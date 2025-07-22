@@ -82,11 +82,11 @@ body {
 
 /* Distraction-free mode */
 .distraction-free {
-  overflow: hidden;
+  background: white !important;
 }
 
-.distraction-free .monaco-editor {
-  padding: 60px !important;
+.dark .distraction-free {
+  background: #111827 !important;
 }
 
 /* Line clamp utility */

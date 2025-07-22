@@ -1,5 +1,4 @@
 import React from 'react';
-import { AnimatePresence } from 'framer-motion';
 import {
   Bold,
   Italic,
@@ -12,13 +11,18 @@ import {
   Quote,
   Type,
   Save,
+  Minus,
+  Plus,
   Heart,
   Lock,
   Unlock,
   Eye,
   EyeOff,
+  Download,
+  Share,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
+import { exportNote } from '../../utils/helpers';
 
 interface ToolbarProps {
   note: any;
@@ -34,6 +38,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onToggleEncryption,
 }) => {
   const { settings } = useStore();
+  const { updateSettings } = useStore();
 
   if (settings.distractionFreeMode) {
     return null;
@@ -58,87 +63,142 @@ const Toolbar: React.FC<ToolbarProps> = ({
     </button>
   );
 
-  return (
-    <AnimatePresence>
-      <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4">
-        <div className="flex items-center space-x-1">
-          {!note.isCodeMode && (
-            <>
-              <ToolbarButton
-                icon={<Bold className="w-4 h-4" />}
-                tooltip="Bold (Ctrl+B)"
-                onClick={() => {}}
-              />
-              <ToolbarButton
-                icon={<Italic className="w-4 h-4" />}
-                tooltip="Italic (Ctrl+I)"
-                onClick={() => {}}
-              />
-              <ToolbarButton
-                icon={<Underline className="w-4 h-4" />}
-                tooltip="Underline (Ctrl+U)"
-                onClick={() => {}}
-              />
-              <ToolbarButton
-                icon={<Strikethrough className="w-4 h-4" />}
-                tooltip="Strikethrough"
-                onClick={() => {}}
-              />
-              <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
-              <ToolbarButton
-                icon={<List className="w-4 h-4" />}
-                tooltip="Bullet List"
-                onClick={() => {}}
-              />
-              <ToolbarButton
-                icon={<ListOrdered className="w-4 h-4" />}
-                tooltip="Numbered List"
-                onClick={() => {}}
-              />
-              <ToolbarButton
-                icon={<Quote className="w-4 h-4" />}
-                tooltip="Quote"
-                onClick={() => {}}
-              />
-              <ToolbarButton
-                icon={<Link className="w-4 h-4" />}
-                tooltip="Insert Link"
-                onClick={() => {}}
-              />
-            </>
-          )}
-        </div>
+  const handleFontSizeChange = (increase: boolean) => {
+    const newSize = increase 
+      ? Math.min(settings.fontSize + 2, 24)
+      : Math.max(settings.fontSize - 2, 12);
+    updateSettings({ fontSize: newSize });
+  };
 
-        <div className="flex items-center space-x-1">
-          <ToolbarButton
-            icon={<Code className="w-4 h-4" />}
-            tooltip="Toggle Code Mode"
-            active={note.isCodeMode}
-            onClick={onToggleCodeMode}
-          />
-          <ToolbarButton
-            icon={<Heart className="w-4 h-4" />}
-            tooltip="Toggle Favorite"
-            active={note.isFavorite}
-            onClick={onToggleFavorite}
-          />
-          <ToolbarButton
-            icon={note.isEncrypted ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-            tooltip={note.isEncrypted ? "Remove Encryption" : "Encrypt Note"}
-            active={note.isEncrypted}
-            onClick={onToggleEncryption}
-          />
-          
-          <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
-          
-          <ToolbarButton
-            icon={settings.distractionFreeMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            tooltip="Toggle Focus Mode"
-            onClick={() => {}}
-          />
-        </div>
+  const handleToggleFocusMode = () => {
+    updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
+  };
+
+  const handleDownload = () => {
+    exportNote(note, 'txt');
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: note.title,
+          text: note.content,
+        });
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(note.content);
+    }
+  };
+
+  return (
+    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4">
+      <div className="flex items-center space-x-1">
+        {!note.isCodeMode && (
+          <>
+            <ToolbarButton
+              icon={<Bold className="w-4 h-4" />}
+              tooltip="Bold (Ctrl+B)"
+              onClick={() => {}}
+            />
+            <ToolbarButton
+              icon={<Italic className="w-4 h-4" />}
+              tooltip="Italic (Ctrl+I)"
+              onClick={() => {}}
+            />
+            <ToolbarButton
+              icon={<Underline className="w-4 h-4" />}
+              tooltip="Underline (Ctrl+U)"
+              onClick={() => {}}
+            />
+            <ToolbarButton
+              icon={<Strikethrough className="w-4 h-4" />}
+              tooltip="Strikethrough"
+              onClick={() => {}}
+            />
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
+            <ToolbarButton
+              icon={<List className="w-4 h-4" />}
+              tooltip="Bullet List"
+              onClick={() => {}}
+            />
+            <ToolbarButton
+              icon={<ListOrdered className="w-4 h-4" />}
+              tooltip="Numbered List"
+              onClick={() => {}}
+            />
+            <ToolbarButton
+              icon={<Quote className="w-4 h-4" />}
+              tooltip="Quote"
+              onClick={() => {}}
+            />
+            <ToolbarButton
+              icon={<Link className="w-4 h-4" />}
+              tooltip="Insert Link"
+              onClick={() => {}}
+            />
+          </>
+        )}
       </div>
-    </AnimatePresence>
+
+      <div className="flex items-center space-x-1">
+        <ToolbarButton
+          icon={<Minus className="w-4 h-4" />}
+          tooltip="Decrease Font Size"
+          onClick={() => handleFontSizeChange(false)}
+        />
+        <span className="text-xs text-gray-500 dark:text-gray-400 px-2">
+          {settings.fontSize}px
+        </span>
+        <ToolbarButton
+          icon={<Plus className="w-4 h-4" />}
+          tooltip="Increase Font Size"
+          onClick={() => handleFontSizeChange(true)}
+        />
+        
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
+        
+        <ToolbarButton
+          icon={<Code className="w-4 h-4" />}
+          tooltip="Toggle Code Mode"
+          active={note.isCodeMode}
+          onClick={onToggleCodeMode}
+        />
+        <ToolbarButton
+          icon={<Heart className="w-4 h-4" />}
+          tooltip="Toggle Favorite"
+          active={note.isFavorite}
+          onClick={onToggleFavorite}
+        />
+        <ToolbarButton
+          icon={note.isEncrypted ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+          tooltip={note.isEncrypted ? "Remove Encryption" : "Encrypt Note"}
+          active={note.isEncrypted}
+          onClick={onToggleEncryption}
+        />
+        
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
+        
+        <ToolbarButton
+          icon={<Download className="w-4 h-4" />}
+          tooltip="Download Note"
+          onClick={handleDownload}
+        />
+        <ToolbarButton
+          icon={<Share className="w-4 h-4" />}
+          tooltip="Share Note"
+          onClick={handleShare}
+        />
+        <ToolbarButton
+          icon={<Eye className="w-4 h-4" />}
+          tooltip="Toggle Focus Mode"
+          onClick={handleToggleFocusMode}
+        />
+      </div>
+    </div>
   );
 };
 

@@ -104,17 +104,19 @@ const App: React.FC = () => {
   }
   return (
     <Router>
-      <div className={`h-screen flex flex-col bg-gray-50 dark:bg-gray-900 font-inter ${
+      <div className={`h-screen flex flex-col bg-gray-50 dark:bg-gray-900 font-inter transition-all duration-300 ${
         settings.distractionFreeMode ? 'distraction-free' : ''
       }`}>
         {!settings.distractionFreeMode && <Header />}
         
-        <div className="flex-1 flex overflow-hidden">
-          <Sidebar />
+        <div className={`flex-1 flex overflow-hidden ${
+          settings.distractionFreeMode ? 'p-8' : ''
+        }`}>
+          {!settings.distractionFreeMode && <Sidebar />}
           <EditorView />
         </div>
         
-        <FloatingActionButton />
+        {!settings.distractionFreeMode && <FloatingActionButton />}
       </div>
     </Router>
   );
