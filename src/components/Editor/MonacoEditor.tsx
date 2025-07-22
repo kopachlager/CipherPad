@@ -18,6 +18,10 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
     // Ensure editor is editable
     editor.updateOptions({
       readOnly: false,
+      wordWrap: 'on',
+      wordWrapColumn: 80,
+      wrappingIndent: 'indent',
+      wrappingStrategy: 'advanced',
     });
 
     // Define custom themes
@@ -96,9 +100,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           fontSize: settings.fontSize,
           lineHeight: settings.lineHeight,
           fontFamily: note.isCodeMode ? settings.fontFamily : 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-          wordWrap: 'on',
-          wordWrapColumn: 80,
-          wrappingIndent: 'indent',
+          wordWrap: 'bounded',
+          wordWrapColumn: 120,
+          wrappingIndent: 'deepIndent',
           wrappingStrategy: 'advanced',
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
@@ -124,6 +128,8 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           smoothScrolling: true,
           mouseWheelScrollSensitivity: 1,
           fastScrollSensitivity: 5,
+          // Fix copy behavior to not include background
+          copyWithSyntaxHighlighting: false,
         }}
       />
     </div>

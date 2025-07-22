@@ -203,6 +203,15 @@ const EditorView: React.FC = () => {
                   setSelectedText(selection.toString());
                 }
               }}
+              onCopy={(e) => {
+                // Ensure plain text copying without background styles
+                const selection = window.getSelection();
+                if (selection) {
+                  const text = selection.toString();
+                  e.clipboardData?.setData('text/plain', text);
+                  e.preventDefault();
+                }
+              }}
               className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full"
               style={{
                 fontSize: `${settings.fontSize}px`,
@@ -210,6 +219,8 @@ const EditorView: React.FC = () => {
                 fontFamily: settings.fontFamily,
                 wordWrap: 'break-word',
                 whiteSpace: 'pre-wrap',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
               }}
               dangerouslySetInnerHTML={{ __html: localContent }}
             />

@@ -3,6 +3,7 @@ import {
   Bold,
   Italic,
   Underline,
+  Strikethrough,
   Code,
   List,
   ListOrdered,
@@ -257,26 +258,69 @@ const Toolbar: React.FC<ToolbarProps> = ({
               />
               
               {showMoreMenu && (
-                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-32">
+                <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-48">
                   <button
                     onClick={() => {
                       execCommand('underline');
                       setShowMoreMenu(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
                   >
-                    <Underline className="w-3 h-3" />
+                    <Underline className="w-4 h-4" />
                     <span>Underline</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      execCommand('strikeThrough');
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
+                  >
+                    <Strikethrough className="w-4 h-4" />
+                    <span>Strikethrough</span>
+                  </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                  <button
+                    onClick={() => {
+                      const url = prompt('Enter URL:');
+                      if (url) execCommand('createLink', url);
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
+                  >
+                    <Link className="w-4 h-4" />
+                    <span>Insert Link</span>
                   </button>
                   <button
                     onClick={() => {
                       execCommand('formatBlock', 'blockquote');
                       setShowMoreMenu(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
                   >
-                    <Quote className="w-3 h-3" />
+                    <Quote className="w-4 h-4" />
                     <span>Quote</span>
+                  </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                  <button
+                    onClick={() => {
+                      handleDownload();
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleShare();
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
+                  >
+                    <Share className="w-4 h-4" />
+                    <span>Share</span>
                   </button>
                 </div>
               )}
