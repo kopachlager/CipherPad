@@ -160,9 +160,9 @@ const Sidebar: React.FC = () => {
   return (
     <>
       {sidebarOpen && (
-        <aside className="w-80 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        <aside className="w-80 h-full bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0">
           {/* Search */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -178,7 +178,7 @@ const Sidebar: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
             {/* Quick Actions */}
-            <div>
+            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                 Quick Access
               </h3>
@@ -217,7 +217,7 @@ const Sidebar: React.FC = () => {
             </div>
 
             {/* Folders */}
-            <div>
+            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                   Folders
@@ -267,7 +267,7 @@ const Sidebar: React.FC = () => {
 
             {/* Notes List - Minimal One Line */}
             {filteredNotes.length > 0 && (
-              <div>
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                   {viewMode === 'trash' ? 'Deleted Notes' : 
                    viewMode === 'favorites' ? 'Favorite Notes' : 

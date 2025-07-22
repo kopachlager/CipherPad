@@ -104,16 +104,27 @@ const App: React.FC = () => {
   }
   return (
     <Router>
-      <div className={`h-screen flex flex-col bg-gray-50 dark:bg-gray-900 font-inter transition-all duration-300 ${
+      <div className={`min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 font-inter transition-all duration-300 ${
         settings.distractionFreeMode ? 'distraction-free' : ''
-      }`}>
-        {!settings.distractionFreeMode && <Header />}
-        
-        <div className={`flex-1 flex ${
-          settings.distractionFreeMode ? 'p-8' : ''
-        } overflow-hidden`}>
-          {!settings.distractionFreeMode && <Sidebar />}
-          <EditorView />
+      } p-4 md:p-8`}>
+        {/* Desktop Frame Container */}
+        <div className="max-w-7xl mx-auto">
+          <div className={`bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
+            settings.distractionFreeMode 
+              ? 'h-[calc(100vh-4rem)] md:h-[calc(100vh-8rem)]' 
+              : 'h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)]'
+          }`}>
+            <div className="h-full flex flex-col">
+              {!settings.distractionFreeMode && <Header />}
+              
+              <div className={`flex-1 flex ${
+                settings.distractionFreeMode ? 'p-8' : ''
+              } overflow-hidden`}>
+                {!settings.distractionFreeMode && <Sidebar />}
+                <EditorView />
+              </div>
+            </div>
+          </div>
         </div>
         
         {!settings.distractionFreeMode && <FloatingActionButton />}

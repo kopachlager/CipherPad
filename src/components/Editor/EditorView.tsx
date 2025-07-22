@@ -100,7 +100,7 @@ const EditorView: React.FC = () => {
 
   return (
     <>
-      <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden rounded-r-2xl">
         <Toolbar
           note={activeNote}
           onToggleCodeMode={handleToggleCodeMode}

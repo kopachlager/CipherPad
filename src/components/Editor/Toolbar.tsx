@@ -96,7 +96,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-2 sm:px-4 overflow-x-auto">
+    <div className="h-12 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 overflow-x-auto flex-shrink-0">
       <div className="flex items-center space-x-1 flex-shrink-0">
         {!note.isCodeMode && (
           <div className="hidden sm:flex items-center space-x-1">
