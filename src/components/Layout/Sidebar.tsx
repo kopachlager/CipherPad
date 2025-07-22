@@ -31,6 +31,7 @@ const Sidebar: React.FC = () => {
     restoreNote,
     setActiveNote,
     setSelectedFolder,
+    updateNote,
   } = useStore();
 
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
@@ -134,7 +135,6 @@ const Sidebar: React.FC = () => {
         <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
           {count}
         </span>
-      </div>
       )}
     </button>
   );
@@ -216,6 +216,7 @@ const Sidebar: React.FC = () => {
             <X className="w-3 h-3 text-gray-500" />
           </button>
         )}
+      </div>
       </div>
     </div>
   );
