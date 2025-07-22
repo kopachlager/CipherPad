@@ -360,42 +360,47 @@ export const useStore = create<Store>()(
 
       updateSettings: (updates) => {
         const updateSettingsAsync = async () => {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) return;
-
           const newSettings = { ...get().settings, ...updates };
           
           // Save to localStorage as backup
           saveSettings(newSettings);
           
-          // Save to Supabase
-          const dbUpdates: any = {};
-          if (updates.theme !== undefined) dbUpdates.theme = updates.theme;
-          if (updates.accentColor !== undefined) dbUpdates.accent_color = updates.accentColor;
-          if (updates.fontFamily !== undefined) dbUpdates.font_family = updates.fontFamily;
-          if (updates.fontSize !== undefined) dbUpdates.font_size = updates.fontSize;
-          if (updates.lineHeight !== undefined) dbUpdates.line_height = updates.lineHeight;
-          if (updates.autoSave !== undefined) dbUpdates.auto_save = updates.autoSave;
-          if (updates.autoLock !== undefined) dbUpdates.auto_lock = updates.autoLock;
-          if (updates.autoLockTimeout !== undefined) dbUpdates.auto_lock_timeout = updates.autoLockTimeout;
-          if (updates.biometricAuth !== undefined) dbUpdates.biometric_auth = updates.biometricAuth;
-          if (updates.showWordCount !== undefined) dbUpdates.show_word_count = updates.showWordCount;
-          if (updates.distractionFreeMode !== undefined) dbUpdates.distraction_free_mode = updates.distractionFreeMode;
-
-          const { error } = await supabase
-            .from('user_settings')
-            .upsert({
-              user_id: user.id,
-              ...dbUpdates,
-            });
-
-          if (error) {
-            console.error('Error saving settings:', error);
-          }
-
+          // Update state immediately for responsive UI
           set({ settings: newSettings });
+          
+          // Save to Supabase in background
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const dbUpdates: any = {};
+            if (updates.theme !== undefined) dbUpdates.theme = updates.theme;
+            if (updates.accentColor !== undefined) dbUpdates.accent_color = updates.accentColor;
+            if (updates.fontFamily !== undefined) dbUpdates.font_family = updates.fontFamily;
+            if (updates.fontSize !== undefined) dbUpdates.font_size = updates.fontSize;
+            if (updates.lineHeight !== undefined) dbUpdates.line_height = updates.lineHeight;
+            if (updates.autoSave !== undefined) dbUpdates.auto_save = updates.autoSave;
+            if (updates.autoLock !== undefined) dbUpdates.auto_lock = updates.autoLock;
+            if (updates.autoLockTimeout !== undefined) dbUpdates.auto_lock_timeout = updates.autoLockTimeout;
+            if (updates.biometricAuth !== undefined) dbUpdates.biometric_auth = updates.biometricAuth;
+            if (updates.showWordCount !== undefined) dbUpdates.show_word_count = updates.showWordCount;
+            if (updates.distractionFreeMode !== undefined) dbUpdates.distraction_free_mode = updates.distractionFreeMode;
+
+            const { error } = await supabase
+              .from('user_settings')
+              .upsert({
+                user_id: user.id,
+                ...dbUpdates,
+              });
+
+            if (error) {
+              console.error('Error saving settings to Supabase:', error);
+            }
+          } catch (error) {
+            console.error('Failed to save settings to Supabase:', error);
+          }
         };
-        
+          
         updateSettingsAsync();
       },
 

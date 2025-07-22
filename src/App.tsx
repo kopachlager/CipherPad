@@ -21,9 +21,20 @@ const App: React.FC = () => {
   useEffect(() => {
     if (user) {
       console.log('User authenticated, loading data...');
-      loadNotes();
-      loadFolders();
-      loadSettings();
+      const loadUserData = async () => {
+        try {
+          await Promise.all([
+            loadNotes(),
+            loadFolders(),
+            loadSettings()
+          ]);
+          console.log('User data loaded successfully');
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      };
+      
+      loadUserData();
     }
   }, [user, loadNotes, loadFolders, loadSettings]);
 
