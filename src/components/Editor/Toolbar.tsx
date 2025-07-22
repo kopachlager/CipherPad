@@ -35,8 +35,14 @@ interface ToolbarProps {
   onLanguageChange?: (language: string) => void;
   isRecording?: boolean;
   isTranscribing?: boolean;
-  selectedText?: string;
-  cursorPosition?: number;
+  contentAnalysis: {
+    hasLists: boolean;
+    hasLinks: boolean;
+    hasCode: boolean;
+    hasSelection: boolean;
+    selectedText: string;
+    wordCount: number;
+  };
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -49,34 +55,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onLanguageChange,
   isRecording = false,
   isTranscribing = false,
-  selectedText = '',
+  contentAnalysis,
 }) => {
   const { settings, updateSettings } = useStore();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [contextualTools, setContextualTools] = useState<string[]>([]);
-
-  // Auto-detect content and suggest contextual tools
-  useEffect(() => {
-    const content = note.content || '';
-    const tools: string[] = [];
-
-    // Only show contextual tools when they're actually relevant
-    if (selectedText.length > 0) {
-      tools.push('formatting');
-    }
-    if (content.includes('http') || content.includes('[') && content.includes('](')) {
-      tools.push('link');
-    }
-    if (content.includes('- ') || content.includes('* ') || /^\d+\.\s/.test(content)) {
-      tools.push('lists');
-    }
-    if (content.includes('```') || content.includes('`')) {
-      tools.push('code');
-    }
-
-    setContextualTools(tools);
-  }, [note.content, selectedText]);
 
   if (settings.distractionFreeMode) {
     return null;
@@ -101,9 +84,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
     tooltip: string;
     active?: boolean;
     onClick: () => void;
+    suggested?: boolean;
     disabled?: boolean;
-    contextual?: boolean;
-  }> = ({ icon, tooltip, active, onClick, disabled = false, contextual = false }) => (
+  }> = ({ 
+    icon, 
+    tooltip, 
+    active = false, 
+    onClick, 
+    disabled = false,
+    suggested = false 
+  }) => (
     <button
       onClick={onClick}
       disabled={disabled}
@@ -113,7 +103,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           ? 'opacity-50 cursor-not-allowed'
           : active
           ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-          : contextual
+          : suggested
           ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30'
           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
       }`}
@@ -121,14 +111,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
       {icon}
     </button>
   );
-
-  const execCommand = (command: string, value?: string) => {
-    document.execCommand(command, false, value);
-    const editor = document.querySelector('[contenteditable="true"]') as HTMLElement;
-    if (editor) {
-      editor.focus();
-    }
-  };
 
   const handleDownload = () => {
     exportNote(note, note.isCodeMode ? 'txt' : 'md');
@@ -151,6 +133,42 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
   const handleToggleFocusMode = () => {
     updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
+  };
+
+  const insertTextAtCursor = (beforeText: string, afterText: string = '') => {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const newText = beforeText + selectedText + afterText;
+    
+    const newValue = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+    textarea.value = newValue;
+    
+    // Trigger change event
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    
+    // Set cursor position
+    const newCursorPos = start + beforeText.length + selectedText.length + afterText.length;
+    textarea.setSelectionRange(newCursorPos, newCursorPos);
+    textarea.focus();
+  };
+
+  const formatText = (format: 'bold' | 'italic' | 'underline' | 'strikethrough' | 'code') => {
+    switch (format) {
+      case 'bold':
+        insertTextAtCursor('**', '**');
+        break;
+      case 'italic':
+        insertTextAtCursor('*', '*');
+        break;
+      case 'code':
+        insertTextAtCursor('`', '`');
+        break;
+    }
   };
 
   return (
@@ -200,41 +218,38 @@ const Toolbar: React.FC<ToolbarProps> = ({
         ) : (
           /* Rich Text Mode - Contextual Tools */
           <div className="flex items-center space-x-1 ml-2">
-            {/* Always show basic formatting */}
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold"
-              onClick={() => execCommand('bold')}
-              contextual={contextualTools.includes('formatting')}
+              onClick={() => formatText('bold')}
+              suggested={contentAnalysis.hasSelection}
             />
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
               tooltip="Italic"
-              onClick={() => execCommand('italic')}
-              contextual={contextualTools.includes('formatting')}
+              onClick={() => formatText('italic')}
+              suggested={contentAnalysis.hasSelection}
             />
 
-            {/* Show lists only when contextually relevant */}
-            {contextualTools.includes('lists') && (
+            {contentAnalysis.hasLists && (
               <>
                 <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
                 <ToolbarButton
                   icon={<List className="w-4 h-4" />}
                   tooltip="Bullet List"
-                  onClick={() => execCommand('insertUnorderedList')}
-                  contextual={true}
+                  onClick={() => insertTextAtCursor('- ', '')}
+                  suggested={true}
                 />
                 <ToolbarButton
                   icon={<ListOrdered className="w-4 h-4" />}
                   tooltip="Numbered List"
-                  onClick={() => execCommand('insertOrderedList')}
-                  contextual={true}
+                  onClick={() => insertTextAtCursor('1. ', '')}
+                  suggested={true}
                 />
               </>
             )}
 
-            {/* Show link tool when links detected */}
-            {contextualTools.includes('link') && (
+            {contentAnalysis.hasLinks && (
               <>
                 <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
                 <ToolbarButton
@@ -242,9 +257,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   tooltip="Insert Link"
                   onClick={() => {
                     const url = prompt('Enter URL:');
-                    if (url) execCommand('createLink', url);
+                    if (url) insertTextAtCursor(`[Link](${url})`, '');
                   }}
-                  contextual={true}
+                  suggested={true}
                 />
               </>
             )}
@@ -261,7 +276,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-48">
                   <button
                     onClick={() => {
-                      execCommand('underline');
+                      insertTextAtCursor('<u>', '</u>');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -271,7 +286,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      execCommand('strikeThrough');
+                      insertTextAtCursor('~~', '~~');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -283,7 +298,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   <button
                     onClick={() => {
                       const url = prompt('Enter URL:');
-                      if (url) execCommand('createLink', url);
+                      if (url) insertTextAtCursor(`[Link](${url})`, '');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -293,7 +308,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      execCommand('formatBlock', 'blockquote');
+                      insertTextAtCursor('> ', '');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"

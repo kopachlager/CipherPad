@@ -100,9 +100,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           fontSize: settings.fontSize,
           lineHeight: settings.lineHeight,
           fontFamily: note.isCodeMode ? settings.fontFamily : 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-          wordWrap: 'bounded',
-          wordWrapColumn: 120,
-          wrappingIndent: 'deepIndent',
+          wordWrap: 'on',
+          wordWrapColumn: 80,
+          wrappingIndent: 'indent',
           wrappingStrategy: 'advanced',
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
@@ -122,7 +122,6 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           roundedSelection: false,
           readOnly: false,
           cursorStyle: 'line',
-          automaticLayout: true,
           cursorBlinking: 'blink',
           renderLineHighlight: 'line',
           smoothScrolling: true,
@@ -130,6 +129,11 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           fastScrollSensitivity: 5,
           // Fix copy behavior to not include background
           copyWithSyntaxHighlighting: false,
+          // Better wrapping
+          rulers: [],
+          folding: true,
+          foldingStrategy: 'auto',
+          showFoldingControls: 'mouseover',
         }}
       />
     </div>
