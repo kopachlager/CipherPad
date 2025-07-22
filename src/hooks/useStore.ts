@@ -323,6 +323,7 @@ export const useStore = create<Store>()(
       },
 
       setActiveNote: (id) => {
+        console.log('Setting active note:', id);
         set({ activeNoteId: id });
         get().updateLastActivity();
       },

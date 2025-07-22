@@ -6,19 +6,13 @@ import {
   Trash2,
   Plus,
   Search,
-  ChevronRight,
-  ChevronDown,
-  Download,
-  Share,
   X,
-  Edit3,
   Lock,
   Code,
-  MoreHorizontal,
   FolderOpen,
+  MoreVertical,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
-import { formatDate, exportNote } from '../../utils/helpers';
 
 const Sidebar: React.FC = () => {
   const {
@@ -38,7 +32,6 @@ const Sidebar: React.FC = () => {
     updateNote,
   } = useStore();
 
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [viewMode, setViewMode] = useState<'all' | 'favorites' | 'trash'>('all');
@@ -65,37 +58,6 @@ const Sidebar: React.FC = () => {
   const favoriteNotes = filteredNotes.filter((note) => note.isFavorite);
   const trashedNotes = notes.filter((note) => note.isDeleted);
 
-  const toggleFolder = (folderId: string) => {
-    const newExpanded = new Set(expandedFolders);
-    if (newExpanded.has(folderId)) {
-      newExpanded.delete(folderId);
-    } else {
-      newExpanded.add(folderId);
-    }
-    setExpandedFolders(newExpanded);
-  };
-
-  const handleDownloadNote = (note: any, e: React.MouseEvent) => {
-    e.stopPropagation();
-    exportNote(note, 'txt');
-  };
-
-  const handleShareNote = async (note: any, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: note.title,
-          text: note.content,
-        });
-      } catch (err) {
-        console.log('Share cancelled');
-      }
-    } else {
-      navigator.clipboard.writeText(note.content);
-    }
-  };
-
   const handleCreateFolder = () => {
     if (newFolderName.trim()) {
       createFolder(newFolderName.trim()).catch(console.error);
@@ -117,6 +79,11 @@ const Sidebar: React.FC = () => {
   const handleMoveToFolder = (noteId: string, folderId: string | null) => {
     updateNote(noteId, { folderId });
     setShowMoveMenu(null);
+  };
+
+  const handleNoteClick = (noteId: string) => {
+    console.log('Note clicked:', noteId);
+    setActiveNote(noteId);
   };
 
   const QuickAccessItem: React.FC<{
@@ -150,7 +117,7 @@ const Sidebar: React.FC = () => {
     noteId, 
     currentFolderId 
   }) => (
-    <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10 min-w-32">
+    <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-32">
       <button
         onClick={() => handleMoveToFolder(noteId, null)}
         className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${
@@ -176,106 +143,6 @@ const Sidebar: React.FC = () => {
           </div>
         </button>
       ))}
-    </div>
-  );
-
-  const NoteItem: React.FC<{ note: any }> = ({ note }) => (
-    <div
-      className={`relative group p-3 rounded-md transition-colors duration-150 border cursor-pointer ${
-        activeNoteId === note.id
-          ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
-          : 'hover:bg-gray-50 dark:hover:bg-gray-800 border-transparent'
-      }`}
-      onClick={() => setActiveNote(note.id)}
-    >
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2 mb-1">
-            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-              {note.title || 'Untitled'}
-            </h4>
-            <div className="flex items-center space-x-1">
-              {note.isFavorite && (
-                <Star className="w-3 h-3 text-yellow-500 fill-current" />
-              )}
-              {note.isEncrypted && (
-                <Lock className="w-3 h-3 text-gray-500" />
-              )}
-              {note.isCodeMode && (
-                <Code className="w-3 h-3 text-gray-500" />
-              )}
-            </div>
-          </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-1">
-            {note.content || 'No content'}
-          </p>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {formatDate(new Date(note.updatedAt))}
-            </span>
-            {note.folderId && (
-              <div className="flex items-center space-x-1">
-                <Folder className="w-3 h-3 text-gray-400" />
-                <span className="text-xs text-gray-400">
-                  {folders.find(f => f.id === note.folderId)?.name}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 ml-2">
-          <div className="relative">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowMoveMenu(showMoveMenu === note.id ? null : note.id);
-              }}
-              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-              title="Move to folder"
-            >
-              <FolderOpen className="w-3 h-3 text-gray-500" />
-            </button>
-            {showMoveMenu === note.id && (
-              <MoveToFolderMenu noteId={note.id} currentFolderId={note.folderId} />
-            )}
-          </div>
-          
-          <button
-            onClick={(e) => handleDownloadNote(note, e)}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-            title="Download note"
-          >
-            <Download className="w-3 h-3 text-gray-500" />
-          </button>
-          
-          <button
-            onClick={(e) => handleShareNote(note, e)}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-            title="Share note"
-          >
-            <Share className="w-3 h-3 text-gray-500" />
-          </button>
-          
-          {viewMode === 'trash' ? (
-            <button
-              onClick={(e) => handleRestoreNote(note.id, e)}
-              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-              title="Restore note"
-            >
-              <Edit3 className="w-3 h-3 text-gray-500" />
-            </button>
-          ) : (
-            <button
-              onClick={(e) => handleDeleteNote(note.id, e)}
-              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-              title="Delete note"
-            >
-              <X className="w-3 h-3 text-gray-500" />
-            </button>
-          )}
-        </div>
-      </div>
     </div>
   );
 
@@ -394,7 +261,7 @@ const Sidebar: React.FC = () => {
               </div>
             </div>
 
-            {/* Notes List */}
+            {/* Notes List - Minimal One Line */}
             {filteredNotes.length > 0 && (
               <div>
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
@@ -403,11 +270,77 @@ const Sidebar: React.FC = () => {
                    selectedFolderId ? folders.find(f => f.id === selectedFolderId)?.name || 'Folder Notes' :
                    'All Notes'}
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {filteredNotes
                     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
                     .map((note) => (
-                      <NoteItem key={note.id} note={note} />
+                      <div
+                        key={note.id}
+                        className={`group flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-colors duration-150 ${
+                          activeNoteId === note.id
+                            ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                            : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                        }`}
+                        onClick={() => handleNoteClick(note.id)}
+                      >
+                        <div className="flex items-center space-x-2 flex-1 min-w-0">
+                          <div className="flex items-center space-x-1 flex-shrink-0">
+                            {note.isFavorite && (
+                              <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                            )}
+                            {note.isEncrypted && (
+                              <Lock className="w-3 h-3 text-gray-500" />
+                            )}
+                            {note.isCodeMode && (
+                              <Code className="w-3 h-3 text-gray-500" />
+                            )}
+                          </div>
+                          <span className="text-sm font-medium truncate">
+                            {note.title || 'Untitled'}
+                          </span>
+                          {note.folderId && (
+                            <span className="text-xs text-gray-400 flex-shrink-0">
+                              in {folders.find(f => f.id === note.folderId)?.name}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                          <div className="relative">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowMoveMenu(showMoveMenu === note.id ? null : note.id);
+                              }}
+                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                              title="Move to folder"
+                            >
+                              <FolderOpen className="w-3 h-3 text-gray-500" />
+                            </button>
+                            {showMoveMenu === note.id && (
+                              <MoveToFolderMenu noteId={note.id} currentFolderId={note.folderId} />
+                            )}
+                          </div>
+                          
+                          {viewMode === 'trash' ? (
+                            <button
+                              onClick={(e) => handleRestoreNote(note.id, e)}
+                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                              title="Restore note"
+                            >
+                              <Plus className="w-3 h-3 text-gray-500" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => handleDeleteNote(note.id, e)}
+                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                              title="Delete note"
+                            >
+                              <X className="w-3 h-3 text-gray-500" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     ))}
                 </div>
               </div>
