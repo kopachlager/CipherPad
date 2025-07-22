@@ -5,9 +5,10 @@ import {
   Sun, 
   Moon, 
   Settings, 
-  Lock,
-  Plus
+  Plus,
+  LogOut
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
 
@@ -19,9 +20,13 @@ const Header: React.FC = () => {
     searchQuery,
     createNote,
     settings,
-    auth
   } = useStore();
+  const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <header className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 relative z-50">
@@ -67,12 +72,13 @@ const Header: React.FC = () => {
           )}
         </button>
 
-        {auth.hasPassword && (
+        {user && (
           <button
+            onClick={handleSignOut}
             className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
-            title="Lock app"
+            title="Sign out"
           >
-            <Lock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
         )}
 

@@ -64,7 +64,7 @@ const Sidebar: React.FC = () => {
 
   const handleCreateFolder = () => {
     if (newFolderName.trim()) {
-      createFolder(newFolderName.trim());
+      createFolder(newFolderName.trim()).catch(console.error);
       setNewFolderName('');
       setShowNewFolder(false);
     }

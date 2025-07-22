@@ -1,35 +1,50 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import EditorView from './components/Editor/EditorView';
 import FloatingActionButton from './components/FloatingActionButton';
+import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
 import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const App: React.FC = () => {
-  const { auth, settings, updateLastActivity } = useStore();
+  const { settings, updateLastActivity, loadNotes, loadFolders } = useStore();
+  const { user, loading } = useAuth();
+  const [showAuthModal, setShowAuthModal] = React.useState(false);
   useTheme();
   useKeyboardShortcuts();
 
+  // Load data when user is authenticated
+  useEffect(() => {
+    if (user) {
+      loadNotes();
+      loadFolders();
+    }
+  }, [user, loadNotes, loadFolders]);
+
+  // Show auth modal if not authenticated and not loading
+  useEffect(() => {
+    if (!loading && !user) {
+      setShowAuthModal(true);
+    } else {
+      setShowAuthModal(false);
+    }
+  }, [user, loading]);
+
   // Auto-lock functionality
   useEffect(() => {
-    if (!settings.autoLock || !auth.hasPassword) return;
+    if (!settings.autoLock || !user) return;
 
     const checkAutoLock = () => {
-      const now = new Date();
-      const lastActivity = new Date(auth.lastActivity);
-      const timeDiff = now.getTime() - lastActivity.getTime();
-
-      if (timeDiff > settings.autoLockTimeout && auth.isAuthenticated) {
-        // Would trigger lock function
-      }
+      // Auto-lock logic would go here
     };
 
     const interval = setInterval(checkAutoLock, 60000); // Check every minute
     return () => clearInterval(interval);
-  }, [settings.autoLock, settings.autoLockTimeout, auth.hasPassword, auth.lastActivity, auth.isAuthenticated]);
+  }, [settings.autoLock, settings.autoLockTimeout, user]);
 
   // Track user activity
   useEffect(() => {
@@ -63,6 +78,17 @@ const App: React.FC = () => {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Router>
       <div className={`h-screen flex flex-col bg-gray-50 dark:bg-gray-900 font-inter ${
@@ -76,6 +102,11 @@ const App: React.FC = () => {
         </div>
         
         <FloatingActionButton />
+        
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+        />
       </div>
     </Router>
   );
