@@ -47,7 +47,7 @@ interface Store {
 }
 
 const defaultSettings: AppSettings = {
-  theme: 'system',
+  theme: 'light',
   accentColor: '#6b7280',
   fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   fontSize: 16,

@@ -68,7 +68,7 @@ const Header: React.FC = () => {
             className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
             title="Toggle theme"
           >
-            {theme === 'dark' ? (
+            {theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) ? (
               <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             ) : (
               <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
