@@ -5,6 +5,8 @@ import StatusBar from './StatusBar';
 import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
+import EncryptionModal from '../Encryption/EncryptionModal';
+import { encryptData, decryptData } from '../../utils/crypto';
 
 const EditorView: React.FC = () => {
   const { 
@@ -18,6 +20,7 @@ const EditorView: React.FC = () => {
   const activeNote = notes.find((note) => note.id === activeNoteId);
   const [localContent, setLocalContent] = useState('');
   const [lastSaved, setLastSaved] = useState<Date | undefined>();
+  const [showEncryptionModal, setShowEncryptionModal] = useState(false);
 
   useAutoSave(activeNoteId, localContent);
 
@@ -81,31 +84,47 @@ const EditorView: React.FC = () => {
   };
 
   const handleToggleEncryption = () => {
-    // This would open an encryption dialog
-    updateNote(activeNote.id, { isEncrypted: !activeNote.isEncrypted });
+    setShowEncryptionModal(true);
+  };
+
+  const handleEncryptionSave = (content: string, isEncrypted: boolean) => {
+    updateNote(activeNote.id, { 
+      content,
+      isEncrypted 
+    });
+    setLocalContent(content);
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-white dark:bg-gray-900">
-      <Toolbar
-        note={activeNote}
-        onToggleCodeMode={handleToggleCodeMode}
-        onToggleFavorite={handleToggleFavorite}
-        onToggleEncryption={handleToggleEncryption}
-      />
-      
-      <div className="flex-1 overflow-hidden">
-        <MonacoEditor
+    <>
+      <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
+        <Toolbar
           note={activeNote}
-          onChange={handleContentChange}
+          onToggleCodeMode={handleToggleCodeMode}
+          onToggleFavorite={handleToggleFavorite}
+          onToggleEncryption={handleToggleEncryption}
+        />
+        
+        <div className="flex-1 overflow-hidden">
+          <MonacoEditor
+            note={activeNote}
+            onChange={handleContentChange}
+          />
+        </div>
+        
+        <StatusBar
+          note={activeNote}
+          lastSaved={lastSaved}
         />
       </div>
-      
-      <StatusBar
+
+      <EncryptionModal
+        isOpen={showEncryptionModal}
+        onClose={() => setShowEncryptionModal(false)}
         note={activeNote}
-        lastSaved={lastSaved}
+        onSave={handleEncryptionSave}
       />
-    </div>
+    </>
   );
 };
 

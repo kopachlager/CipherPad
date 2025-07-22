@@ -49,6 +49,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
     tooltip: string;
     active?: boolean;
     onClick: () => void;
+    className?: string;
   }> = ({ icon, tooltip, active, onClick }) => (
     <button
       onClick={onClick}
@@ -95,10 +96,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4">
-      <div className="flex items-center space-x-1">
+    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-2 sm:px-4 overflow-x-auto">
+      <div className="flex items-center space-x-1 flex-shrink-0">
         {!note.isCodeMode && (
-          <>
+          <div className="hidden sm:flex items-center space-x-1">
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold (Ctrl+B)"
@@ -114,12 +115,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
               tooltip="Underline (Ctrl+U)"
               onClick={() => {}}
             />
-            <ToolbarButton
-              icon={<Strikethrough className="w-4 h-4" />}
-              tooltip="Strikethrough"
-              onClick={() => {}}
-            />
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
             <ToolbarButton
               icon={<List className="w-4 h-4" />}
               tooltip="Bullet List"
@@ -130,27 +126,17 @@ const Toolbar: React.FC<ToolbarProps> = ({
               tooltip="Numbered List"
               onClick={() => {}}
             />
-            <ToolbarButton
-              icon={<Quote className="w-4 h-4" />}
-              tooltip="Quote"
-              onClick={() => {}}
-            />
-            <ToolbarButton
-              icon={<Link className="w-4 h-4" />}
-              tooltip="Insert Link"
-              onClick={() => {}}
-            />
-          </>
+          </div>
         )}
       </div>
 
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center space-x-1 flex-shrink-0">
         <ToolbarButton
           icon={<Minus className="w-4 h-4" />}
           tooltip="Decrease Font Size"
           onClick={() => handleFontSizeChange(false)}
         />
-        <span className="text-xs text-gray-500 dark:text-gray-400 px-2">
+        <span className="text-xs text-gray-500 dark:text-gray-400 px-1 hidden sm:inline">
           {settings.fontSize}px
         </span>
         <ToolbarButton
@@ -159,7 +145,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           onClick={() => handleFontSizeChange(true)}
         />
         
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
         
         <ToolbarButton
           icon={<Code className="w-4 h-4" />}
@@ -180,18 +166,21 @@ const Toolbar: React.FC<ToolbarProps> = ({
           onClick={onToggleEncryption}
         />
         
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-2" />
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
         
-        <ToolbarButton
-          icon={<Download className="w-4 h-4" />}
-          tooltip="Download Note"
-          onClick={handleDownload}
-        />
-        <ToolbarButton
-          icon={<Share className="w-4 h-4" />}
-          tooltip="Share Note"
-          onClick={handleShare}
-        />
+        <div className="hidden sm:flex items-center space-x-1">
+          <ToolbarButton
+            icon={<Download className="w-4 h-4" />}
+            tooltip="Download Note"
+            onClick={handleDownload}
+          />
+          <ToolbarButton
+            icon={<Share className="w-4 h-4" />}
+            tooltip="Share Note"
+            onClick={handleShare}
+          />
+        </div>
+        
         <ToolbarButton
           icon={<Eye className="w-4 h-4" />}
           tooltip="Toggle Focus Mode"

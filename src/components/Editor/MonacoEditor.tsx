@@ -10,16 +10,14 @@ interface MonacoEditorProps {
 const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
   const { settings } = useStore();
   const editorRef = useRef<any>(null);
-  const [isReady, setIsReady] = React.useState(false);
 
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
-    setIsReady(true);
     editor.focus();
   };
 
   const handleEditorChange = (value: string | undefined) => {
-    if (isReady && value !== undefined) {
+    if (value !== undefined) {
       onChange(value);
     }
   };
@@ -30,7 +28,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
   const language = note.isCodeMode ? (note.language || 'plaintext') : 'plaintext';
 
   return (
-    <div className="flex-1 relative">
+    <div className="flex-1 relative overflow-hidden">
       <Editor
         height="100%"
         language={language}
@@ -47,14 +45,18 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           automaticLayout: true,
           padding: { top: 20, bottom: 20 },
           lineNumbers: note.isCodeMode ? 'on' : 'off',
-          readOnly: false,
-          domReadOnly: false,
           scrollbar: {
             vertical: 'auto',
             horizontal: 'auto',
             verticalScrollbarSize: 8,
             horizontalScrollbarSize: 8,
           },
+          contextmenu: true,
+          selectOnLineNumbers: true,
+          roundedSelection: false,
+          readOnly: false,
+          cursorStyle: 'line',
+          automaticLayout: true,
         }}
       />
     </div>

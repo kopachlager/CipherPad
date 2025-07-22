@@ -109,9 +109,9 @@ const App: React.FC = () => {
       }`}>
         {!settings.distractionFreeMode && <Header />}
         
-        <div className={`flex-1 flex overflow-hidden ${
+        <div className={`flex-1 flex ${
           settings.distractionFreeMode ? 'p-8' : ''
-        }`}>
+        } overflow-hidden`}>
           {!settings.distractionFreeMode && <Sidebar />}
           <EditorView />
         </div>
