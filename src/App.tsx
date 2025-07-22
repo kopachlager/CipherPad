@@ -14,7 +14,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 const App: React.FC = () => {
   const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings } = useStore();
   const { user, loading } = useAuth();
-  const [showLanding, setShowLanding] = React.useState(true);
+  const [showLanding, setShowLanding] = React.useState(!user);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   useTheme();
   useKeyboardShortcuts();
