@@ -146,14 +146,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           }}
           className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
-          <option value="Inter">Inter</option>
-          <option value="JetBrains Mono">JetBrains Mono</option>
-          <option value="Fira Code">Fira Code</option>
-          <option value="Source Code Pro">Source Code Pro</option>
-          <option value="Monaco">Monaco</option>
-          <option value="Consolas">Consolas</option>
-          <option value="Roboto Mono">Roboto Mono</option>
-          <option value="Ubuntu Mono">Ubuntu Mono</option>
+          <option value="Inter">Inter (Default)</option>
+          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+          <option value="'Fira Code', monospace">Fira Code</option>
+          <option value="'Source Code Pro', monospace">Source Code Pro</option>
+          <option value="Monaco, monospace">Monaco</option>
+          <option value="Consolas, monospace">Consolas</option>
+          <option value="'Roboto Mono', monospace">Roboto Mono</option>
+          <option value="'Ubuntu Mono', monospace">Ubuntu Mono</option>
         </select>
       </SettingItem>
 

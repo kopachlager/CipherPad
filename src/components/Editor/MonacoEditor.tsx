@@ -39,7 +39,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
         options={{
           fontSize: settings.fontSize,
           lineHeight: settings.lineHeight,
-          fontFamily: settings.fontFamily,
+          fontFamily: note.isCodeMode ? settings.fontFamily : 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           wordWrap: 'on',
           minimap: { enabled: false },
           scrollBeyondLastLine: false,

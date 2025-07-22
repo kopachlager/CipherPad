@@ -12,6 +12,10 @@ import {
   Share,
   X,
   Edit3,
+  Lock,
+  Code,
+  MoreHorizontal,
+  FolderOpen,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { formatDate, exportNote } from '../../utils/helpers';
@@ -38,6 +42,7 @@ const Sidebar: React.FC = () => {
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [viewMode, setViewMode] = useState<'all' | 'favorites' | 'trash'>('all');
+  const [showMoveMenu, setShowMoveMenu] = useState<string | null>(null);
 
   const filteredNotes = notes.filter((note) => {
     // Filter by view mode
@@ -111,7 +116,9 @@ const Sidebar: React.FC = () => {
 
   const handleMoveToFolder = (noteId: string, folderId: string | null) => {
     updateNote(noteId, { folderId });
+    setShowMoveMenu(null);
   };
+
   const QuickAccessItem: React.FC<{
     icon: React.ReactNode;
     label: string;
@@ -139,87 +146,145 @@ const Sidebar: React.FC = () => {
     </button>
   );
 
+  const MoveToFolderMenu: React.FC<{ noteId: string; currentFolderId?: string }> = ({ 
+    noteId, 
+    currentFolderId 
+  }) => (
+    <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10 min-w-32">
+      <button
+        onClick={() => handleMoveToFolder(noteId, null)}
+        className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${
+          !currentFolderId ? 'bg-gray-50 dark:bg-gray-700' : ''
+        }`}
+      >
+        <div className="flex items-center space-x-2">
+          <FileText className="w-3 h-3" />
+          <span>No Folder</span>
+        </div>
+      </button>
+      {folders.map((folder) => (
+        <button
+          key={folder.id}
+          onClick={() => handleMoveToFolder(noteId, folder.id)}
+          className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${
+            currentFolderId === folder.id ? 'bg-gray-50 dark:bg-gray-700' : ''
+          }`}
+        >
+          <div className="flex items-center space-x-2">
+            <Folder className="w-3 h-3" style={{ color: folder.color }} />
+            <span>{folder.name}</span>
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+
   const NoteItem: React.FC<{ note: any }> = ({ note }) => (
     <div
-      className={`w-full text-left p-3 rounded-md transition-colors duration-150 border group ${
+      className={`relative group p-3 rounded-md transition-colors duration-150 border cursor-pointer ${
         activeNoteId === note.id
           ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
           : 'hover:bg-gray-50 dark:hover:bg-gray-800 border-transparent'
       }`}
+      onClick={() => setActiveNote(note.id)}
     >
-      <div onClick={() => setActiveNote(note.id)} className="cursor-pointer">
-      <div className="flex items-center justify-between mb-1">
-        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-          {note.title || 'Untitled'}
-        </h4>
-        <div className="flex items-center space-x-1">
-          {note.isFavorite && (
-            <Star className="w-3 h-3 text-gray-600 dark:text-gray-400 fill-current" />
-          )}
-          {note.isEncrypted && (
-            <div className="w-2 h-2 bg-gray-400 rounded-full" title="Encrypted" />
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center space-x-2 mb-1">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              {note.title || 'Untitled'}
+            </h4>
+            <div className="flex items-center space-x-1">
+              {note.isFavorite && (
+                <Star className="w-3 h-3 text-yellow-500 fill-current" />
+              )}
+              {note.isEncrypted && (
+                <Lock className="w-3 h-3 text-gray-500" />
+              )}
+              {note.isCodeMode && (
+                <Code className="w-3 h-3 text-gray-500" />
+              )}
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-1">
+            {note.content || 'No content'}
+          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
+              {formatDate(new Date(note.updatedAt))}
+            </span>
+            {note.folderId && (
+              <div className="flex items-center space-x-1">
+                <Folder className="w-3 h-3 text-gray-400" />
+                <span className="text-xs text-gray-400">
+                  {folders.find(f => f.id === note.folderId)?.name}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 ml-2">
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMoveMenu(showMoveMenu === note.id ? null : note.id);
+              }}
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+              title="Move to folder"
+            >
+              <FolderOpen className="w-3 h-3 text-gray-500" />
+            </button>
+            {showMoveMenu === note.id && (
+              <MoveToFolderMenu noteId={note.id} currentFolderId={note.folderId} />
+            )}
+          </div>
+          
+          <button
+            onClick={(e) => handleDownloadNote(note, e)}
+            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+            title="Download note"
+          >
+            <Download className="w-3 h-3 text-gray-500" />
+          </button>
+          
+          <button
+            onClick={(e) => handleShareNote(note, e)}
+            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+            title="Share note"
+          >
+            <Share className="w-3 h-3 text-gray-500" />
+          </button>
+          
+          {viewMode === 'trash' ? (
+            <button
+              onClick={(e) => handleRestoreNote(note.id, e)}
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+              title="Restore note"
+            >
+              <Edit3 className="w-3 h-3 text-gray-500" />
+            </button>
+          ) : (
+            <button
+              onClick={(e) => handleDeleteNote(note.id, e)}
+              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+              title="Delete note"
+            >
+              <X className="w-3 h-3 text-gray-500" />
+            </button>
           )}
         </div>
       </div>
-      </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-1">
-        {note.content || 'No content'}
-      </p>
-      <span className="text-xs text-gray-400 dark:text-gray-500">
-        {formatDate(new Date(note.updatedAt))}
-      </span>
-      
-      <div className="flex items-center justify-between mt-2">
-        <select
-          value={note.folderId || ''}
-          onChange={(e) => handleMoveToFolder(note.id, e.target.value || null)}
-          onClick={(e) => e.stopPropagation()}
-          className="text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-gray-600 dark:text-gray-400"
-        >
-          <option value="">No Folder</option>
-          {folders.map((folder) => (
-            <option key={folder.id} value={folder.id}>
-              {folder.name}
-            </option>
-          ))}
-        </select>
-        
-      <div className="flex items-center justify-end space-x-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-        <button
-          onClick={(e) => handleDownloadNote(note, e)}
-          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-          title="Download note"
-        >
-          <Download className="w-3 h-3 text-gray-500" />
-        </button>
-        <button
-          onClick={(e) => handleShareNote(note, e)}
-          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-          title="Share note"
-        >
-          <Share className="w-3 h-3 text-gray-500" />
-        </button>
-        {viewMode === 'trash' ? (
-          <button
-            onClick={(e) => handleRestoreNote(note.id, e)}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-            title="Restore note"
-          >
-            <Edit3 className="w-3 h-3 text-gray-500" />
-          </button>
-        ) : (
-          <button
-            onClick={(e) => handleDeleteNote(note.id, e)}
-            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-            title="Delete note"
-          >
-            <X className="w-3 h-3 text-gray-500" />
-          </button>
-        )}
-      </div>
-      </div>
     </div>
   );
+
+  // Close move menu when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = () => setShowMoveMenu(null);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -252,21 +317,30 @@ const Sidebar: React.FC = () => {
                   label="All Notes"
                   count={notes.filter((n) => !n.isDeleted).length}
                   active={viewMode === 'all'}
-                  onClick={() => setViewMode('all')}
+                  onClick={() => {
+                    setViewMode('all');
+                    setSelectedFolder(null);
+                  }}
                 />
                 <QuickAccessItem
                   icon={<Star className="w-4 h-4" />}
                   label="Favorites"
                   count={favoriteNotes.length}
                   active={viewMode === 'favorites'}
-                  onClick={() => setViewMode('favorites')}
+                  onClick={() => {
+                    setViewMode('favorites');
+                    setSelectedFolder(null);
+                  }}
                 />
                 <QuickAccessItem
                   icon={<Trash2 className="w-4 h-4" />}
                   label="Trash"
                   count={trashedNotes.length}
                   active={viewMode === 'trash'}
-                  onClick={() => setViewMode('trash')}
+                  onClick={() => {
+                    setViewMode('trash');
+                    setSelectedFolder(null);
+                  }}
                 />
               </div>
             </div>
@@ -305,27 +379,17 @@ const Sidebar: React.FC = () => {
 
               <div className="space-y-1">
                 {folders.map((folder) => (
-                  <div key={folder.id}>
-                    <div className="flex items-center">
-                      <button
-                        onClick={() => toggleFolder(folder.id)}
-                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                      >
-                        {expandedFolders.has(folder.id) ? (
-                          <ChevronDown className="w-3 h-3" />
-                        ) : (
-                          <ChevronRight className="w-3 h-3" />
-                        )}
-                      </button>
-                      <QuickAccessItem
-                        icon={<Folder className="w-4 h-4" style={{ color: folder.color }} />}
-                        label={folder.name}
-                        count={notes.filter((n) => n.folderId === folder.id && !n.isDeleted).length}
-                        active={selectedFolderId === folder.id}
-                        onClick={() => setSelectedFolder(folder.id)}
-                      />
-                    </div>
-                  </div>
+                  <QuickAccessItem
+                    key={folder.id}
+                    icon={<Folder className="w-4 h-4" style={{ color: folder.color }} />}
+                    label={folder.name}
+                    count={notes.filter((n) => n.folderId === folder.id && !n.isDeleted).length}
+                    active={selectedFolderId === folder.id}
+                    onClick={() => {
+                      setSelectedFolder(folder.id);
+                      setViewMode('all');
+                    }}
+                  />
                 ))}
               </div>
             </div>
@@ -334,15 +398,35 @@ const Sidebar: React.FC = () => {
             {filteredNotes.length > 0 && (
               <div>
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                  {viewMode === 'trash' ? 'Deleted Notes' : viewMode === 'favorites' ? 'Favorite Notes' : 'All Notes'}
+                  {viewMode === 'trash' ? 'Deleted Notes' : 
+                   viewMode === 'favorites' ? 'Favorite Notes' : 
+                   selectedFolderId ? folders.find(f => f.id === selectedFolderId)?.name || 'Folder Notes' :
+                   'All Notes'}
                 </h3>
                 <div className="space-y-2">
                   {filteredNotes
                     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
                     .map((note) => (
-                    <NoteItem key={note.id} note={note} />
-                  ))}
+                      <NoteItem key={note.id} note={note} />
+                    ))}
                 </div>
+              </div>
+            )}
+
+            {filteredNotes.length === 0 && (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {searchQuery ? 'No notes found' : 'No notes yet'}
+                </p>
+                {!searchQuery && (
+                  <button
+                    onClick={() => createNote()}
+                    className="mt-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  >
+                    Create your first note
+                  </button>
+                )}
               </div>
             )}
           </div>
