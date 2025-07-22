@@ -51,13 +51,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight max-w-5xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 max-w-5xl mx-auto" style={{ fontSize: '56px', lineHeight: '64px', fontWeight: 700, color: 'rgb(28, 28, 28)' }}>
             Organize your thoughts,<br />
             <span className="text-gray-600">secure your ideas.</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base mb-12 max-w-3xl mx-auto" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
             Write, organize, and protect your notes with military-grade encryption. 
             Focus on what matters while we keep your thoughts safe.
           </p>
@@ -172,9 +172,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <span>Features</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-3xl font-medium mb-6 max-w-4xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Your ultimate secure note-taking experience
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base max-w-3xl mx-auto" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
               Discover how CipherWrite can revolutionize the way you work and 
               organize. Explore a myriad of features designed to enhance your productivity.
             </p>
@@ -190,9 +191,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Lock className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                <h3 className="text-2xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Military-Grade Encryption
                 </h3>
-                <p className="text-gray-600 leading-relaxed text-lg mb-6">
+                <p className="mb-6" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Your thoughts deserve the highest level of protection. Our end-to-end encryption 
                   ensures that only you can access your notes, using the same security standards 
                   trusted by governments and financial institutions worldwide.
@@ -215,9 +217,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Zap className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium mb-4" style={{ fontSize: '20px', lineHeight: '28px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Lightning Fast
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Instant sync across all your devices with real-time collaboration features.
                 </p>
               </div>
@@ -231,9 +234,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Eye className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium mb-4" style={{ fontSize: '20px', lineHeight: '28px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Focus Mode
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Distraction-free writing environment that helps you concentrate on what matters.
                 </p>
               </div>
@@ -244,9 +248,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Code className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                <h3 className="text-2xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Smart Organization
                 </h3>
-                <p className="text-gray-600 leading-relaxed text-lg mb-6">
+                <p className="mb-6" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Organize your thoughts with intelligent folders, tags, and search. Our smart 
                   categorization helps you find exactly what you're looking for, when you need it. 
                   Perfect for writers, developers, and creative professionals.
@@ -275,9 +280,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Mic className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
+                <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Voice Notes
                 </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-sm" style={{ fontSize: '14px', lineHeight: '20px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Convert speech to text with AI-powered transcription.
                 </p>
               </div>
@@ -287,9 +293,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Download className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
+                <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Export Anywhere
                 </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-sm" style={{ fontSize: '14px', lineHeight: '20px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Export to PDF, Markdown, or plain text formats.
                 </p>
               </div>
@@ -299,9 +306,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Shield className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
+                <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Offline First
                 </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-sm" style={{ fontSize: '14px', lineHeight: '20px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Work anywhere, anytime. Sync when you're back online.
                 </p>
               </div>
@@ -311,9 +319,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Star className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
+                <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Favorites
                 </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-sm" style={{ fontSize: '14px', lineHeight: '20px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                   Quick access to your most important notes and ideas.
                 </p>
               </div>
@@ -333,9 +342,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <span>FAQ</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              <h2 className="text-3xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                 Your guide to CipherWrite wisdom
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                 Explore the answers to common queries and make the 
                 most of your CipherWrite experience.
               </p>
@@ -413,9 +423,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <span>The numbers</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              <h2 className="text-3xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                 The pinnacle of secure note-taking
               </h2>
-              <p className="text-lg text-gray-600 mb-12 leading-relaxed">
+              <p className="mb-12" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
                 The world's most trusted note-taking app. Meticulously crafted with 
                 end-to-end encryption, real-time sync, and distraction-free writing.
               </p>
@@ -510,9 +521,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <span>Testimonials</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-5xl mx-auto leading-tight">
+            <h2 className="text-3xl font-medium mb-6 max-w-5xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Your ultimate CipherWrite secure note-taking experience
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="max-w-3xl mx-auto" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
               The world's most advanced secure note-taking app. Meticulously crafted with 
               end-to-end encryption, real-time sync, and distraction-free writing experience.
             </p>
@@ -654,9 +666,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <span>Pricing</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-3xl font-medium mb-6 max-w-4xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Choose the plan that's right for you
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="max-w-3xl mx-auto" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
               Compare our pricing plans to find the one that best suits your needs and budget.
             </p>
           </div>
@@ -808,61 +821,116 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 py-20">
+      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-black py-24 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 translate-y-1/2"></div>
+        </div>
+        
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12">
+          <div className="grid lg:grid-cols-5 gap-16">
             {/* Brand */}
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                  <Lock className="w-4 h-4 text-gray-900" />
+            <div className="lg:col-span-2">
+              <div className="flex items-center space-x-4 mb-8">
+                <div className="w-12 h-12 bg-gradient-to-br from-white to-gray-100 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Lock className="w-5 h-5 text-gray-900" />
                 </div>
-                <div className="font-bold text-white text-2xl">CipherWrite</div>
+                <div className="font-bold text-white text-3xl tracking-tight">CipherWrite</div>
               </div>
-              <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-md">
-                The most secure and intuitive note-taking app for writers, developers, and creative professionals.
+              <p className="text-gray-300 text-lg leading-relaxed mb-10 max-w-md">
+                The world's most secure and intuitive note-taking platform. Trusted by writers, 
+                developers, and creative professionals worldwide.
               </p>
-              <div className="flex items-center space-x-6">
-                <div className="flex items-center space-x-2 text-gray-400">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm">All systems operational</span>
+              
+              {/* Status & Stats */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                  <span className="text-gray-300 text-sm font-medium">All systems operational</span>
+                </div>
+                <div className="flex items-center space-x-6 text-sm text-gray-400">
+                  <div className="flex items-center space-x-2">
+                    <span className="font-semibold text-white">1000+</span>
+                    <span>Active Users</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-semibold text-white">99.9%</span>
+                    <span>Uptime</span>
+                  </div>
                 </div>
               </div>
             </div>
             
             {/* Product */}
             <div>
-              <h4 className="font-semibold text-white mb-6">Product</h4>
-              <ul className="space-y-4">
-                <li><a href="#features" className="text-gray-400 hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Security</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Updates</a></li>
+              <h4 className="font-semibold text-white mb-8 text-lg">Product</h4>
+              <ul className="space-y-5">
+                <li><a href="#features" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Features</a></li>
+                <li><a href="#pricing" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Pricing</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Security</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Updates</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">API</a></li>
+              </ul>
+            </div>
+            
+            {/* Resources */}
+            <div>
+              <h4 className="font-semibold text-white mb-8 text-lg">Resources</h4>
+              <ul className="space-y-5">
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Documentation</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Help Center</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Community</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Blog</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Changelog</a></li>
               </ul>
             </div>
             
             {/* Company */}
             <div>
-              <h4 className="font-semibold text-white mb-6">Company</h4>
-              <ul className="space-y-4">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+              <h4 className="font-semibold text-white mb-8 text-lg">Company</h4>
+              <ul className="space-y-5">
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">About Us</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Careers</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Press Kit</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Contact</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block">Partners</a></li>
               </ul>
             </div>
           </div>
           
           {/* Bottom */}
-          <div className="border-t border-gray-800 mt-16 pt-8">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="text-gray-400 text-sm mb-4 md:mb-0">
+          <div className="border-t border-gray-700/50 mt-20 pt-10">
+            <div className="flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
+              <div className="text-gray-400 text-sm">
                 © 2024 CipherWrite. All rights reserved.
               </div>
-              <div className="flex items-center space-x-6 text-sm text-gray-400">
-                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
+              
+              <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-6 text-sm text-gray-400">
+                  <a href="#" className="hover:text-white transition-colors duration-300">Privacy Policy</a>
+                  <a href="#" className="hover:text-white transition-colors duration-300">Terms of Service</a>
+                  <a href="#" className="hover:text-white transition-colors duration-300">Cookie Policy</a>
+                </div>
+                
+                {/* Social Links */}
+                <div className="flex items-center space-x-4">
+                  <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+                    <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                    </svg>
+                  </a>
+                  <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+                    <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                    </svg>
+                  </a>
+                  <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+                    <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
