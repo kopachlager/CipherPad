@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Shield, Zap, Lock } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Lock, Plus } from 'lucide-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
