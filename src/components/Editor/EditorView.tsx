@@ -21,6 +21,9 @@ const EditorView: React.FC = () => {
   const [localContent, setLocalContent] = useState('');
   const [lastSaved, setLastSaved] = useState<Date | undefined>();
   const [showEncryptionModal, setShowEncryptionModal] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
   useAutoSave(activeNoteId, localContent);
 
@@ -29,6 +32,65 @@ const EditorView: React.FC = () => {
       setLocalContent(activeNote.content);
     }
   }, [activeNote]);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+        await transcribeAudio(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      alert('Could not access microphone. Please check permissions.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      setMediaRecorder(null);
+    }
+  };
+
+  const transcribeAudio = async (audioBlob: Blob) => {
+    setIsTranscribing(true);
+    try {
+      // This would integrate with a speech-to-text service like OpenAI Whisper
+      // For now, we'll simulate the transcription
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.wav');
+      
+      // Simulated transcription - replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const transcribedText = "This is a simulated transcription. In a real implementation, this would be the actual transcribed text from the audio.";
+      
+      // Insert transcribed text at the end of current content
+      const newContent = localContent + (localContent ? ' ' : '') + transcribedText;
+      setLocalContent(newContent);
+      handleContentChange(newContent);
+    } catch (error) {
+      console.error('Transcription error:', error);
+      alert('Failed to transcribe audio. Please try again.');
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
 
   if (!activeNote) {
     return (
@@ -106,14 +168,34 @@ const EditorView: React.FC = () => {
           onToggleCodeMode={handleToggleCodeMode}
           onToggleFavorite={handleToggleFavorite}
           onToggleEncryption={handleToggleEncryption}
+          onStartRecording={startRecording}
+          onStopRecording={stopRecording}
+          isRecording={isRecording}
+          isTranscribing={isTranscribing}
         />
         
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden relative">
           <RichTextEditor
-            note={activeNote}
+            content={localContent}
             onChange={handleContentChange}
             isCodeMode={activeNote.isCodeMode}
           />
+          
+          {/* Recording Indicator */}
+          {isRecording && (
+            <div className="absolute top-4 right-4 flex items-center space-x-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-2 rounded-full z-10">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-sm font-medium">Recording...</span>
+            </div>
+          )}
+
+          {/* Transcribing Indicator */}
+          {isTranscribing && (
+            <div className="absolute top-4 right-4 flex items-center space-x-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-2 rounded-full z-10">
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+              <span className="text-sm font-medium">Transcribing...</span>
+            </div>
+          )}
         </div>
         
         <StatusBar

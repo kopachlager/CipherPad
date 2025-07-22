@@ -51,12 +51,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   };
 
-  const execCommand = (command: string, value?: string) => {
-    document.execCommand(command, false, value);
-    editorRef.current?.focus();
-    handleInput();
-  };
-
   const insertText = (text: string) => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0) {
@@ -127,29 +121,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   };
 
-  const ToolbarButton: React.FC<{
-    icon: React.ReactNode;
-    onClick: () => void;
-    active?: boolean;
-    title: string;
-    disabled?: boolean;
-  }> = ({ icon, onClick, active, title, disabled }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={`p-2 rounded-md transition-colors duration-150 ${
-        disabled
-          ? 'opacity-50 cursor-not-allowed'
-          : active
-          ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-          : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
-      }`}
-    >
-      {icon}
-    </button>
-  );
-
   if (isCodeMode) {
     return (
       <div className="flex-1 relative">
@@ -164,133 +135,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      {/* Rich Text Toolbar */}
-      <div className="flex items-center space-x-1 p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
-        <div className="flex items-center space-x-1">
-          <ToolbarButton
-            icon={<Heading1 className="w-4 h-4" />}
-            onClick={() => execCommand('formatBlock', 'h1')}
-            title="Heading 1"
-          />
-          <ToolbarButton
-            icon={<Heading2 className="w-4 h-4" />}
-            onClick={() => execCommand('formatBlock', 'h2')}
-            title="Heading 2"
-          />
-          <ToolbarButton
-            icon={<Heading3 className="w-4 h-4" />}
-            onClick={() => execCommand('formatBlock', 'h3')}
-            title="Heading 3"
-          />
-        </div>
-
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-        <div className="flex items-center space-x-1">
-          <ToolbarButton
-            icon={<Bold className="w-4 h-4" />}
-            onClick={() => execCommand('bold')}
-            title="Bold (Ctrl+B)"
-          />
-          <ToolbarButton
-            icon={<Italic className="w-4 h-4" />}
-            onClick={() => execCommand('italic')}
-            title="Italic (Ctrl+I)"
-          />
-          <ToolbarButton
-            icon={<Underline className="w-4 h-4" />}
-            onClick={() => execCommand('underline')}
-            title="Underline (Ctrl+U)"
-          />
-          <ToolbarButton
-            icon={<Strikethrough className="w-4 h-4" />}
-            onClick={() => execCommand('strikeThrough')}
-            title="Strikethrough"
-          />
-        </div>
-
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-        <div className="flex items-center space-x-1">
-          <ToolbarButton
-            icon={<AlignLeft className="w-4 h-4" />}
-            onClick={() => execCommand('justifyLeft')}
-            title="Align Left"
-          />
-          <ToolbarButton
-            icon={<AlignCenter className="w-4 h-4" />}
-            onClick={() => execCommand('justifyCenter')}
-            title="Align Center"
-          />
-          <ToolbarButton
-            icon={<AlignRight className="w-4 h-4" />}
-            onClick={() => execCommand('justifyRight')}
-            title="Align Right"
-          />
-        </div>
-
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-        <div className="flex items-center space-x-1">
-          <ToolbarButton
-            icon={<List className="w-4 h-4" />}
-            onClick={() => execCommand('insertUnorderedList')}
-            title="Bullet List"
-          />
-          <ToolbarButton
-            icon={<ListOrdered className="w-4 h-4" />}
-            onClick={() => execCommand('insertOrderedList')}
-            title="Numbered List"
-          />
-          <ToolbarButton
-            icon={<Quote className="w-4 h-4" />}
-            onClick={() => execCommand('formatBlock', 'blockquote')}
-            title="Quote"
-          />
-        </div>
-
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-        <div className="flex items-center space-x-1">
-          <ToolbarButton
-            icon={<Link className="w-4 h-4" />}
-            onClick={() => {
-              const url = prompt('Enter URL:');
-              if (url) execCommand('createLink', url);
-            }}
-            title="Insert Link"
-          />
-          <ToolbarButton
-            icon={<Code className="w-4 h-4" />}
-            onClick={() => execCommand('formatBlock', 'pre')}
-            title="Code Block"
-          />
-        </div>
-
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
-
-        {/* Audio Transcription */}
-        <div className="flex items-center space-x-1">
-          {isTranscribing ? (
-            <ToolbarButton
-              icon={<Loader className="w-4 h-4 animate-spin" />}
-              onClick={() => {}}
-              title="Transcribing..."
-              disabled={true}
-            />
-          ) : (
-            <ToolbarButton
-              icon={isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-              onClick={isRecording ? stopRecording : startRecording}
-              title={isRecording ? "Stop Recording" : "Start Voice Recording"}
-              active={isRecording}
-            />
-          )}
-        </div>
-      </div>
-
-      {/* Rich Text Editor */}
+    <div className="flex-1 flex flex-col relative">
       <div
         ref={editorRef}
         contentEditable

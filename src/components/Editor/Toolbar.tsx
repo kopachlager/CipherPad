@@ -20,6 +20,15 @@ import {
   EyeOff,
   Download,
   Share,
+  Heading1,
+  Heading2,
+  Heading3,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Mic,
+  MicOff,
+  Loader,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
@@ -29,6 +38,10 @@ interface ToolbarProps {
   onToggleCodeMode: () => void;
   onToggleFavorite: () => void;
   onToggleEncryption: () => void;
+  onStartRecording?: () => void;
+  onStopRecording?: () => void;
+  isRecording?: boolean;
+  isTranscribing?: boolean;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -36,6 +49,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onToggleCodeMode,
   onToggleFavorite,
   onToggleEncryption,
+  onStartRecording,
+  onStopRecording,
+  isRecording = false,
+  isTranscribing = false,
 }) => {
   const { settings } = useStore();
   const { updateSettings } = useStore();
@@ -50,11 +67,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
     active?: boolean;
     onClick: () => void;
     className?: string;
-  }> = ({ icon, tooltip, active, onClick }) => (
+    disabled?: boolean;
+  }> = ({ icon, tooltip, active, onClick, disabled = false }) => (
     <button
       onClick={onClick}
+      disabled={disabled}
       title={tooltip}
       className={`p-2 rounded-md transition-colors duration-150 ${
+        disabled
+          ? 'opacity-50 cursor-not-allowed'
+          :
         active
           ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
@@ -63,6 +85,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
       {icon}
     </button>
   );
+
+  const execCommand = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    // Focus back to editor after command
+    const editor = document.querySelector('[contenteditable="true"]') as HTMLElement;
+    if (editor) {
+      editor.focus();
+    }
+  };
 
   const handleFontSizeChange = (increase: boolean) => {
     const newSize = increase 
@@ -98,39 +129,137 @@ const Toolbar: React.FC<ToolbarProps> = ({
   return (
     <div className="h-12 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 overflow-x-auto flex-shrink-0">
       <div className="flex items-center space-x-1 flex-shrink-0">
-        {!note.isCodeMode && (
-          <div className="hidden sm:flex items-center space-x-1">
+        {!note.isCodeMode ? (
+          // Rich Text Formatting Tools
+          <div className="flex items-center space-x-1">
+            {/* Headings */}
+            <div className="hidden md:flex items-center space-x-1">
+              <ToolbarButton
+                icon={<Heading1 className="w-4 h-4" />}
+                tooltip="Heading 1"
+                onClick={() => execCommand('formatBlock', 'h1')}
+              />
+              <ToolbarButton
+                icon={<Heading2 className="w-4 h-4" />}
+                tooltip="Heading 2"
+                onClick={() => execCommand('formatBlock', 'h2')}
+              />
+              <ToolbarButton
+                icon={<Heading3 className="w-4 h-4" />}
+                tooltip="Heading 3"
+                onClick={() => execCommand('formatBlock', 'h3')}
+              />
+              <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+            </div>
+
+            {/* Text Formatting */}
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold (Ctrl+B)"
-              onClick={() => {}}
+              onClick={() => execCommand('bold')}
             />
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
               tooltip="Italic (Ctrl+I)"
-              onClick={() => {}}
+              onClick={() => execCommand('italic')}
             />
             <ToolbarButton
               icon={<Underline className="w-4 h-4" />}
               tooltip="Underline (Ctrl+U)"
-              onClick={() => {}}
+              onClick={() => execCommand('underline')}
             />
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+            <ToolbarButton
+              icon={<Strikethrough className="w-4 h-4" />}
+              tooltip="Strikethrough"
+              onClick={() => execCommand('strikeThrough')}
+            />
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
+
+            {/* Alignment - Hidden on mobile */}
+            <div className="hidden sm:flex items-center space-x-1">
+              <ToolbarButton
+                icon={<AlignLeft className="w-4 h-4" />}
+                tooltip="Align Left"
+                onClick={() => execCommand('justifyLeft')}
+              />
+              <ToolbarButton
+                icon={<AlignCenter className="w-4 h-4" />}
+                tooltip="Align Center"
+                onClick={() => execCommand('justifyCenter')}
+              />
+              <ToolbarButton
+                icon={<AlignRight className="w-4 h-4" />}
+                tooltip="Align Right"
+                onClick={() => execCommand('justifyRight')}
+              />
+            </div>
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
+
+            {/* Lists */}
             <ToolbarButton
               icon={<List className="w-4 h-4" />}
               tooltip="Bullet List"
-              onClick={() => {}}
+              onClick={() => execCommand('insertUnorderedList')}
             />
             <ToolbarButton
               icon={<ListOrdered className="w-4 h-4" />}
               tooltip="Numbered List"
-              onClick={() => {}}
+              onClick={() => execCommand('insertOrderedList')}
             />
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
+
+            {/* Additional Tools - Hidden on mobile */}
+            <div className="hidden md:flex items-center space-x-1">
+              <ToolbarButton
+                icon={<Quote className="w-4 h-4" />}
+                tooltip="Quote"
+                onClick={() => execCommand('formatBlock', 'blockquote')}
+              />
+              <ToolbarButton
+                icon={<Link className="w-4 h-4" />}
+                tooltip="Insert Link"
+                onClick={() => {
+                  const url = prompt('Enter URL:');
+                  if (url) execCommand('createLink', url);
+                }}
+              />
+            </div>
+          </div>
+        ) : (
+          // Code Mode - Show language indicator
+          <div className="flex items-center space-x-2">
+            <Code className="w-4 h-4 text-gray-500" />
+            <span className="text-sm text-gray-500 font-mono">
+              {note.language || 'plaintext'}
+            </span>
           </div>
         )}
       </div>
 
       <div className="flex items-center space-x-1 flex-shrink-0">
+        {/* Audio Recording */}
+        {isTranscribing ? (
+          <ToolbarButton
+            icon={<Loader className="w-4 h-4 animate-spin" />}
+            tooltip="Transcribing..."
+            onClick={() => {}}
+            disabled={true}
+          />
+        ) : (
+          <ToolbarButton
+            icon={isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            tooltip={isRecording ? "Stop Recording" : "Start Voice Recording"}
+            active={isRecording}
+            onClick={isRecording ? (onStopRecording || (() => {})) : (onStartRecording || (() => {}))}
+          />
+        )}
+
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+
+        {/* Font Size Controls */}
         <ToolbarButton
           icon={<Minus className="w-4 h-4" />}
           tooltip="Decrease Font Size"
@@ -147,6 +276,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
         
+        {/* Note Actions */}
         <ToolbarButton
           icon={<Code className="w-4 h-4" />}
           tooltip="Toggle Code Mode"
@@ -168,6 +298,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
         
+        {/* Export & Share */}
         <div className="hidden sm:flex items-center space-x-1">
           <ToolbarButton
             icon={<Download className="w-4 h-4" />}
