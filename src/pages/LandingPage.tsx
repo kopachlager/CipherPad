@@ -95,8 +95,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <span>Features</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
-              Your ultimate secure note-taking experience
-            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Discover how CipherWrite can revolutionize the way you work and 
               organize. Explore a myriad of features designed to enhance your productivity.
@@ -167,7 +165,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Code className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  Smart Organization
                 </h3>
                 <p className="text-gray-600 mb-6 text-lg">
                   Organize your thoughts with intelligent folders, tags, and search. Our smart 
@@ -196,7 +193,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-300">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
                   <Mic className="w-5 h-5 text-white" />
-                </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
                   Voice Notes
                 </h4>
@@ -208,7 +204,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-400">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
                   <Download className="w-5 h-5 text-white" />
-                </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
                   Export Anywhere
                 </h4>
@@ -220,7 +215,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-500">
                 <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center mb-4">
                   <Shield className="w-5 h-5 text-white" />
-                </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
                   Offline First
                 </h4>
@@ -234,7 +228,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                   <Star className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="text-lg font-bold text-gray-900 mb-3">
-                  Favorites
                 </h4>
                 <p className="text-sm text-gray-600">
                   Quick access to your most important notes and ideas.
