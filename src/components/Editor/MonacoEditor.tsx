@@ -97,16 +97,21 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           lineHeight: settings.lineHeight,
           fontFamily: note.isCodeMode ? settings.fontFamily : 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           wordWrap: 'on',
+          wordWrapColumn: 80,
+          wrappingIndent: 'indent',
+          wrappingStrategy: 'advanced',
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
           automaticLayout: true,
           padding: { top: 20, bottom: 20 },
           lineNumbers: note.isCodeMode ? 'on' : 'off',
+          lineNumbersMinChars: 3,
           scrollbar: {
             vertical: 'auto',
             horizontal: 'auto',
             verticalScrollbarSize: 8,
             horizontalScrollbarSize: 8,
+            useShadows: false,
           },
           contextmenu: true,
           selectOnLineNumbers: true,
@@ -116,6 +121,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           automaticLayout: true,
           cursorBlinking: 'blink',
           renderLineHighlight: 'line',
+          smoothScrolling: true,
+          mouseWheelScrollSensitivity: 1,
+          fastScrollSensitivity: 5,
         }}
       />
     </div>
