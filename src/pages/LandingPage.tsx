@@ -163,7 +163,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
+      <section id="features" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20">
@@ -171,10 +171,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Features</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
               Your ultimate secure note-taking experience
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Discover how CipherWrite can revolutionize the way you work and 
               organize. Explore a myriad of features designed to enhance your productivity.
             </p>
@@ -214,19 +214,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Guide Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Left Content */}
             <div>
-              <div className="inline-flex items-center space-x-2 bg-white text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                 <span>FAQ</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Your guide to CipherWrite wisdom
               </h2>
-              <p className="text-xl text-gray-600 leading-relaxed">
+              <p className="text-lg text-gray-600 leading-relaxed">
                 Explore the answers to common queries and make the 
                 most of your CipherWrite experience.
               </p>
@@ -294,19 +294,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             {/* Left Content */}
             <div>
-              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                 <span>The numbers</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 The pinnacle of secure note-taking
               </h2>
-              <p className="text-xl text-gray-600 mb-12 leading-relaxed">
+              <p className="text-lg text-gray-600 mb-12 leading-relaxed">
                 The world's most trusted note-taking app. Meticulously crafted with 
                 end-to-end encryption, real-time sync, and distraction-free writing.
               </p>
@@ -392,18 +392,18 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20">
-            <div className="inline-flex items-center space-x-2 bg-white text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Testimonials</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
               What our users say
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Join thousands of writers, professionals, and teams who trust CipherWrite 
               to keep their thoughts secure and organized.
             </p>
@@ -475,20 +475,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-24 bg-white">
+      <section id="pricing" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20">
-            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Pricing</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 max-w-4xl mx-auto leading-tight">
-              Simple, transparent pricing
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
+              Choose the plan that's right for you
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Start free with all essential features. Upgrade to unlock AI-powered 
-              writing assistance and advanced capabilities.
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Compare our pricing plans to find the one that best suits your needs and budget.
             </p>
           </div>
 
@@ -714,7 +713,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* About Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             {/* Left - Illustration */}
@@ -733,14 +732,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
             {/* Right Content */}
             <div>
-              <div className="inline-flex items-center space-x-2 bg-white text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                 <span>About us</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Hey there! We're the creative minds behind CipherWrite.
               </h2>
-              <p className="text-xl text-gray-600 mb-12 leading-relaxed">
+              <p className="text-lg text-gray-600 mb-12 leading-relaxed">
                 Guided by a relentless commitment to simplifying your writing 
                 journey through intuitive and secure note-taking tools.
               </p>
