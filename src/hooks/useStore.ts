@@ -324,6 +324,8 @@ export const useStore = create<Store>()(
 
       setActiveNote: (id) => {
         console.log('Setting active note:', id);
+        const note = get().notes.find(n => n.id === id);
+        console.log('Found note:', note);
         set({ activeNoteId: id });
         get().updateLastActivity();
       },

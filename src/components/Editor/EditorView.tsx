@@ -51,6 +51,9 @@ const EditorView: React.FC = () => {
   const handleContentChange = (content: string) => {
     setLocalContent(content);
     
+    // Update the note immediately for real-time sync
+    updateNote(activeNote.id, { content });
+    
     // Auto-detect language if in code mode
     if (activeNote.isCodeMode) {
       const detectedLanguage = detectLanguage(content);

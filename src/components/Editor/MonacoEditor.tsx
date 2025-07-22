@@ -14,6 +14,11 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
     editor.focus();
+    
+    // Ensure editor is editable
+    editor.updateOptions({
+      readOnly: false,
+    });
   };
 
   const handleEditorChange = (value: string | undefined) => {

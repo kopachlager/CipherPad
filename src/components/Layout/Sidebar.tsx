@@ -11,8 +11,12 @@ import {
   Code,
   FolderOpen,
   MoreVertical,
+  Unlock,
+  Download,
+  Share,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
+import { exportNote } from '../../utils/helpers';
 
 const Sidebar: React.FC = () => {
   const {
@@ -321,6 +325,55 @@ const Sidebar: React.FC = () => {
                               <MoveToFolderMenu noteId={note.id} currentFolderId={note.folderId} />
                             )}
                           </div>
+                          
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Toggle encryption
+                              updateNote(note.id, { isEncrypted: !note.isEncrypted });
+                            }}
+                            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                            title={note.isEncrypted ? "Remove encryption" : "Encrypt note"}
+                          >
+                            {note.isEncrypted ? (
+                              <Lock className="w-3 h-3 text-gray-500" />
+                            ) : (
+                              <Unlock className="w-3 h-3 text-gray-500" />
+                            )}
+                          </button>
+                          
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              exportNote(note, 'txt');
+                            }}
+                            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                            title="Download note"
+                          >
+                            <Download className="w-3 h-3 text-gray-500" />
+                          </button>
+                          
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (navigator.share) {
+                                try {
+                                  await navigator.share({
+                                    title: note.title,
+                                    text: note.content,
+                                  });
+                                } catch (err) {
+                                  console.log('Share cancelled');
+                                }
+                              } else {
+                                navigator.clipboard.writeText(note.content);
+                              }
+                            }}
+                            className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                            title="Share note"
+                          >
+                            <Share className="w-3 h-3 text-gray-500" />
+                          </button>
                           
                           {viewMode === 'trash' ? (
                             <button
