@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   FileText,
   Folder,
@@ -77,12 +77,11 @@ const Sidebar: React.FC = () => {
     active?: boolean;
     onClick: () => void;
   }> = ({ icon, label, count, active, onClick }) => (
-    <motion.button
-      whileHover={{ x: 4 }}
+    <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+      className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors duration-150 ${
         active
-          ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+          ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
       }`}
     >
@@ -91,20 +90,19 @@ const Sidebar: React.FC = () => {
         <span className="font-medium">{label}</span>
       </div>
       {count !== undefined && (
-        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full">
+        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
           {count}
         </span>
       )}
-    </motion.button>
+    </button>
   );
 
   const NoteItem: React.FC<{ note: any }> = ({ note }) => (
-    <motion.button
-      whileHover={{ x: 4 }}
+    <button
       onClick={() => setActiveNote(note.id)}
-      className={`w-full text-left p-3 rounded-lg transition-colors border ${
+      className={`w-full text-left p-3 rounded-md transition-colors duration-150 border ${
         activeNoteId === note.id
-          ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+          ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
           : 'hover:bg-gray-50 dark:hover:bg-gray-800 border-transparent'
       }`}
     >
@@ -113,7 +111,7 @@ const Sidebar: React.FC = () => {
           {note.title || 'Untitled'}
         </h4>
         {note.isFavorite && (
-          <Star className="w-4 h-4 text-yellow-500 fill-current" />
+          <Star className="w-4 h-4 text-gray-600 dark:text-gray-400 fill-current" />
         )}
       </div>
       <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-1">
@@ -122,19 +120,13 @@ const Sidebar: React.FC = () => {
       <span className="text-xs text-gray-400 dark:text-gray-500">
         {formatDate(new Date(note.updatedAt))}
       </span>
-    </motion.button>
+    </button>
   );
 
   return (
     <AnimatePresence>
       {sidebarOpen && (
-        <motion.aside
-          initial={{ x: -320, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -320, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 120 }}
-          className="w-80 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col"
-        >
+        <aside className="w-80 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
           {/* Mobile search */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 sm:hidden">
             <div className="relative">
@@ -143,7 +135,7 @@ const Sidebar: React.FC = () => {
                 data-search-input
                 type="text"
                 placeholder="Search notes..."
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border-0 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
               />
             </div>
           </div>
@@ -185,7 +177,7 @@ const Sidebar: React.FC = () => {
                 </h3>
                 <button
                   onClick={() => setShowNewFolder(true)}
-                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
                 >
                   <Plus className="w-3 h-3 text-gray-500" />
                 </button>
@@ -203,7 +195,7 @@ const Sidebar: React.FC = () => {
                     }}
                     onBlur={handleCreateFolder}
                     placeholder="Folder name"
-                    className="w-full px-2 py-1 text-sm bg-gray-100 dark:bg-gray-800 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-2 py-1 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
                     autoFocus
                   />
                 </div>
@@ -215,7 +207,7 @@ const Sidebar: React.FC = () => {
                     <div className="flex items-center">
                       <button
                         onClick={() => toggleFolder(folder.id)}
-                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
                       >
                         {expandedFolders.has(folder.id) ? (
                           <ChevronDown className="w-3 h-3" />
@@ -250,7 +242,7 @@ const Sidebar: React.FC = () => {
               </div>
             )}
           </div>
-        </motion.aside>
+        </aside>
       )}
     </AnimatePresence>
   );

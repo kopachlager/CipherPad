@@ -16,7 +16,7 @@ export const useAutoSave = (noteId: string | null, content: string) => {
     // Set new timeout for auto-save
     timeoutRef.current = setTimeout(() => {
       updateNote(noteId, { content });
-    }, 1000); // 1 second delay
+    }, 2000); // 2 second delay
 
     return () => {
       if (timeoutRef.current) {

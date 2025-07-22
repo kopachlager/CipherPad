@@ -49,7 +49,7 @@ interface Store {
 
 const defaultSettings: AppSettings = {
   theme: 'system',
-  accentColor: '#3b82f6',
+  accentColor: '#6b7280',
   fontSize: 16,
   lineHeight: 1.6,
   autoSave: true,

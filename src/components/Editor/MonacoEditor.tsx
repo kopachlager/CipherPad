@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Editor } from '@monaco-editor/react';
 import { useStore } from '../../hooks/useStore';
-import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
 
 interface MonacoEditorProps {
@@ -13,25 +12,16 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
   const { settings } = useStore();
   const editorRef = useRef<any>(null);
 
-  useAutoSave(note.id, note.content);
-
   const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
     
     // Focus the editor
     editor.focus();
-    
-    // Set up auto-detection
-    if (!note.language || note.language === 'plaintext') {
-      const detectedLanguage = detectLanguage(note.content);
-      if (detectedLanguage !== 'plaintext') {
-        // Update the note language
-        // This would be handled by the parent component
-      }
-    }
   };
 
-  const theme = settings.theme === 'dark' ? 'vs-dark' : 'vs';
+  const theme = settings.theme === 'dark' || 
+    (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) 
+    ? 'vs-dark' : 'vs';
   const language = note.isCodeMode ? (note.language || 'plaintext') : 'plaintext';
 
   return (
@@ -56,7 +46,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
           folding: note.isCodeMode,
           lineDecorationsWidth: 0,
           lineNumbersMinChars: 3,
-          renderLineHighlight: 'none',
+          renderLineHighlight: 'line',
           scrollbar: {
             vertical: 'auto',
             horizontal: 'auto',
@@ -71,6 +61,12 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
             showKeywords: note.isCodeMode,
             showSnippets: note.isCodeMode,
           },
+          contextmenu: true,
+          selectOnLineNumbers: true,
+          roundedSelection: false,
+          readOnly: false,
+          cursorStyle: 'line',
+          automaticLayout: true,
         }}
       />
     </div>

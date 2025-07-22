@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Bold,
   Italic,
@@ -45,29 +45,22 @@ const Toolbar: React.FC<ToolbarProps> = ({
     active?: boolean;
     onClick: () => void;
   }> = ({ icon, tooltip, active, onClick }) => (
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+    <button
       onClick={onClick}
       title={tooltip}
-      className={`p-2 rounded-lg transition-colors ${
+      className={`p-2 rounded-md transition-colors duration-150 ${
         active
-          ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+          ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
       }`}
     >
       {icon}
-    </motion.button>
+    </button>
   );
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4"
-      >
+      <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4">
         <div className="flex items-center space-x-1">
           {!note.isCodeMode && (
             <>
@@ -144,7 +137,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             onClick={() => {}}
           />
         </div>
-      </motion.div>
+      </div>
     </AnimatePresence>
   );
 };
