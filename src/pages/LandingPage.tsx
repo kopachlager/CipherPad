@@ -171,8 +171,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Features</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
             <h2 className="text-3xl font-medium mb-6 max-w-4xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Your ultimate secure note-taking experience
+            </h2>
             </h2>
             <p className="text-base max-w-3xl mx-auto" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
               Discover how CipherWrite can revolutionize the way you work and 
@@ -189,6 +191,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Lock className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
                 <h3 className="text-2xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Military-Grade Encryption
                 </h3>
@@ -214,6 +217,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
                 <h3 className="text-lg font-medium mb-4" style={{ fontSize: '20px', lineHeight: '28px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Lightning Fast
                 </h3>
@@ -230,6 +234,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                   <Eye className="w-5 h-5 text-white" />
                 </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
                 <h3 className="text-lg font-medium mb-4" style={{ fontSize: '20px', lineHeight: '28px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Focus Mode
                 </h3>
@@ -243,6 +248,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Code className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
                 <h3 className="text-2xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Smart Organization
                 </h3>
@@ -274,6 +280,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Mic className="w-6 h-6 text-white" />
                 </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
                 <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Voice Notes
                 </h4>
@@ -286,6 +293,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Download className="w-6 h-6 text-white" />
                 </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
                 <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Export Anywhere
                 </h4>
@@ -298,6 +306,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
                 <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Offline First
                 </h4>
@@ -310,6 +319,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Star className="w-6 h-6 text-white" />
                 </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
                 <h4 className="text-base font-medium mb-3" style={{ fontSize: '18px', lineHeight: '24px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Favorites
                 </h4>
@@ -332,6 +342,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                 <span>FAQ</span>
               </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               <h2 className="text-3xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                 Your guide to CipherWrite wisdom
               </h2>
@@ -412,6 +423,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                 <span>The numbers</span>
               </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               <h2 className="text-3xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                 The pinnacle of secure note-taking
               </h2>
@@ -509,6 +521,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Testimonials</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-5xl mx-auto leading-tight">
             <h2 className="text-3xl font-medium mb-6 max-w-5xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Your ultimate CipherWrite secure note-taking experience
             </h2>
@@ -653,6 +666,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Pricing</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
             <h2 className="text-3xl font-medium mb-6 max-w-4xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Choose the plan that's right for you
             </h2>
@@ -928,3 +942,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 };
 
 export default LandingPage;
+  )
+}
+  )
+}
+  )
+}
