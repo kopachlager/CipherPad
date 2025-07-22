@@ -12,9 +12,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       const heroGraphic = document.getElementById('hero-graphic');
       if (heroGraphic) {
         const scrollY = window.scrollY;
-        const maxTilt = 8; // Maximum tilt in degrees
+        const maxTilt = -8; // Maximum tilt in degrees (negative for opposite direction)
         const tiltAmount = Math.min(scrollY / 100, maxTilt);
-        heroGraphic.style.transform = `perspective(1000px) rotateX(${tiltAmount}deg)`;
+        heroGraphic.style.transform = `perspective(1000px) rotateX(${Math.abs(tiltAmount)}deg)`;
       }
     };
 
@@ -90,26 +90,157 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
 
           {/* App Preview Placeholder */}
-          <div className="relative max-w-6xl mx-auto">
-            <div className="bg-gray-900 rounded-3xl p-6 shadow-2xl transform transition-transform duration-1000 ease-out" id="hero-graphic">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden">
+          <div className="relative max-w-5xl mx-auto">
+            <div className="bg-gray-900 rounded-3xl p-5 shadow-2xl transform transition-transform duration-1000 ease-out" id="hero-graphic" style={{ transform: 'perspective(1000px) rotateX(-2deg)' }}>
+              <div className="bg-white rounded-2xl overflow-hidden">
                 {/* Mock App Interface */}
-                <div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center px-6">
+                <div className="h-12 bg-white border-b border-gray-200 flex items-center px-4">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
                   <div className="flex-1 text-center">
-                    <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">CipherWrite</div>
+                    <div className="text-sm text-gray-600 font-medium">CipherWrite</div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button className="p-1.5 rounded-md hover:bg-gray-100 transition-colors">
+                      <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                    </button>
+                    <button className="p-1.5 rounded-md hover:bg-gray-100 transition-colors">
+                      <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                    </button>
+                    <button className="p-1.5 rounded-md hover:bg-gray-100 transition-colors">
+                      <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                    </button>
                   </div>
                 </div>
                 
-                <div className="flex h-[500px]">
+                <div className="flex h-[425px]">
                   {/* Sidebar */}
-                  <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                  <div className="w-72 bg-gray-50 border-r border-gray-200 p-4">
+                    {/* Search Bar */}
+                    <div className="mb-4">
+                      <div className="relative">
+                        <div className="w-3 h-3 bg-gray-400 rounded absolute left-3 top-1/2 transform -translate-y-1/2"></div>
+                        <div className="w-full pl-9 pr-3 py-2 bg-gray-100 border border-gray-200 rounded-md">
+                          <div className="h-3 bg-gray-300 rounded w-20"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Quick Access */}
+                    <div className="mb-4">
+                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Quick Access</div>
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-md">
+                          <div className="w-3 h-3 bg-gray-500 rounded"></div>
+                          <span className="text-sm font-medium text-gray-900">All Notes</span>
+                          <div className="ml-auto text-xs bg-gray-200 px-2 py-0.5 rounded-full">12</div>
+                        </div>
+                        <div className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-100 rounded-md">
+                          <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                          <span className="text-sm text-gray-700">Favorites</span>
+                          <div className="ml-auto text-xs bg-gray-200 px-2 py-0.5 rounded-full">3</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Notes List */}
+                    <div>
+                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Recent Notes</div>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2 p-3 bg-white rounded-lg shadow-sm border border-gray-200">
+                          <div className="flex items-center space-x-1">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-gray-400 rounded"></div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">Meeting Notes</div>
+                            <div className="text-xs text-gray-500">2 hours ago</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-1">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-gray-700 truncate">Project Ideas</div>
+                            <div className="text-xs text-gray-500">1 day ago</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 rounded-lg">
+                          <div className="flex items-center space-x-1">
+                            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-gray-400 rounded"></div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-gray-700 truncate">Personal Journal</div>
+                            <div className="text-xs text-gray-500">3 days ago</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Main Editor Area */}
+                  <div className="flex-1 flex flex-col">
+                    {/* Toolbar */}
+                    <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4">
+                      <div className="flex items-center space-x-2">
+                        <button className="p-1.5 rounded hover:bg-gray-100">
+                          <div className="w-4 h-4 bg-gray-500 rounded"></div>
+                        </button>
+                        <div className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">Plain Text</div>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <button className="p-1.5 rounded hover:bg-gray-100">
+                          <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                        </button>
+                        <button className="p-1.5 rounded hover:bg-gray-100">
+                          <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                        </button>
+                        <button className="p-1.5 rounded hover:bg-gray-100">
+                          <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Editor Content */}
+                    <div className="flex-1 p-6">
+                      {/* Title */}
+                      <div className="h-8 bg-gray-100 rounded-lg mb-6 w-64"></div>
+                      
+                      {/* Content Lines */}
+                      <div className="space-y-3">
+                        <div className="h-4 bg-gray-100 rounded w-full"></div>
+                        <div className="h-4 bg-gray-100 rounded w-5/6"></div>
+                        <div className="h-4 bg-gray-100 rounded w-4/6"></div>
+                        <div className="h-4 bg-gray-100 rounded w-full"></div>
+                        <div className="h-4 bg-gray-100 rounded w-3/4"></div>
+                        <div className="h-4 bg-gray-100 rounded w-5/6"></div>
+                        <div className="h-4 bg-gray-100 rounded w-2/3"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Status Bar */}
+                    <div className="h-8 bg-gray-50 border-t border-gray-200 flex items-center justify-between px-4 text-xs text-gray-500">
+                      <div className="flex items-center space-x-4">
+                        <span>245 words</span>
+                        <span>1,234 characters</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-gray-400 rounded"></div>
+                        <span>Auto-saved</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <div className="flex-1">
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Meeting Notes</div>
