@@ -14,7 +14,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 const App: React.FC = () => {
   const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings } = useStore();
   const { user, loading } = useAuth();
-  const [showLanding, setShowLanding] = React.useState(true);
+  const [showLanding, setShowLanding] = React.useState(!user);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   useTheme();
   useKeyboardShortcuts();
@@ -42,10 +42,18 @@ const App: React.FC = () => {
 
   // Show auth modal if not authenticated and not loading
   useEffect(() => {
-    if (!loading && !user) {
-      // Don't show auth modal immediately, let them see landing page first
-      setShowAuthModal(false);
-    } else {
+    if (!loading) {
+      if (!user) {
+        // Show landing page for non-authenticated users
+        setShowLanding(true);
+        setShowAuthModal(false);
+      } else {
+        // Hide landing page when user is authenticated
+        setShowLanding(false);
+        setShowAuthModal(false);
+      }
+    }
+  }, [user, loading]);
       setShowAuthModal(false);
       setShowLanding(false); // Hide landing page when user is authenticated
     }
@@ -107,13 +115,15 @@ const App: React.FC = () => {
   }
 
   // Show landing page for non-authenticated users
-  if (!user) {
+  if (!user && !loading) {
     return (
       <div className="min-h-screen">
-        <LandingPage onGetStarted={() => {
-          setShowLanding(false);
-          setShowAuthModal(true);
-        }} />
+        {showLanding ? (
+          <LandingPage onGetStarted={() => {
+            setShowLanding(false);
+            setShowAuthModal(true);
+          }} />
+        ) : null}
         <AuthModal 
           isOpen={showAuthModal} 
           onClose={() => {
