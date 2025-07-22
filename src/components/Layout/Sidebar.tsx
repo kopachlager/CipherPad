@@ -309,10 +309,10 @@ const Sidebar: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-300 dark:border-gray-600">
               <button
                 onClick={() => toggleSection('quickAccess')}
-                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 rounded-t-xl"
               >
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                   Quick Access
@@ -428,10 +428,10 @@ const Sidebar: React.FC = () => {
 
             {/* Notes List */}
             {sortedNotes.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-300 dark:border-gray-600">
                 <button
                   onClick={() => toggleSection('notesList')}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 rounded-t-xl"
                 >
                   <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     {viewMode === 'trash' ? 'Deleted Notes' : 
