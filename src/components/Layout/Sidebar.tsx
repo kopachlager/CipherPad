@@ -309,107 +309,142 @@ const Sidebar: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                Quick Access
-              </h3>
-              <div className="space-y-1">
-                <QuickAccessItem
-                  icon={<FileText className="w-4 h-4" />}
-                  label="All Notes"
-                  count={notes.filter((n) => !n.isDeleted).length}
-                  active={viewMode === 'all'}
-                  onClick={() => {
-                    setViewMode('all');
-                    setSelectedFolder(null);
-                  }}
-                />
-                <QuickAccessItem
-                  icon={<Star className="w-4 h-4" />}
-                  label="Favorites"
-                  count={favoriteNotes.length}
-                  active={viewMode === 'favorites'}
-                  onClick={() => {
-                    setViewMode('favorites');
-                    setSelectedFolder(null);
-                  }}
-                />
-                <QuickAccessItem
-                  icon={<Trash2 className="w-4 h-4" />}
-                  label="Trash"
-                  count={trashedNotes.length}
-                  active={viewMode === 'trash'}
-                  onClick={() => {
-                    setViewMode('trash');
-                    setSelectedFolder(null);
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Folders */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-3">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => toggleSection('quickAccess')}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+              >
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                  Folders
+                  Quick Access
                 </h3>
-                <button
-                  onClick={() => setShowNewFolder(true)}
-                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                >
-                  <Plus className="w-3 h-3 text-gray-500" />
-                </button>
-              </div>
+                {collapsedSections.has('quickAccess') ? (
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                )}
+              </button>
               
-              {showNewFolder && (
-                <div className="mb-2">
-                  <input
-                    type="text"
-                    value={newFolderName}
-                    onChange={(e) => setNewFolderName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleCreateFolder();
-                      if (e.key === 'Escape') setShowNewFolder(false);
+              {!collapsedSections.has('quickAccess') && (
+                <div className="px-4 pb-4 space-y-1">
+                  <QuickAccessItem
+                    icon={<FileText className="w-4 h-4" />}
+                    label="All Notes"
+                    count={notes.filter((n) => !n.isDeleted).length}
+                    active={viewMode === 'all'}
+                    onClick={() => {
+                      setViewMode('all');
+                      setSelectedFolder(null);
                     }}
-                    onBlur={handleCreateFolder}
-                    placeholder="Folder name"
-                    className="w-full px-2 py-1 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
-                    autoFocus
+                  />
+                  <QuickAccessItem
+                    icon={<Star className="w-4 h-4" />}
+                    label="Favorites"
+                    count={favoriteNotes.length}
+                    active={viewMode === 'favorites'}
+                    onClick={() => {
+                      setViewMode('favorites');
+                      setSelectedFolder(null);
+                    }}
+                  />
+                  <QuickAccessItem
+                    icon={<Trash2 className="w-4 h-4" />}
+                    label="Trash"
+                    count={trashedNotes.length}
+                    active={viewMode === 'trash'}
+                    onClick={() => {
+                      setViewMode('trash');
+                      setSelectedFolder(null);
+                    }}
                   />
                 </div>
               )}
-
-              <div className="space-y-1">
-                {folders.map((folder) => (
-                  <QuickAccessItem
-                    key={folder.id}
-                    icon={<Folder className="w-4 h-4" style={{ color: folder.color }} />}
-                    label={folder.name}
-                    count={notes.filter((n) => n.folderId === folder.id && !n.isDeleted).length}
-                    active={selectedFolderId === folder.id}
-                    onClick={() => {
-                      setSelectedFolder(folder.id);
-                      setViewMode('all');
-                    }}
-                  />
-                ))}
-              </div>
             </div>
 
-            {/* Notes List - Minimal One Line */}
+            {/* Folders */}
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => toggleSection('folders')}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+              >
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  Folders
+                </h3>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowNewFolder(true);
+                    }}
+                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                  >
+                    <Plus className="w-3 h-3 text-gray-500" />
+                  </button>
+                  {collapsedSections.has('folders') ? (
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  )}
+                </div>
+              </button>
+              
+              {!collapsedSections.has('folders') && (
+                <div className="px-4 pb-4">
+                  {showNewFolder && (
+                    <div className="mb-2">
+                      <input
+                        type="text"
+                        value={newFolderName}
+                        onChange={(e) => setNewFolderName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleCreateFolder();
+                          if (e.key === 'Escape') setShowNewFolder(false);
+                        }}
+                        onBlur={handleCreateFolder}
+                        placeholder="Folder name"
+                        className="w-full px-2 py-1 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+                        autoFocus
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    {folders.map((folder) => (
+                      <QuickAccessItem
+                        key={folder.id}
+                        icon={<Folder className="w-4 h-4" style={{ color: folder.color }} />}
+                        label={folder.name}
+                        count={notes.filter((n) => n.folderId === folder.id && !n.isDeleted).length}
+                        active={selectedFolderId === folder.id}
+                        onClick={() => {
+                          setSelectedFolder(folder.id);
+                          setViewMode('all');
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Notes List */}
             {sortedNotes.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-3">
+              <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => toggleSection('notesList')}
+                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+                >
                   <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     {viewMode === 'trash' ? 'Deleted Notes' : 
                      viewMode === 'favorites' ? 'Favorite Notes' : 
                      selectedFolderId ? folders.find(f => f.id === selectedFolderId)?.name || 'Folder Notes' :
                      'All Notes'} ({sortedNotes.length})
                   </h3>
-                  
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => setShowFilters(!showFilters)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowFilters(!showFilters);
+                      }}
                       className={`p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150 ${
                         showFilters ? 'bg-gray-200 dark:bg-gray-700' : ''
                       }`}
@@ -417,195 +452,204 @@ const Sidebar: React.FC = () => {
                     >
                       <Filter className="w-3 h-3 text-gray-500" />
                     </button>
+                    {collapsedSections.has('notesList') ? (
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    )}
                   </div>
-                </div>
-
-                {showFilters && (
-                  <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Sort by:</span>
-                      <div className="flex items-center space-x-1">
-                        <select
-                          value={sortBy}
-                          onChange={(e) => setSortBy(e.target.value as any)}
-                          className="text-xs bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded px-2 py-1"
-                        >
-                          <option value="updated">Last Modified</option>
-                          <option value="created">Date Created</option>
-                          <option value="title">Title</option>
-                          <option value="size">Size</option>
-                        </select>
-                        <button
-                          onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
-                          title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
-                        >
-                          {sortOrder === 'asc' ? 
-                            <SortAsc className="w-3 h-3" /> : 
-                            <SortDesc className="w-3 h-3" />
-                          }
-                        </button>
+                </button>
+                
+                {!collapsedSections.has('notesList') && (
+                  <div className="px-4 pb-4">
+                    {showFilters && (
+                      <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Sort by:</span>
+                          <div className="flex items-center space-x-1">
+                            <select
+                              value={sortBy}
+                              onChange={(e) => setSortBy(e.target.value as any)}
+                              className="text-xs bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded px-2 py-1"
+                            >
+                              <option value="updated">Last Modified</option>
+                              <option value="created">Date Created</option>
+                              <option value="title">Title</option>
+                              <option value="size">Size</option>
+                            </select>
+                            <button
+                              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                              title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
+                            >
+                              {sortOrder === 'asc' ? 
+                                <SortAsc className="w-3 h-3" /> : 
+                                <SortDesc className="w-3 h-3" />
+                              }
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Group by:</span>
+                          <select
+                            value={groupBy}
+                            onChange={(e) => setGroupBy(e.target.value as any)}
+                            className="text-xs bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded px-2 py-1"
+                          >
+                            <option value="none">No Grouping</option>
+                            <option value="folder">Folder</option>
+                            <option value="date">Date Modified</option>
+                            <option value="tag">Tags</option>
+                          </select>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Group by:</span>
-                      <select
-                        value={groupBy}
-                        onChange={(e) => setGroupBy(e.target.value as any)}
-                        className="text-xs bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded px-2 py-1"
-                      >
-                        <option value="none">No Grouping</option>
-                        <option value="folder">Folder</option>
-                        <option value="date">Date Modified</option>
-                        <option value="tag">Tags</option>
-                      </select>
+                    )}
+
+                    <div className="space-y-2 max-h-96 overflow-y-auto framed-scrollbar">
+                      {Object.entries(groupedNotes).map(([groupName, groupNotes]) => (
+                        <div key={groupName}>
+                          {groupBy !== 'none' && (
+                            <button
+                              onClick={() => toggleGroup(groupName)}
+                              className="w-full flex items-center justify-between px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                            >
+                              <div className="flex items-center space-x-2">
+                                {collapsedGroups.has(groupName) ? 
+                                  <ChevronRight className="w-3 h-3" /> : 
+                                  <ChevronDown className="w-3 h-3" />
+                                }
+                                <span>{groupName}</span>
+                              </div>
+                              <span className="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                                {groupNotes.length}
+                              </span>
+                            </button>
+                          )}
+                          
+                          {(!collapsedGroups.has(groupName) || groupBy === 'none') && (
+                            <div className="space-y-1">
+                              {groupNotes.map((note) => (
+                                <div
+                                  key={note.id}
+                                  className={`group flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-colors duration-150 ${
+                                    activeNoteId === note.id
+                                      ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                                      : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                                  }`}
+                                  onClick={() => handleNoteClick(note.id)}
+                                >
+                                  <div className="flex items-center space-x-2 flex-1 min-w-0">
+                                    <div className="flex items-center space-x-1 flex-shrink-0">
+                                      {note.isFavorite && (
+                                        <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                                      )}
+                                      {note.isEncrypted && (
+                                        <Lock className="w-3 h-3 text-gray-500" />
+                                      )}
+                                      {note.isCodeMode && (
+                                        <Code className="w-3 h-3 text-gray-500" />
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-sm font-medium truncate">
+                                        {note.title || 'Untitled'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                                    <div className="relative">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowMoveMenu(showMoveMenu === note.id ? null : note.id);
+                                        }}
+                                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                                        title="Move to folder"
+                                      >
+                                        <FolderOpen className="w-3 h-3 text-gray-500" />
+                                      </button>
+                                      {showMoveMenu === note.id && (
+                                        <MoveToFolderMenu noteId={note.id} currentFolderId={note.folderId} />
+                                      )}
+                                    </div>
+                                    
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateNote(note.id, { isEncrypted: !note.isEncrypted });
+                                      }}
+                                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                                      title={note.isEncrypted ? "Remove encryption" : "Encrypt note"}
+                                    >
+                                      {note.isEncrypted ? (
+                                        <Lock className="w-3 h-3 text-gray-500" />
+                                      ) : (
+                                        <Unlock className="w-3 h-3 text-gray-500" />
+                                      )}
+                                    </button>
+                                    
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        exportNote(note, 'txt');
+                                      }}
+                                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                                      title="Download note"
+                                    >
+                                      <Download className="w-3 h-3 text-gray-500" />
+                                    </button>
+                                    
+                                    <button
+                                      onClick={async (e) => {
+                                        e.stopPropagation();
+                                        if (navigator.share) {
+                                          try {
+                                            await navigator.share({
+                                              title: note.title,
+                                              text: note.content,
+                                            });
+                                          } catch (err) {
+                                            console.log('Share cancelled');
+                                          }
+                                        } else {
+                                          navigator.clipboard.writeText(note.content);
+                                        }
+                                      }}
+                                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                                      title="Share note"
+                                    >
+                                      <Share className="w-3 h-3 text-gray-500" />
+                                    </button>
+                                    
+                                    {viewMode === 'trash' ? (
+                                      <button
+                                        onClick={(e) => handleRestoreNote(note.id, e)}
+                                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                                        title="Restore note"
+                                      >
+                                        <Plus className="w-3 h-3 text-gray-500" />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={(e) => handleDeleteNote(note.id, e)}
+                                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
+                                        title="Delete note"
+                                      >
+                                        <X className="w-3 h-3 text-gray-500" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
-
-                <div className="space-y-2 max-h-96 overflow-y-auto framed-scrollbar">
-                  {Object.entries(groupedNotes).map(([groupName, groupNotes]) => (
-                    <div key={groupName}>
-                      {groupBy !== 'none' && (
-                        <button
-                          onClick={() => toggleGroup(groupName)}
-                          className="w-full flex items-center justify-between px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-                        >
-                          <div className="flex items-center space-x-2">
-                            {collapsedGroups.has(groupName) ? 
-                              <ChevronRight className="w-3 h-3" /> : 
-                              <ChevronDown className="w-3 h-3" />
-                            }
-                            <span>{groupName}</span>
-                          </div>
-                          <span className="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
-                            {groupNotes.length}
-                          </span>
-                        </button>
-                      )}
-                      
-                      {(!collapsedGroups.has(groupName) || groupBy === 'none') && (
-                        <div className="space-y-1">
-                          {groupNotes.map((note) => (
-                            <div
-                              key={note.id}
-                              className={`group flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-colors duration-150 ${
-                                activeNoteId === note.id
-                                  ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
-                                  : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                              }`}
-                              onClick={() => handleNoteClick(note.id)}
-                            >
-                              <div className="flex items-center space-x-2 flex-1 min-w-0">
-                                <div className="flex items-center space-x-1 flex-shrink-0">
-                                  {note.isFavorite && (
-                                    <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                                  )}
-                                  {note.isEncrypted && (
-                                    <Lock className="w-3 h-3 text-gray-500" />
-                                  )}
-                                  {note.isCodeMode && (
-                                    <Code className="w-3 h-3 text-gray-500" />
-                                  )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="text-sm font-medium truncate">
-                                    {note.title || 'Untitled'}
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                                <div className="relative">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setShowMoveMenu(showMoveMenu === note.id ? null : note.id);
-                                    }}
-                                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                                    title="Move to folder"
-                                  >
-                                    <FolderOpen className="w-3 h-3 text-gray-500" />
-                                  </button>
-                                  {showMoveMenu === note.id && (
-                                    <MoveToFolderMenu noteId={note.id} currentFolderId={note.folderId} />
-                                  )}
-                                </div>
-                                
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    updateNote(note.id, { isEncrypted: !note.isEncrypted });
-                                  }}
-                                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                                  title={note.isEncrypted ? "Remove encryption" : "Encrypt note"}
-                                >
-                                  {note.isEncrypted ? (
-                                    <Lock className="w-3 h-3 text-gray-500" />
-                                  ) : (
-                                    <Unlock className="w-3 h-3 text-gray-500" />
-                                  )}
-                                </button>
-                                
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    exportNote(note, 'txt');
-                                  }}
-                                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                                  title="Download note"
-                                >
-                                  <Download className="w-3 h-3 text-gray-500" />
-                                </button>
-                                
-                                <button
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    if (navigator.share) {
-                                      try {
-                                        await navigator.share({
-                                          title: note.title,
-                                          text: note.content,
-                                        });
-                                      } catch (err) {
-                                        console.log('Share cancelled');
-                                      }
-                                    } else {
-                                      navigator.clipboard.writeText(note.content);
-                                    }
-                                  }}
-                                  className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                                  title="Share note"
-                                >
-                                  <Share className="w-3 h-3 text-gray-500" />
-                                </button>
-                                
-                                {viewMode === 'trash' ? (
-                                  <button
-                                    onClick={(e) => handleRestoreNote(note.id, e)}
-                                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                                    title="Restore note"
-                                  >
-                                    <Plus className="w-3 h-3 text-gray-500" />
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={(e) => handleDeleteNote(note.id, e)}
-                                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
-                                    title="Delete note"
-                                  >
-                                    <X className="w-3 h-3 text-gray-500" />
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
 
