@@ -1,34 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Bold,
   Italic,
   Underline,
-  Strikethrough,
   Code,
-  Link,
+  Type,
   List,
   ListOrdered,
   Quote,
-  Type,
-  Save,
-  Minus,
-  Plus,
-  Heart,
-  Lock,
-  Unlock,
-  Eye,
-  EyeOff,
-  Download,
-  Share,
-  Heading1,
-  Heading2,
-  Heading3,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
+  Link,
   Mic,
   MicOff,
   Loader,
+  Heart,
+  Lock,
+  Unlock,
+  Download,
+  Share,
+  Eye,
+  ChevronDown,
+  Palette,
+  Languages,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
@@ -40,8 +32,11 @@ interface ToolbarProps {
   onToggleEncryption: () => void;
   onStartRecording?: () => void;
   onStopRecording?: () => void;
+  onLanguageChange?: (language: string) => void;
   isRecording?: boolean;
   isTranscribing?: boolean;
+  selectedText?: string;
+  cursorPosition?: number;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -51,63 +46,109 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onToggleEncryption,
   onStartRecording,
   onStopRecording,
+  onLanguageChange,
   isRecording = false,
   isTranscribing = false,
+  selectedText = '',
 }) => {
-  const { settings } = useStore();
-  const { updateSettings } = useStore();
+  const { settings, updateSettings } = useStore();
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [detectedFormat, setDetectedFormat] = useState<string[]>([]);
+
+  // Auto-detect content format and suggest tools
+  useEffect(() => {
+    const content = note.content || '';
+    const formats: string[] = [];
+
+    // Detect markdown
+    if (content.includes('# ') || content.includes('## ') || content.includes('### ')) {
+      formats.push('markdown');
+    }
+    
+    // Detect lists
+    if (content.includes('- ') || content.includes('* ') || /^\d+\.\s/.test(content)) {
+      formats.push('lists');
+    }
+    
+    // Detect links
+    if (content.includes('http') || content.includes('[') && content.includes('](')) {
+      formats.push('links');
+    }
+    
+    // Detect code blocks
+    if (content.includes('```') || content.includes('`')) {
+      formats.push('code');
+    }
+
+    setDetectedFormat(formats);
+  }, [note.content]);
 
   if (settings.distractionFreeMode) {
     return null;
   }
+
+  const languages = [
+    { value: 'plaintext', label: 'Plain Text' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'python', label: 'Python' },
+    { value: 'java', label: 'Java' },
+    { value: 'cpp', label: 'C++' },
+    { value: 'csharp', label: 'C#' },
+    { value: 'php', label: 'PHP' },
+    { value: 'ruby', label: 'Ruby' },
+    { value: 'go', label: 'Go' },
+    { value: 'rust', label: 'Rust' },
+    { value: 'html', label: 'HTML' },
+    { value: 'css', label: 'CSS' },
+    { value: 'scss', label: 'SCSS' },
+    { value: 'json', label: 'JSON' },
+    { value: 'xml', label: 'XML' },
+    { value: 'yaml', label: 'YAML' },
+    { value: 'markdown', label: 'Markdown' },
+    { value: 'sql', label: 'SQL' },
+    { value: 'shell', label: 'Shell' },
+  ];
 
   const ToolbarButton: React.FC<{
     icon: React.ReactNode;
     tooltip: string;
     active?: boolean;
     onClick: () => void;
-    className?: string;
     disabled?: boolean;
-  }> = ({ icon, tooltip, active, onClick, disabled = false }) => (
+    suggested?: boolean;
+  }> = ({ icon, tooltip, active, onClick, disabled = false, suggested = false }) => (
     <button
       onClick={onClick}
       disabled={disabled}
       title={tooltip}
-      className={`p-2 rounded-md transition-colors duration-150 ${
+      className={`relative p-2 rounded-md transition-all duration-150 ${
         disabled
           ? 'opacity-50 cursor-not-allowed'
-          :
-        active
-          ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+          : active
+          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 shadow-sm'
+          : suggested
+          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30'
           : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
       }`}
     >
       {icon}
+      {suggested && (
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+      )}
     </button>
   );
 
   const execCommand = (command: string, value?: string) => {
     document.execCommand(command, false, value);
-    // Focus back to editor after command
     const editor = document.querySelector('[contenteditable="true"]') as HTMLElement;
     if (editor) {
       editor.focus();
     }
   };
 
-  const handleFontSizeChange = (increase: boolean) => {
-    const newSize = increase 
-      ? Math.min(settings.fontSize + 2, 24)
-      : Math.max(settings.fontSize - 2, 12);
-    updateSettings({ fontSize: newSize });
-  };
-
-  const handleToggleFocusMode = () => {
-    updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
-  };
-
   const handleDownload = () => {
-    exportNote(note, 'txt');
+    exportNote(note, note.isCodeMode ? 'txt' : 'md');
   };
 
   const handleShare = async () => {
@@ -121,125 +162,141 @@ const Toolbar: React.FC<ToolbarProps> = ({
         console.log('Share cancelled');
       }
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(note.content);
     }
   };
 
-  return (
-    <div className="h-12 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 overflow-x-auto flex-shrink-0">
-      <div className="flex items-center space-x-1 flex-shrink-0">
-        {!note.isCodeMode ? (
-          // Rich Text Formatting Tools
-          <div className="flex items-center space-x-1">
-            {/* Headings */}
-            <div className="hidden md:flex items-center space-x-1">
-              <ToolbarButton
-                icon={<Heading1 className="w-4 h-4" />}
-                tooltip="Heading 1"
-                onClick={() => execCommand('formatBlock', 'h1')}
-              />
-              <ToolbarButton
-                icon={<Heading2 className="w-4 h-4" />}
-                tooltip="Heading 2"
-                onClick={() => execCommand('formatBlock', 'h2')}
-              />
-              <ToolbarButton
-                icon={<Heading3 className="w-4 h-4" />}
-                tooltip="Heading 3"
-                onClick={() => execCommand('formatBlock', 'h3')}
-              />
-              <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
-            </div>
+  const handleToggleFocusMode = () => {
+    updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
+  };
 
-            {/* Text Formatting */}
+  return (
+    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 overflow-x-auto flex-shrink-0">
+      <div className="flex items-center space-x-1">
+        {/* Mode Toggle */}
+        <ToolbarButton
+          icon={<Code className="w-4 h-4" />}
+          tooltip={note.isCodeMode ? "Switch to Rich Text" : "Switch to Code Mode"}
+          active={note.isCodeMode}
+          onClick={onToggleCodeMode}
+        />
+
+        {note.isCodeMode ? (
+          /* Code Mode Tools */
+          <div className="flex items-center space-x-1 ml-2">
+            <div className="relative">
+              <button
+                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                className="flex items-center space-x-2 px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                <Languages className="w-3 h-3" />
+                <span className="font-mono">
+                  {languages.find(l => l.value === note.language)?.label || 'Plain Text'}
+                </span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
+              
+              {showLanguageMenu && (
+                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 max-h-64 overflow-y-auto">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.value}
+                      onClick={() => {
+                        onLanguageChange?.(lang.value);
+                        setShowLanguageMenu(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                        note.language === lang.value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : ''
+                      }`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Rich Text Tools - Smart & Contextual */
+          <div className="flex items-center space-x-1 ml-2">
+            {/* Basic Formatting */}
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold (Ctrl+B)"
               onClick={() => execCommand('bold')}
+              suggested={detectedFormat.includes('markdown')}
             />
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
               tooltip="Italic (Ctrl+I)"
               onClick={() => execCommand('italic')}
+              suggested={detectedFormat.includes('markdown')}
             />
             <ToolbarButton
               icon={<Underline className="w-4 h-4" />}
               tooltip="Underline (Ctrl+U)"
               onClick={() => execCommand('underline')}
             />
-            <ToolbarButton
-              icon={<Strikethrough className="w-4 h-4" />}
-              tooltip="Strikethrough"
-              onClick={() => execCommand('strikeThrough')}
-            />
 
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-            {/* Alignment - Hidden on mobile */}
-            <div className="hidden sm:flex items-center space-x-1">
-              <ToolbarButton
-                icon={<AlignLeft className="w-4 h-4" />}
-                tooltip="Align Left"
-                onClick={() => execCommand('justifyLeft')}
-              />
-              <ToolbarButton
-                icon={<AlignCenter className="w-4 h-4" />}
-                tooltip="Align Center"
-                onClick={() => execCommand('justifyCenter')}
-              />
-              <ToolbarButton
-                icon={<AlignRight className="w-4 h-4" />}
-                tooltip="Align Right"
-                onClick={() => execCommand('justifyRight')}
-              />
-            </div>
-
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
-
-            {/* Lists */}
+            {/* Lists - Show when detected or selected */}
             <ToolbarButton
               icon={<List className="w-4 h-4" />}
               tooltip="Bullet List"
               onClick={() => execCommand('insertUnorderedList')}
+              suggested={detectedFormat.includes('lists')}
             />
             <ToolbarButton
               icon={<ListOrdered className="w-4 h-4" />}
               tooltip="Numbered List"
               onClick={() => execCommand('insertOrderedList')}
+              suggested={detectedFormat.includes('lists')}
             />
 
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
+            {/* Contextual Tools */}
+            {(detectedFormat.includes('links') || selectedText.length > 0) && (
+              <>
+                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                <ToolbarButton
+                  icon={<Link className="w-4 h-4" />}
+                  tooltip="Insert Link"
+                  onClick={() => {
+                    const url = prompt('Enter URL:');
+                    if (url) execCommand('createLink', url);
+                  }}
+                  suggested={detectedFormat.includes('links')}
+                />
+              </>
+            )}
 
-            {/* Additional Tools - Hidden on mobile */}
-            <div className="hidden md:flex items-center space-x-1">
-              <ToolbarButton
-                icon={<Quote className="w-4 h-4" />}
-                tooltip="Quote"
-                onClick={() => execCommand('formatBlock', 'blockquote')}
-              />
-              <ToolbarButton
-                icon={<Link className="w-4 h-4" />}
-                tooltip="Insert Link"
-                onClick={() => {
-                  const url = prompt('Enter URL:');
-                  if (url) execCommand('createLink', url);
-                }}
-              />
-            </div>
-          </div>
-        ) : (
-          // Code Mode - Show language indicator
-          <div className="flex items-center space-x-2">
-            <Code className="w-4 h-4 text-gray-500" />
-            <span className="text-sm text-gray-500 font-mono">
-              {note.language || 'plaintext'}
-            </span>
+            {detectedFormat.includes('code') && (
+              <>
+                <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+                <ToolbarButton
+                  icon={<Code className="w-4 h-4" />}
+                  tooltip="Inline Code"
+                  onClick={() => {
+                    const selection = window.getSelection();
+                    if (selection && selection.toString()) {
+                      execCommand('insertHTML', `<code>${selection.toString()}</code>`);
+                    }
+                  }}
+                  suggested={true}
+                />
+              </>
+            )}
+
+            <ToolbarButton
+              icon={<Quote className="w-4 h-4" />}
+              tooltip="Quote"
+              onClick={() => execCommand('formatBlock', 'blockquote')}
+            />
           </div>
         )}
       </div>
 
-      <div className="flex items-center space-x-1 flex-shrink-0">
+      <div className="flex items-center space-x-1">
         {/* Audio Recording */}
         {isTranscribing ? (
           <ToolbarButton
@@ -251,7 +308,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         ) : (
           <ToolbarButton
             icon={isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            tooltip={isRecording ? "Stop Recording" : "Start Voice Recording"}
+            tooltip={isRecording ? "Stop Recording" : "Voice to Text"}
             active={isRecording}
             onClick={isRecording ? (onStopRecording || (() => {})) : (onStartRecording || (() => {}))}
           />
@@ -259,65 +316,47 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
 
-        {/* Font Size Controls */}
-        <ToolbarButton
-          icon={<Minus className="w-4 h-4" />}
-          tooltip="Decrease Font Size"
-          onClick={() => handleFontSizeChange(false)}
-        />
-        <span className="text-xs text-gray-500 dark:text-gray-400 px-1 hidden sm:inline">
-          {settings.fontSize}px
-        </span>
-        <ToolbarButton
-          icon={<Plus className="w-4 h-4" />}
-          tooltip="Increase Font Size"
-          onClick={() => handleFontSizeChange(true)}
-        />
-        
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
-        
         {/* Note Actions */}
         <ToolbarButton
-          icon={<Code className="w-4 h-4" />}
-          tooltip="Toggle Code Mode"
-          active={note.isCodeMode}
-          onClick={onToggleCodeMode}
-        />
-        <ToolbarButton
           icon={<Heart className="w-4 h-4" />}
-          tooltip="Toggle Favorite"
+          tooltip="Favorite"
           active={note.isFavorite}
           onClick={onToggleFavorite}
         />
         <ToolbarButton
           icon={note.isEncrypted ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-          tooltip={note.isEncrypted ? "Remove Encryption" : "Encrypt Note"}
+          tooltip={note.isEncrypted ? "Encrypted" : "Encrypt"}
           active={note.isEncrypted}
           onClick={onToggleEncryption}
         />
-        
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1 hidden sm:block" />
-        
-        {/* Export & Share */}
-        <div className="hidden sm:flex items-center space-x-1">
-          <ToolbarButton
-            icon={<Download className="w-4 h-4" />}
-            tooltip="Download Note"
-            onClick={handleDownload}
-          />
-          <ToolbarButton
-            icon={<Share className="w-4 h-4" />}
-            tooltip="Share Note"
-            onClick={handleShare}
-          />
-        </div>
-        
+
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1" />
+
+        {/* Export & Focus */}
+        <ToolbarButton
+          icon={<Download className="w-4 h-4" />}
+          tooltip="Download"
+          onClick={handleDownload}
+        />
+        <ToolbarButton
+          icon={<Share className="w-4 h-4" />}
+          tooltip="Share"
+          onClick={handleShare}
+        />
         <ToolbarButton
           icon={<Eye className="w-4 h-4" />}
-          tooltip="Toggle Focus Mode"
+          tooltip="Focus Mode"
           onClick={handleToggleFocusMode}
         />
       </div>
+
+      {/* Click outside to close language menu */}
+      {showLanguageMenu && (
+        <div 
+          className="fixed inset-0 z-10" 
+          onClick={() => setShowLanguageMenu(false)}
+        />
+      )}
     </div>
   );
 };

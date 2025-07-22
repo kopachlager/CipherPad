@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import RichTextEditor from './RichTextEditor';
+import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
 import { useStore } from '../../hooks/useStore';
@@ -24,6 +24,8 @@ const EditorView: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [selectedText, setSelectedText] = useState('');
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   useAutoSave(activeNoteId, localContent);
 
@@ -144,6 +146,10 @@ const EditorView: React.FC = () => {
     });
   };
 
+  const handleLanguageChange = (language: string) => {
+    updateNote(activeNote.id, { language });
+  };
+
   const handleToggleFavorite = () => {
     toggleNoteFavorite(activeNote.id);
   };
@@ -168,18 +174,46 @@ const EditorView: React.FC = () => {
           onToggleCodeMode={handleToggleCodeMode}
           onToggleFavorite={handleToggleFavorite}
           onToggleEncryption={handleToggleEncryption}
+          onLanguageChange={handleLanguageChange}
           onStartRecording={startRecording}
           onStopRecording={stopRecording}
           isRecording={isRecording}
           isTranscribing={isTranscribing}
+          selectedText={selectedText}
+          cursorPosition={cursorPosition}
         />
         
         <div className="flex-1 overflow-hidden relative">
-          <RichTextEditor
-            content={localContent}
-            onChange={handleContentChange}
-            isCodeMode={activeNote.isCodeMode}
-          />
+          {activeNote.isCodeMode ? (
+            <MonacoEditor
+              note={activeNote}
+              onChange={handleContentChange}
+            />
+          ) : (
+            <div
+              contentEditable
+              suppressContentEditableWarning={true}
+              onInput={(e) => {
+                const target = e.target as HTMLDivElement;
+                handleContentChange(target.innerHTML);
+              }}
+              onSelect={() => {
+                const selection = window.getSelection();
+                if (selection) {
+                  setSelectedText(selection.toString());
+                }
+              }}
+              className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full"
+              style={{
+                fontSize: `${settings.fontSize}px`,
+                lineHeight: settings.lineHeight,
+                fontFamily: settings.fontFamily,
+                wordWrap: 'break-word',
+                whiteSpace: 'pre-wrap',
+              }}
+              dangerouslySetInnerHTML={{ __html: localContent }}
+            />
+          )}
           
           {/* Recording Indicator */}
           {isRecording && (
