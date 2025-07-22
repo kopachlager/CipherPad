@@ -525,7 +525,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </p>
               <div className="flex items-center space-x-4">
                 <div className="w-10 h-10 bg-teal-500 rounded-full"></div>
-                </div>
                 <div>
                   <div className="font-medium text-gray-900">Alex Thompson</div>
                   <div className="text-gray-500 text-sm">Tech Entrepreneur</div>
@@ -573,7 +572,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </div>
             </div>
           </div>
-        </div>
       </section>
 
       {/* Pricing Section */}
