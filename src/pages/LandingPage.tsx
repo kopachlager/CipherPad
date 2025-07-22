@@ -191,7 +191,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Lock className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-6">
                 <h3 className="text-2xl font-medium mb-6" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Military-Grade Encryption
                 </h3>
@@ -217,7 +216,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
                 <h3 className="text-lg font-medium mb-4" style={{ fontSize: '20px', lineHeight: '28px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Lightning Fast
                 </h3>
@@ -234,7 +232,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                   <Eye className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
                 <h3 className="text-lg font-medium mb-4" style={{ fontSize: '20px', lineHeight: '28px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
                   Focus Mode
                 </h3>
