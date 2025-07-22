@@ -39,6 +39,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
         options={{
           fontSize: settings.fontSize,
           lineHeight: settings.lineHeight,
+          fontFamily: settings.fontFamily,
           wordWrap: 'on',
           minimap: { enabled: false },
           scrollBeyondLastLine: false,

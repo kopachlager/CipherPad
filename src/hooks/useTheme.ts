@@ -18,7 +18,8 @@ export const useTheme = () => {
     // Set font settings
     root.style.setProperty('--font-size', `${settings.fontSize}px`);
     root.style.setProperty('--line-height', settings.lineHeight.toString());
-  }, [settings.theme, settings.accentColor, settings.fontSize, settings.lineHeight]);
+    root.style.setProperty('--font-family', settings.fontFamily);
+  }, [settings.theme, settings.accentColor, settings.fontSize, settings.lineHeight, settings.fontFamily]);
 
   const toggleTheme = () => {
     const newTheme = settings.theme === 'light' ? 'dark' : 'light';

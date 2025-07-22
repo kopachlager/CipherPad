@@ -108,6 +108,9 @@ const Sidebar: React.FC = () => {
     restoreNote(noteId);
   };
 
+  const handleMoveToFolder = (noteId: string, folderId: string | null) => {
+    updateNote(noteId, { folderId });
+  };
   const QuickAccessItem: React.FC<{
     icon: React.ReactNode;
     label: string;
@@ -131,19 +134,20 @@ const Sidebar: React.FC = () => {
         <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">
           {count}
         </span>
+      </div>
       )}
     </button>
   );
 
   const NoteItem: React.FC<{ note: any }> = ({ note }) => (
-    <button
-      onClick={() => setActiveNote(note.id)}
+    <div
       className={`w-full text-left p-3 rounded-md transition-colors duration-150 border group ${
         activeNoteId === note.id
           ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
           : 'hover:bg-gray-50 dark:hover:bg-gray-800 border-transparent'
       }`}
     >
+      <div onClick={() => setActiveNote(note.id)} className="cursor-pointer">
       <div className="flex items-center justify-between mb-1">
         <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
           {note.title || 'Untitled'}
@@ -157,6 +161,7 @@ const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
+      </div>
       <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-1">
         {note.content || 'No content'}
       </p>
@@ -164,6 +169,21 @@ const Sidebar: React.FC = () => {
         {formatDate(new Date(note.updatedAt))}
       </span>
       
+      <div className="flex items-center justify-between mt-2">
+        <select
+          value={note.folderId || ''}
+          onChange={(e) => handleMoveToFolder(note.id, e.target.value || null)}
+          onClick={(e) => e.stopPropagation()}
+          className="text-xs bg-transparent border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-gray-600 dark:text-gray-400"
+        >
+          <option value="">No Folder</option>
+          {folders.map((folder) => (
+            <option key={folder.id} value={folder.id}>
+              {folder.name}
+            </option>
+          ))}
+        </select>
+        
       <div className="flex items-center justify-end space-x-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
         <button
           onClick={(e) => handleDownloadNote(note, e)}
@@ -197,7 +217,7 @@ const Sidebar: React.FC = () => {
           </button>
         )}
       </div>
-    </button>
+    </div>
   );
 
   return (

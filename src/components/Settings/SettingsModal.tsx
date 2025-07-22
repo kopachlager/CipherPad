@@ -133,6 +133,31 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const renderEditorSettings = () => (
     <div className="space-y-1">
       <SettingItem
+        label="Font Family"
+        description="Choose your preferred font for the editor"
+      >
+        <select
+          value={tempSettings.fontFamily}
+          onChange={(e) => {
+            const newFontFamily = e.target.value;
+            const newSettings = { ...tempSettings, fontFamily: newFontFamily };
+            setTempSettings(newSettings);
+            updateSettings({ fontFamily: newFontFamily });
+          }}
+          className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        >
+          <option value="Inter">Inter</option>
+          <option value="JetBrains Mono">JetBrains Mono</option>
+          <option value="Fira Code">Fira Code</option>
+          <option value="Source Code Pro">Source Code Pro</option>
+          <option value="Monaco">Monaco</option>
+          <option value="Consolas">Consolas</option>
+          <option value="Roboto Mono">Roboto Mono</option>
+          <option value="Ubuntu Mono">Ubuntu Mono</option>
+        </select>
+      </SettingItem>
+
+      <SettingItem
         label="Font Size"
         description="Adjust the editor font size"
       >

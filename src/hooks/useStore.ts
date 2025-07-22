@@ -11,6 +11,7 @@ interface Store {
   
   // Folders
   folders: Folder[];
+  selectedFolderId: string | null;
   
   // Settings
   settings: AppSettings;
@@ -36,6 +37,7 @@ interface Store {
   loadFolders: () => Promise<void>;
   
   setActiveNote: (id: string | null) => void;
+  setSelectedFolder: (id: string | null) => void;
   updateSettings: (updates: Partial<AppSettings>) => void;
   
   setSidebarOpen: (open: boolean) => void;
@@ -47,6 +49,7 @@ interface Store {
 const defaultSettings: AppSettings = {
   theme: 'system',
   accentColor: '#6b7280',
+  fontFamily: 'Inter',
   fontSize: 16,
   lineHeight: 1.6,
   autoSave: true,
@@ -69,6 +72,7 @@ export const useStore = create<Store>()(
       notes: [],
       activeNoteId: null,
       folders: [],
+      selectedFolderId: null,
       settings: defaultSettings,
       auth: defaultAuth,
       sidebarOpen: true,
@@ -321,6 +325,10 @@ export const useStore = create<Store>()(
       setActiveNote: (id) => {
         set({ activeNoteId: id });
         get().updateLastActivity();
+      },
+
+      setSelectedFolder: (id) => {
+        set({ selectedFolderId: id });
       },
 
       updateSettings: (updates) => {

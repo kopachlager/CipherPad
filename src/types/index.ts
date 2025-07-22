@@ -24,6 +24,7 @@ export interface Folder {
 export interface AppSettings {
   theme: 'light' | 'dark' | 'system';
   accentColor: string;
+  fontFamily: string;
   fontSize: number;
   lineHeight: number;
   autoSave: boolean;
