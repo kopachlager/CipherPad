@@ -52,7 +52,19 @@ const Sidebar: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [groupBy, setGroupBy] = useState<'none' | 'folder' | 'date' | 'tag'>('none');
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  
+  // Collapsible sections state
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
+  const toggleSection = (sectionName: string) => {
+    const newCollapsed = new Set(collapsedSections);
+    if (newCollapsed.has(sectionName)) {
+      newCollapsed.delete(sectionName);
+    } else {
+      newCollapsed.add(sectionName);
+    }
+    setCollapsedSections(newCollapsed);
+  };
   const filteredNotes = notes.filter((note) => {
     // First filter by view mode
     let passesViewMode = false;
