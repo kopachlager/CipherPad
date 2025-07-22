@@ -6,7 +6,6 @@ import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
 import EncryptionModal from '../Encryption/EncryptionModal';
-import { encryptData, decryptData } from '../../utils/crypto';
 
 const EditorView: React.FC = () => {
   const { 
@@ -24,8 +23,7 @@ const EditorView: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [selectedText, setSelectedText] = useState('');
-  const [cursorPosition, setCursorPosition] = useState(0);
+  const [editorRef, setEditorRef] = useState<HTMLDivElement | null>(null);
 
   useAutoSave(activeNoteId, localContent);
 
@@ -116,10 +114,12 @@ const EditorView: React.FC = () => {
     setLocalContent(content);
     
     // Update the note immediately for real-time sync
-    updateNote(activeNote.id, { content });
+    if (activeNote) {
+      updateNote(activeNote.id, { content });
+    }
     
     // Auto-detect language if in code mode
-    if (activeNote.isCodeMode) {
+    if (activeNote && activeNote.isCodeMode) {
       const detectedLanguage = detectLanguage(content);
       if (detectedLanguage !== activeNote.language) {
         updateNote(activeNote.id, { language: detectedLanguage });
@@ -127,7 +127,7 @@ const EditorView: React.FC = () => {
     }
     
     // Update title if empty and content has text
-    if (!activeNote.title || activeNote.title === 'Untitled Note') {
+    if (activeNote && (!activeNote.title || activeNote.title === 'Untitled Note')) {
       const firstLine = content.split('\n')[0].substring(0, 50).trim();
       if (firstLine) {
         updateNote(activeNote.id, { title: firstLine });
@@ -135,6 +135,20 @@ const EditorView: React.FC = () => {
     }
     
     setLastSaved(new Date());
+  };
+
+  const getContentAnalysis = () => {
+    if (!activeNote) return { hasLists: false, hasLinks: false, hasCode: false, hasSelection: false };
+    
+    const content = activeNote.content || '';
+    return {
+      hasLists: /^[\s]*[-*+]\s|^[\s]*\d+\.\s/m.test(content),
+      hasLinks: /https?:\/\/|www\.|\.com|\.org|\.net/i.test(content) || /\[.*?\]\(.*?\)/.test(content),
+      hasCode: /```|`[^`]+`|<code>/.test(content),
+      hasSelection: window.getSelection()?.toString().length > 0,
+      selectedText: window.getSelection()?.toString() || '',
+      wordCount: content.split(/\s+/).filter(w => w.length > 0).length
+    };
   };
 
   const handleToggleCodeMode = () => {
@@ -179,8 +193,7 @@ const EditorView: React.FC = () => {
           onStopRecording={stopRecording}
           isRecording={isRecording}
           isTranscribing={isTranscribing}
-          selectedText={selectedText}
-          cursorPosition={cursorPosition}
+          contentAnalysis={getContentAnalysis()}
         />
         
         <div className="flex-1 overflow-hidden relative">
@@ -190,39 +203,33 @@ const EditorView: React.FC = () => {
               onChange={handleContentChange}
             />
           ) : (
-            <div
-              contentEditable
-              suppressContentEditableWarning={true}
-              onInput={(e) => {
-                const target = e.target as HTMLDivElement;
-                handleContentChange(target.innerHTML);
+            <textarea
+              ref={(ref) => setEditorRef(ref)}
+              value={localContent}
+              onChange={(e) => {
+                const newContent = e.target.value;
+                setLocalContent(newContent);
+                handleContentChange(newContent);
               }}
-              onSelect={() => {
-                const selection = window.getSelection();
-                if (selection) {
-                  setSelectedText(selection.toString());
-                }
+              onSelect={(e) => {
+                // Update selection for toolbar context
+                const target = e.target as HTMLTextAreaElement;
+                const start = target.selectionStart;
+                const end = target.selectionEnd;
+                const selectedText = target.value.substring(start, end);
+                // Trigger toolbar update if needed
               }}
-              onCopy={(e) => {
-                // Ensure plain text copying without background styles
-                const selection = window.getSelection();
-                if (selection) {
-                  const text = selection.toString();
-                  e.clipboardData?.setData('text/plain', text);
-                  e.preventDefault();
-                }
-              }}
-              className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full"
+              placeholder="Start writing your note..."
+              className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full w-full resize-none bg-transparent border-none text-gray-900 dark:text-gray-100"
               style={{
                 fontSize: `${settings.fontSize}px`,
                 lineHeight: settings.lineHeight,
                 fontFamily: settings.fontFamily,
-                wordWrap: 'break-word',
-                whiteSpace: 'pre-wrap',
-                overflowWrap: 'break-word',
-                wordBreak: 'break-word',
+                whiteSpace: 'pre-wrap', // Preserve whitespace and wrap
+                wordWrap: 'break-word', // Break long words
+                overflowWrap: 'break-word', // Modern word breaking
+                wordBreak: 'break-word', // Break words when necessary
               }}
-              dangerouslySetInnerHTML={{ __html: localContent }}
             />
           )}
           
