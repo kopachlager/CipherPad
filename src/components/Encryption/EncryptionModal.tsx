@@ -41,6 +41,8 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
           return;
         }
         onSave(decryptedContent, false);
+        setPassword('');
+        setConfirmPassword('');
         onClose();
       } catch (err) {
         setError('Failed to decrypt note. Please check your password.');
@@ -60,6 +62,8 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
       try {
         const encryptedContent = encryptData(note.content, password);
         onSave(encryptedContent, true);
+        setPassword('');
+        setConfirmPassword('');
         onClose();
       } catch (err) {
         setError('Failed to encrypt note');

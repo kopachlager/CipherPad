@@ -24,6 +24,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { settings, updateSettings } = useStore();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('appearance');
+  const [tempSettings, setTempSettings] = useState(settings);
+
+  // Update temp settings when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setTempSettings(settings);
+    }
+  }, [isOpen, settings]);
 
   if (!isOpen) return null;
 
@@ -53,11 +61,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const Toggle: React.FC<{
     checked: boolean;
     onChange: (checked: boolean) => void;
-  }> = ({ checked, onChange }) => (
+    disabled?: boolean;
+  }> = ({ checked, onChange, disabled = false }) => (
     <button
+      disabled={disabled}
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        checked ? 'bg-gray-900 dark:bg-gray-100' : 'bg-gray-200 dark:bg-gray-700'
+        disabled 
+          ? 'opacity-50 cursor-not-allowed bg-gray-200 dark:bg-gray-700'
+          : checked 
+            ? 'bg-gray-900 dark:bg-gray-100' 
+            : 'bg-gray-200 dark:bg-gray-700'
       }`}
     >
       <span
@@ -82,9 +96,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           ].map((themeOption) => (
             <button
               key={themeOption.value}
-              onClick={() => updateSettings({ theme: themeOption.value as any })}
+              onClick={() => {
+                const newSettings = { ...tempSettings, theme: themeOption.value as any };
+                setTempSettings(newSettings);
+                updateSettings({ theme: themeOption.value as any });
+              }}
               className={`p-2 rounded-md border transition-colors ${
-                settings.theme === themeOption.value
+                tempSettings.theme === themeOption.value
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
                   : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
@@ -101,8 +119,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Hide all UI elements except the editor"
       >
         <Toggle
-          checked={settings.distractionFreeMode}
-          onChange={(checked) => updateSettings({ distractionFreeMode: checked })}
+          checked={tempSettings.distractionFreeMode}
+          onChange={(checked) => {
+            const newSettings = { ...tempSettings, distractionFreeMode: checked };
+            setTempSettings(newSettings);
+            updateSettings({ distractionFreeMode: checked });
+          }}
         />
       </SettingItem>
     </div>
@@ -116,14 +138,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       >
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => updateSettings({ fontSize: Math.max(settings.fontSize - 2, 12) })}
+            onClick={() => {
+              const newSize = Math.max(tempSettings.fontSize - 2, 12);
+              const newSettings = { ...tempSettings, fontSize: newSize };
+              setTempSettings(newSettings);
+              updateSettings({ fontSize: newSize });
+            }}
             className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <Type className="w-3 h-3" />
           </button>
-          <span className="text-sm font-mono w-8 text-center">{settings.fontSize}</span>
+          <span className="text-sm font-mono w-8 text-center">{tempSettings.fontSize}</span>
           <button
-            onClick={() => updateSettings({ fontSize: Math.min(settings.fontSize + 2, 24) })}
+            onClick={() => {
+              const newSize = Math.min(tempSettings.fontSize + 2, 24);
+              const newSettings = { ...tempSettings, fontSize: newSize };
+              setTempSettings(newSettings);
+              updateSettings({ fontSize: newSize });
+            }}
             className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <Type className="w-4 h-4" />
@@ -136,8 +168,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Adjust line spacing for better readability"
       >
         <select
-          value={settings.lineHeight}
-          onChange={(e) => updateSettings({ lineHeight: parseFloat(e.target.value) })}
+          value={tempSettings.lineHeight}
+          onChange={(e) => {
+            const newLineHeight = parseFloat(e.target.value);
+            const newSettings = { ...tempSettings, lineHeight: newLineHeight };
+            setTempSettings(newSettings);
+            updateSettings({ lineHeight: newLineHeight });
+          }}
           className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
           <option value={1.2}>Tight (1.2)</option>
@@ -152,8 +189,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Automatically save changes as you type"
       >
         <Toggle
-          checked={settings.autoSave}
-          onChange={(checked) => updateSettings({ autoSave: checked })}
+          checked={tempSettings.autoSave}
+          onChange={(checked) => {
+            const newSettings = { ...tempSettings, autoSave: checked };
+            setTempSettings(newSettings);
+            updateSettings({ autoSave: checked });
+          }}
         />
       </SettingItem>
 
@@ -162,8 +203,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Display word and character count in status bar"
       >
         <Toggle
-          checked={settings.showWordCount}
-          onChange={(checked) => updateSettings({ showWordCount: checked })}
+          checked={tempSettings.showWordCount}
+          onChange={(checked) => {
+            const newSettings = { ...tempSettings, showWordCount: checked };
+            setTempSettings(newSettings);
+            updateSettings({ showWordCount: checked });
+          }}
         />
       </SettingItem>
     </div>
@@ -176,19 +221,28 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Automatically lock the app after inactivity"
       >
         <Toggle
-          checked={settings.autoLock}
-          onChange={(checked) => updateSettings({ autoLock: checked })}
+          checked={tempSettings.autoLock}
+          onChange={(checked) => {
+            const newSettings = { ...tempSettings, autoLock: checked };
+            setTempSettings(newSettings);
+            updateSettings({ autoLock: checked });
+          }}
         />
       </SettingItem>
 
-      {settings.autoLock && (
+      {tempSettings.autoLock && (
         <SettingItem
           label="Auto-Lock Timeout"
           description="Time before auto-lock activates"
         >
           <select
-            value={settings.autoLockTimeout}
-            onChange={(e) => updateSettings({ autoLockTimeout: parseInt(e.target.value) })}
+            value={tempSettings.autoLockTimeout}
+            onChange={(e) => {
+              const newTimeout = parseInt(e.target.value);
+              const newSettings = { ...tempSettings, autoLockTimeout: newTimeout };
+              setTempSettings(newSettings);
+              updateSettings({ autoLockTimeout: newTimeout });
+            }}
             className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             <option value={60000}>1 minute</option>
@@ -204,8 +258,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Use fingerprint or face recognition when available"
       >
         <Toggle
-          checked={settings.biometricAuth}
-          onChange={(checked) => updateSettings({ biometricAuth: checked })}
+          checked={tempSettings.biometricAuth}
+          onChange={(checked) => {
+            const newSettings = { ...tempSettings, biometricAuth: checked };
+            setTempSettings(newSettings);
+            updateSettings({ biometricAuth: checked });
+          }}
+          disabled={!('credentials' in navigator)}
         />
       </SettingItem>
     </div>
