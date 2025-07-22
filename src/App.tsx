@@ -109,7 +109,7 @@ const App: React.FC = () => {
       } p-4 md:p-8`}>
         {/* Desktop Frame Container */}
         <div className="max-w-7xl mx-auto">
-          <div className={`bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
+          <div className={`bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
             settings.distractionFreeMode 
               ? 'h-[calc(100vh-4rem)] md:h-[calc(100vh-8rem)]' 
               : 'h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)]'

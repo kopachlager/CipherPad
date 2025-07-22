@@ -178,7 +178,7 @@ const Sidebar: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                 Quick Access
               </h3>
@@ -217,7 +217,7 @@ const Sidebar: React.FC = () => {
             </div>
 
             {/* Folders */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                   Folders
@@ -267,7 +267,7 @@ const Sidebar: React.FC = () => {
 
             {/* Notes List - Minimal One Line */}
             {filteredNotes.length > 0 && (
-              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xs border border-gray-200 dark:border-gray-700">
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                   {viewMode === 'trash' ? 'Deleted Notes' : 
                    viewMode === 'favorites' ? 'Favorite Notes' : 
