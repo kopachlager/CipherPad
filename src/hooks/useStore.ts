@@ -78,6 +78,20 @@ export const useStore = create<Store>()(
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // First, ensure user exists in users table
+        const { error: userError } = await supabase
+          .from('users')
+          .upsert({ 
+            id: user.id, 
+            email: user.email || '' 
+          }, { 
+            onConflict: 'id' 
+          });
+
+        if (userError) {
+          console.error('Error ensuring user exists:', userError);
+        }
+
         const { data, error } = await supabase
           .from('notes')
           .select('*')
@@ -213,6 +227,20 @@ export const useStore = create<Store>()(
       loadFolders: async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
+
+        // First, ensure user exists in users table
+        const { error: userError } = await supabase
+          .from('users')
+          .upsert({ 
+            id: user.id, 
+            email: user.email || '' 
+          }, { 
+            onConflict: 'id' 
+          });
+
+        if (userError) {
+          console.error('Error ensuring user exists:', userError);
+        }
 
         const { data, error } = await supabase
           .from('folders')
