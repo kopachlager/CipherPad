@@ -484,12 +484,6 @@ const Sidebar: React.FC = () => {
                                   <div className="text-sm font-medium truncate">
                                     {note.title || 'Untitled'}
                                   </div>
-                                  <div className="text-xs text-gray-400 truncate">
-                                    {formatDate(note.updatedAt)} • {note.content.length} chars
-                                    {note.folderId && groupBy !== 'folder' && (
-                                      <span> • {folders.find(f => f.id === note.folderId)?.name}</span>
-                                    )}
-                                  </div>
                                 </div>
                               </div>
                               
