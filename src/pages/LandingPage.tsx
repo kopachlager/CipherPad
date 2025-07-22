@@ -12,9 +12,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       const heroGraphic = document.getElementById('hero-graphic');
       if (heroGraphic) {
         const scrollY = window.scrollY;
-        const maxTilt = -8; // Maximum tilt in degrees (negative for down to top)
+        const maxTilt = 8; // Maximum tilt in degrees
         const tiltAmount = Math.min(scrollY / 100, maxTilt);
-        heroGraphic.style.transform = `perspective(1000px) rotateX(${-tiltAmount}deg)`;
+        heroGraphic.style.transform = `perspective(1000px) rotateX(${tiltAmount}deg)`;
       }
     };
 
@@ -92,139 +92,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           {/* App Preview Placeholder */}
           <div className="relative max-w-6xl mx-auto">
             <div className="bg-gray-900 rounded-3xl p-6 shadow-2xl transform transition-transform duration-1000 ease-out" id="hero-graphic">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-inner">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden">
                 {/* Mock App Interface */}
-                <div className="h-14 bg-white border-b border-gray-200 flex items-center px-6">
+                <div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center px-6">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
                   <div className="flex-1 text-center">
-                    <div className="text-sm text-gray-600 font-medium">CipherWrite</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">CipherWrite</div>
                   </div>
                 </div>
                 
-                <div className="flex h-[500px] bg-gray-50">
+                <div className="flex h-[500px]">
                   {/* Sidebar */}
-                  <div className="w-80 bg-gray-50 border-r border-gray-200 p-4">
-                    {/* Search Bar */}
-                    <div className="mb-6 p-4 bg-white rounded-xl border border-gray-200">
-                      <div className="relative">
-                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-gray-300 rounded-full"></div>
-                        <div className="pl-10 pr-4 py-2 bg-gray-50 rounded-md">
-                          <div className="h-2 bg-gray-200 rounded w-20"></div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Quick Access */}
-                    <div className="mb-6 bg-white rounded-xl border border-gray-200 p-4">
-                      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Quick Access</div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between p-2 bg-gray-100 rounded-md">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 bg-gray-400 rounded"></div>
-                            <span className="text-sm font-medium text-gray-700">All Notes</span>
-                          </div>
-                          <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">12</span>
-                        </div>
-                        <div className="flex items-center justify-between p-2 rounded-md">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                            <span className="text-sm text-gray-600">Favorites</span>
-                          </div>
-                          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">3</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Notes List */}
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
-                      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Recent Notes</div>
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-900 truncate">Project Planning</div>
-                            <div className="text-xs text-gray-500">2 hours ago</div>
-                          </div>
-                          <div className="w-4 h-4 bg-gray-300 rounded"></div>
-                        </div>
-                        <div className="flex items-center space-x-3 p-3 rounded-lg">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-700 truncate">Meeting Notes</div>
-                            <div className="text-xs text-gray-500">1 day ago</div>
-                          </div>
-                          <div className="w-4 h-4 bg-gray-300 rounded"></div>
-                        </div>
-                        <div className="flex items-center space-x-3 p-3 rounded-lg">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-700 truncate">Ideas & Thoughts</div>
-                            <div className="text-xs text-gray-500">3 days ago</div>
-                          </div>
-                          <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Main Editor Area */}
-                  <div className="flex-1 bg-white flex flex-col">
-                    {/* Toolbar */}
-                    <div className="h-12 border-b border-gray-200 flex items-center justify-between px-6">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-gray-200 rounded"></div>
-                        <div className="w-6 h-6 bg-gray-200 rounded"></div>
-                        <div className="w-6 h-6 bg-gray-200 rounded"></div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-yellow-200 rounded"></div>
-                        <div className="w-6 h-6 bg-gray-200 rounded"></div>
-                        <div className="w-6 h-6 bg-gray-200 rounded"></div>
-                      </div>
-                    </div>
-                    
-                    {/* Editor Content */}
-                    <div className="flex-1 p-8">
-                      {/* Title */}
-                      <div className="mb-6">
-                        <div className="h-8 bg-gray-100 rounded-lg w-64 mb-2"></div>
-                      </div>
-                      
-                      {/* Content Lines */}
-                      <div className="space-y-4">
-                        <div className="h-4 bg-gray-100 rounded w-full"></div>
-                        <div className="h-4 bg-gray-100 rounded w-5/6"></div>
-                        <div className="h-4 bg-gray-100 rounded w-4/6"></div>
-                        <div className="h-4 bg-gray-100 rounded w-full"></div>
-                        <div className="h-4 bg-gray-100 rounded w-3/4"></div>
-                        <div className="h-4 bg-gray-100 rounded w-5/6"></div>
-                        <div className="h-4 bg-gray-100 rounded w-2/3"></div>
-                        <div className="h-4 bg-gray-100 rounded w-full"></div>
-                        <div className="h-4 bg-gray-100 rounded w-4/5"></div>
-                      </div>
-                    </div>
-                    
-                    {/* Status Bar */}
-                    <div className="h-8 bg-gray-50 border-t border-gray-200 flex items-center justify-between px-6">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          <div className="w-3 h-3 bg-gray-300 rounded"></div>
-                          <div className="h-2 bg-gray-200 rounded w-12"></div>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <div className="w-3 h-3 bg-gray-300 rounded"></div>
-                          <div className="h-2 bg-gray-200 rounded w-16"></div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <div className="w-3 h-3 bg-green-400 rounded"></div>
-                        <div className="h-2 bg-gray-200 rounded w-16"></div>
-                      </div>
-                    </div>
+                  <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <div className="flex-1">
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Meeting Notes</div>
@@ -247,6 +132,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                         </div>
                         <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                       </div>
+                    </div>
+                  </div>
+                  
+                  {/* Editor */}
+                  <div className="flex-1 p-8">
+                    <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded-lg mb-6 w-64"></div>
+                    <div className="space-y-4">
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-full"></div>
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-5/6"></div>
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-4/6"></div>
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-full"></div>
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-3/4"></div>
+                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-5/6"></div>
                     </div>
                   </div>
                 </div>
