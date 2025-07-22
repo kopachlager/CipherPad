@@ -10,6 +10,9 @@
 
 :root {
   --accent-color: #6b7280;
+  --color-primary: #6b7280;
+  --color-primary-hover: #4b5563;
+  --color-primary-light: #9ca3af;
   --font-size: 16px;
   --line-height: 1.6;
 }
@@ -91,7 +94,7 @@ body {
 
 /* Focus styles */
 .focus-visible {
-  outline: 2px solid var(--accent-color);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 

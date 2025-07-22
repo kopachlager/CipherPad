@@ -11,7 +11,7 @@ import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const App: React.FC = () => {
-  const { settings, updateLastActivity, loadNotes, loadFolders } = useStore();
+  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings } = useStore();
   const { user, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   useTheme();
@@ -23,8 +23,9 @@ const App: React.FC = () => {
       console.log('User authenticated, loading data...');
       loadNotes();
       loadFolders();
+      loadSettings();
     }
-  }, [user, loadNotes, loadFolders]);
+  }, [user, loadNotes, loadFolders, loadSettings]);
 
   // Show auth modal if not authenticated and not loading
   useEffect(() => {

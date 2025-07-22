@@ -40,6 +40,8 @@ interface Store {
   setSelectedFolder: (id: string | null) => void;
   updateSettings: (updates: Partial<AppSettings>) => void;
   
+  loadSettings: () => Promise<void>;
+  
   setSidebarOpen: (open: boolean) => void;
   setSearchQuery: (query: string) => void;
   
@@ -357,11 +359,79 @@ export const useStore = create<Store>()(
       },
 
       updateSettings: (updates) => {
-        set((state) => {
-          const newSettings = { ...state.settings, ...updates };
+        const updateSettingsAsync = async () => {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+
+          const newSettings = { ...get().settings, ...updates };
+          
+          // Save to localStorage as backup
           saveSettings(newSettings);
-          return { settings: newSettings };
-        });
+          
+          // Save to Supabase
+          const dbUpdates: any = {};
+          if (updates.theme !== undefined) dbUpdates.theme = updates.theme;
+          if (updates.accentColor !== undefined) dbUpdates.accent_color = updates.accentColor;
+          if (updates.fontFamily !== undefined) dbUpdates.font_family = updates.fontFamily;
+          if (updates.fontSize !== undefined) dbUpdates.font_size = updates.fontSize;
+          if (updates.lineHeight !== undefined) dbUpdates.line_height = updates.lineHeight;
+          if (updates.autoSave !== undefined) dbUpdates.auto_save = updates.autoSave;
+          if (updates.autoLock !== undefined) dbUpdates.auto_lock = updates.autoLock;
+          if (updates.autoLockTimeout !== undefined) dbUpdates.auto_lock_timeout = updates.autoLockTimeout;
+          if (updates.biometricAuth !== undefined) dbUpdates.biometric_auth = updates.biometricAuth;
+          if (updates.showWordCount !== undefined) dbUpdates.show_word_count = updates.showWordCount;
+          if (updates.distractionFreeMode !== undefined) dbUpdates.distraction_free_mode = updates.distractionFreeMode;
+
+          const { error } = await supabase
+            .from('user_settings')
+            .upsert({
+              user_id: user.id,
+              ...dbUpdates,
+            });
+
+          if (error) {
+            console.error('Error saving settings:', error);
+          }
+
+          set({ settings: newSettings });
+        };
+        
+        updateSettingsAsync();
+      },
+
+      loadSettings: async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('user_settings')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+          console.error('Error loading settings:', error);
+          return;
+        }
+
+        if (data) {
+          const settings: AppSettings = {
+            theme: data.theme as any,
+            accentColor: data.accent_color,
+            fontFamily: data.font_family,
+            fontSize: data.font_size,
+            lineHeight: data.line_height,
+            autoSave: data.auto_save,
+            autoLock: data.auto_lock,
+            autoLockTimeout: data.auto_lock_timeout,
+            biometricAuth: data.biometric_auth,
+            showWordCount: data.show_word_count,
+            distractionFreeMode: data.distraction_free_mode,
+          };
+          
+          set({ settings });
+          saveSettings(settings); // Backup to localStorage
+        }
       },
 
       setSidebarOpen: (open) => {

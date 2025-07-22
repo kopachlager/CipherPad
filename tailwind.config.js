@@ -20,6 +20,18 @@ export default {
           800: '#1f2937',
           900: '#111827',
         },
+        primary: {
+          50: 'rgb(var(--color-primary-light) / 0.1)',
+          100: 'rgb(var(--color-primary-light) / 0.2)',
+          200: 'rgb(var(--color-primary-light) / 0.3)',
+          300: 'var(--color-primary-light)',
+          400: 'var(--color-primary)',
+          500: 'var(--color-primary)',
+          600: 'var(--color-primary-hover)',
+          700: 'var(--color-primary-hover)',
+          800: 'var(--color-primary-hover)',
+          900: 'var(--color-primary-hover)',
+        },
       },
       spacing: {
         '18': '4.5rem',

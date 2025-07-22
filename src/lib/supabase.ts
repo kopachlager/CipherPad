@@ -94,6 +94,56 @@ export type Database = {
           user_id?: string;
         };
       };
+      user_settings: {
+        Row: {
+          user_id: string;
+          theme: string;
+          accent_color: string;
+          font_family: string;
+          font_size: number;
+          line_height: number;
+          auto_save: boolean;
+          auto_lock: boolean;
+          auto_lock_timeout: number;
+          biometric_auth: boolean;
+          show_word_count: boolean;
+          distraction_free_mode: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          theme?: string;
+          accent_color?: string;
+          font_family?: string;
+          font_size?: number;
+          line_height?: number;
+          auto_save?: boolean;
+          auto_lock?: boolean;
+          auto_lock_timeout?: number;
+          biometric_auth?: boolean;
+          show_word_count?: boolean;
+          distraction_free_mode?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          theme?: string;
+          accent_color?: string;
+          font_family?: string;
+          font_size?: number;
+          line_height?: number;
+          auto_save?: boolean;
+          auto_lock?: boolean;
+          auto_lock_timeout?: number;
+          biometric_auth?: boolean;
+          show_word_count?: boolean;
+          distraction_free_mode?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 };
