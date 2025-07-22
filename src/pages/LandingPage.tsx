@@ -17,23 +17,20 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
                 <Lock className="w-4 h-4 text-white" />
               </div>
-              <div>
-                <div className="font-semibold text-gray-900">CipherWrite</div>
-                <div className="text-xs text-gray-500">Secure Notes</div>
-              </div>
+              <div className="font-bold text-xl text-gray-900">CipherWrite</div>
             </div>
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-              <a href="#security" className="text-gray-600 hover:text-gray-900 transition-colors">Security</a>
-              <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+              <a href="#features" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">Features</a>
+              <a href="#testimonials" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">Reviews</a>
+              <a href="#pricing" className="text-gray-700 hover:text-gray-900 transition-colors font-medium">Pricing</a>
             </nav>
 
             {/* CTA Button */}
             <button
               onClick={onGetStarted}
-              className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-5 py-2 rounded-full font-medium transition-colors"
             >
               Get Started
             </button>
@@ -66,12 +63,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20">
             <button
               onClick={onGetStarted}
-              className="bg-gray-900 hover:bg-gray-800 text-white px-10 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-105 flex items-center space-x-2"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-full font-semibold text-lg transition-all hover:scale-105 flex items-center space-x-2"
             >
               <span>Start Writing</span>
               <ArrowRight className="w-5 h-5" />
             </button>
-            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-10 py-4 rounded-xl font-semibold text-lg transition-colors">
+            <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-full font-semibold text-lg transition-colors">
               Learn More
             </button>
           </div>
@@ -185,7 +182,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             {/* First Row - Large + Small */}
             <div className="grid md:grid-cols-3 gap-8">
               {/* Large Feature Card */}
-              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-left">
+              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-left">
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Lock className="w-6 h-6 text-white" />
                 </div>
@@ -210,7 +207,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </div>
               
               {/* Small Feature Card */}
-              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-right">
+              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-right">
                 <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
@@ -226,7 +223,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             {/* Second Row - Small + Large */}
             <div className="grid md:grid-cols-3 gap-8">
               {/* Small Feature Card */}
-              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-left delay-200">
+              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-left delay-100">
                 <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
                   <Eye className="w-5 h-5 text-white" />
                 </div>
@@ -239,7 +236,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </div>
               
               {/* Large Feature Card */}
-              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-right delay-200">
+              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-right delay-100">
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Code className="w-6 h-6 text-white" />
                 </div>
@@ -270,7 +267,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             
             {/* Third Row - Additional Features */}
             <div className="grid md:grid-cols-4 gap-6">
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-300">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-150">
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Mic className="w-6 h-6 text-white" />
                 </div>
@@ -282,7 +279,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 </p>
               </div>
               
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-400">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-200">
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Download className="w-6 h-6 text-white" />
                 </div>
@@ -294,7 +291,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 </p>
               </div>
               
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-500">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-250">
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Shield className="w-6 h-6 text-white" />
                 </div>
@@ -306,7 +303,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 </p>
               </div>
               
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-600">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-300">
                 <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
                   <Star className="w-6 h-6 text-white" />
                 </div>
@@ -405,95 +402,48 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       {/* Stats Section */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Left Content */}
-            <div>
-              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                <span>The numbers</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                The pinnacle of secure note-taking
-              </h2>
-              <p className="text-lg text-gray-600 mb-12 leading-relaxed">
-                The world's most trusted note-taking app. Meticulously crafted with 
-                end-to-end encryption, real-time sync, and distraction-free writing.
-              </p>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>The numbers</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight max-w-4xl mx-auto">
+              The pinnacle of secure note-taking
+            </h2>
+            <p className="text-lg text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
+              The world's most trusted note-taking app. Meticulously crafted with 
+              end-to-end encryption, real-time sync, and distraction-free writing.
+            </p>
+          </div>
 
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-12">
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">1000+</div>
-                  <div className="text-gray-900 font-bold mb-2 text-lg">Active users</div>
-                  <div className="text-gray-600">
-                    Growing community of writers and professionals
-                  </div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">99.9%</div>
-                  <div className="text-gray-900 font-bold mb-2 text-lg">Uptime</div>
-                  <div className="text-gray-600">
-                    Reliable service you can count on
-                  </div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">#1</div>
-                  <div className="text-gray-900 font-bold mb-2 text-lg">Security focused</div>
-                  <div className="text-gray-600">
-                    Leading encryption standards
-                  </div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">24/7</div>
-                  <div className="text-gray-900 font-bold mb-2 text-lg">Sync availability</div>
-                  <div className="text-gray-600">
-                    Your notes, everywhere, anytime
-                  </div>
-                </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-orange-500 mb-3">1000+</div>
+              <div className="text-gray-900 font-bold mb-2 text-lg">Active users</div>
+              <div className="text-gray-600 text-sm">
+                Growing community of writers and professionals
               </div>
             </div>
-
-            {/* Right - App Preview */}
-            <div className="relative">
-              <div className="bg-gray-900 rounded-3xl p-8 shadow-2xl">
-                <div className="bg-white rounded-2xl overflow-hidden">
-                  {/* Mock App Header */}
-                  <div className="h-14 bg-gray-50 border-b border-gray-200 flex items-center px-6">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                    </div>
-                    <div className="flex-1 text-center">
-                      <div className="text-sm text-gray-600 font-medium">2024 Note Planner</div>
-                    </div>
-                  </div>
-                  
-                  {/* Mock App Content */}
-                  <div className="p-8 h-96">
-                    <div className="mb-4">
-                      <div className="text-xl font-bold text-gray-900 mb-4">How to use:</div>
-                      <div className="text-gray-600 mb-6">
-                        For each day, choose what to write from your thoughts, where you keep ideas and notes.
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="font-medium text-gray-700">📝 Daily Notes</span>
-                      </div>
-                      <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="font-medium text-gray-700">🛒 Ideas List</span>
-                      </div>
-                      <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                        <span className="font-medium text-gray-700">📅 Weekly Plan</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-orange-500 mb-3">99.9%</div>
+              <div className="text-gray-900 font-bold mb-2 text-lg">Uptime</div>
+              <div className="text-gray-600 text-sm">
+                Reliable service you can count on
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-orange-500 mb-3">#1</div>
+              <div className="text-gray-900 font-bold mb-2 text-lg">Security focused</div>
+              <div className="text-gray-600 text-sm">
+                Leading encryption standards
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-orange-500 mb-3">24/7</div>
+              <div className="text-gray-900 font-bold mb-2 text-lg">Sync availability</div>
+              <div className="text-gray-600 text-sm">
+                Your notes, everywhere, anytime
               </div>
             </div>
           </div>
@@ -501,7 +451,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-white">
+      <section id="testimonials" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20">
@@ -521,7 +471,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           {/* Testimonials Grid - 2 rows, 3 columns */}
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto animate-fade-in">
             {/* Testimonial 1 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -540,7 +490,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -561,7 +511,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -581,7 +531,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 4 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -601,7 +551,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 5 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -621,7 +571,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 6 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -664,7 +614,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           {/* Pricing Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Basic Plan */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
                   Basic Plan<span className="text-sm font-normal">*</span>
@@ -721,7 +671,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Writer's Plan */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm relative hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm relative hover:shadow-md transition-all duration-300 hover:-translate-y-1">
               {/* Popular Badge */}
               <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
                 <div className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-medium">
@@ -812,10 +762,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12">
             {/* Brand */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-1">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                  <Lock className="w-4 h-4 text-gray-900" />
+                  <Lock className="w-5 h-5 text-gray-900" />
                 </div>
                 <div className="font-bold text-white text-2xl">CipherWrite</div>
               </div>
@@ -838,6 +788,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <li><a href="#pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Security</a></li>
                 <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Updates</a></li>
+              </ul>
+            </div>
+            
+            {/* Resources */}
+            <div>
+              <h4 className="font-semibold text-white mb-6">Resources</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Community</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">API Reference</a></li>
               </ul>
             </div>
             
