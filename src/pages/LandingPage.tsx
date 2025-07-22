@@ -175,6 +175,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             <h2 className="text-3xl font-medium mb-6 max-w-4xl mx-auto" style={{ fontSize: '32px', lineHeight: '40px', fontWeight: 500, color: 'rgb(28, 28, 28)' }}>
               Your ultimate secure note-taking experience
             </h2>
+            </h2>
             <p className="text-base max-w-3xl mx-auto" style={{ fontSize: '16px', lineHeight: '26px', fontWeight: 400, color: 'rgb(83, 83, 92)' }}>
               Discover how CipherWrite can revolutionize the way you work and 
               organize. Explore a myriad of features designed to enhance your productivity.
