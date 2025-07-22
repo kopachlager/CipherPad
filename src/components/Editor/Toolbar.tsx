@@ -316,7 +316,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     <Quote className="w-4 h-4" />
                     <span>Quote</span>
                   </button>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                  <div className="border-t border-gray-300 dark:border-gray-600 my-1"></div>
                   <button
                     onClick={() => {
                       handleDownload();
