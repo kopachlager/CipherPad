@@ -407,26 +407,27 @@ export const useStore = create<Store>()(
           .from('user_settings')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .limit(1);
 
-        if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        if (error) {
           console.error('Error loading settings:', error);
           return;
         }
 
-        if (data) {
+        if (data && data.length > 0) {
+          const settingsData = data[0];
           const settings: AppSettings = {
-            theme: data.theme as any,
-            accentColor: data.accent_color,
-            fontFamily: data.font_family,
-            fontSize: data.font_size,
-            lineHeight: data.line_height,
-            autoSave: data.auto_save,
-            autoLock: data.auto_lock,
-            autoLockTimeout: data.auto_lock_timeout,
-            biometricAuth: data.biometric_auth,
-            showWordCount: data.show_word_count,
-            distractionFreeMode: data.distraction_free_mode,
+            theme: settingsData.theme as any,
+            accentColor: settingsData.accent_color,
+            fontFamily: settingsData.font_family,
+            fontSize: settingsData.font_size,
+            lineHeight: settingsData.line_height,
+            autoSave: settingsData.auto_save,
+            autoLock: settingsData.auto_lock,
+            autoLockTimeout: settingsData.auto_lock_timeout,
+            biometricAuth: settingsData.biometric_auth,
+            showWordCount: settingsData.show_word_count,
+            distractionFreeMode: settingsData.distraction_free_mode,
           };
           
           set({ settings });
