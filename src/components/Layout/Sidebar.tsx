@@ -54,21 +54,38 @@ const Sidebar: React.FC = () => {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
 
   const filteredNotes = notes.filter((note) => {
-    // Filter by view mode
-    if (viewMode === 'trash' && !note.isDeleted) return false;
-    if (viewMode === 'favorites' && !note.isFavorite) return false;
-    if (viewMode === 'all' && note.isDeleted) return false;
+    // First filter by view mode
+    let passesViewMode = false;
     
+    switch (viewMode) {
+      case 'trash':
+        passesViewMode = note.isDeleted;
+        break;
+      case 'favorites':
+        passesViewMode = note.isFavorite && !note.isDeleted;
+        break;
+      case 'all':
+      default:
+        passesViewMode = !note.isDeleted;
+        break;
+    }
+    
+    if (!passesViewMode) return false;
+    
+    // Then filter by search query
     const matchesSearch = searchQuery
       ? note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         note.content.toLowerCase().includes(searchQuery.toLowerCase())
       : true;
     
-    const matchesFolder = selectedFolderId
-      ? note.folderId === selectedFolderId
-      : !selectedFolderId || !note.folderId;
+    if (!matchesSearch) return false;
     
-    return matchesSearch && matchesFolder;
+    // Finally filter by selected folder (only if a folder is selected)
+    const matchesFolder = selectedFolderId 
+      ? note.folderId === selectedFolderId 
+      : true; // Show all notes if no folder is selected
+    
+    return matchesFolder;
   });
 
   // Sort notes

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MonacoEditor from './MonacoEditor';
+import RichTextEditor from './RichTextEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
 import { useStore } from '../../hooks/useStore';
@@ -109,9 +109,10 @@ const EditorView: React.FC = () => {
         />
         
         <div className="flex-1 overflow-hidden">
-          <MonacoEditor
+          <RichTextEditor
             note={activeNote}
             onChange={handleContentChange}
+            isCodeMode={activeNote.isCodeMode}
           />
         </div>
         
