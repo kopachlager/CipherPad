@@ -161,6 +161,242 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
         </div>
       </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>Features</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Your ultimate secure notepad
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover how our note-taking app can revolutionize the way you work and 
+              organize. Explore features designed to enhance your productivity.
+            </p>
+          </div>
+
+          {/* Feature Cards */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Feature 1 */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+              <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
+                <Lock className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                End-to-End Encryption
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Navigate your digital privacy effortlessly with our meticulously designed 
+                encryption, offering a clear and secure view of your personal notes.
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+              <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Lightning Fast Sync
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Navigate your workflow seamlessly with our real-time synchronization, 
+                offering instant access to your notes across all devices.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div>
+              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                <span>The numbers</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                The pinnacle of secure note-taking
+              </h2>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                The world's most trusted note-taking app. Meticulously crafted with 
+                end-to-end encryption, real-time sync, and distraction-free writing.
+              </p>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">1000+</div>
+                  <div className="text-gray-900 font-semibold mb-1">Active users</div>
+                  <div className="text-sm text-gray-600">
+                    Growing community of writers and professionals
+                  </div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">99.9%</div>
+                  <div className="text-gray-900 font-semibold mb-1">Uptime</div>
+                  <div className="text-sm text-gray-600">
+                    Reliable service you can count on
+                  </div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">#1</div>
+                  <div className="text-gray-900 font-semibold mb-1">Security focused</div>
+                  <div className="text-sm text-gray-600">
+                    Leading encryption standards
+                  </div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">24/7</div>
+                  <div className="text-gray-900 font-semibold mb-1">Sync availability</div>
+                  <div className="text-sm text-gray-600">
+                    Your notes, everywhere, anytime
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right - App Preview */}
+            <div className="relative">
+              <div className="bg-gray-900 rounded-2xl p-6 shadow-2xl">
+                <div className="bg-white rounded-xl overflow-hidden">
+                  {/* Mock App Header */}
+                  <div className="h-12 bg-gray-50 border-b border-gray-200 flex items-center px-6">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                    </div>
+                    <div className="flex-1 text-center">
+                      <div className="text-sm text-gray-600 font-medium">2024 Note Planner</div>
+                    </div>
+                  </div>
+                  
+                  {/* Mock App Content */}
+                  <div className="p-6 h-80">
+                    <div className="mb-4">
+                      <div className="text-lg font-semibold text-gray-900 mb-2">How to use:</div>
+                      <div className="text-sm text-gray-600 mb-4">
+                        For each day, choose what to write from your thoughts, where you keep ideas and notes.
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">📝 Daily Notes</span>
+                      </div>
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">🛒 Ideas List</span>
+                      </div>
+                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-gray-700">📅 Weekly Plan</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Left - Illustration */}
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-8 shadow-sm">
+                {/* Simple illustration placeholder */}
+                <div className="text-center">
+                  <div className="w-32 h-32 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <Shield className="w-16 h-16 text-gray-400" />
+                  </div>
+                  <div className="text-6xl mb-4">🛡️</div>
+                  <div className="text-sm text-gray-600">Your data is protected</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Content */}
+            <div>
+              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                <span>About us</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Hey there! We're the creative minds behind CipherWrite.
+              </h2>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Guided by a relentless commitment to simplifying your writing 
+                journey through intuitive and secure note-taking tools.
+              </p>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">5K+</div>
+                  <div className="text-gray-700 font-medium">Notes Created Daily</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">100+</div>
+                  <div className="text-gray-700 font-medium">Countries Served</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">256</div>
+                  <div className="text-gray-700 font-medium">Bit Encryption</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-orange-500 mb-2">24/7</div>
+                  <div className="text-gray-700 font-medium">Support Available</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <Lock className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <div className="font-semibold text-gray-900">CipherWrite</div>
+                <div className="text-xs text-gray-500">Secure Notes</div>
+              </div>
+            </div>
+            <p className="text-gray-600 mb-8">
+              Helping individuals and teams organize their thoughts securely.
+            </p>
+            
+            {/* Simple company logos */}
+            <div className="flex items-center justify-center space-x-8 opacity-60">
+              <div className="text-gray-400 font-medium">Trusted by teams at</div>
+              <div className="flex items-center space-x-6">
+                <div className="w-6 h-6 bg-blue-500 rounded"></div>
+                <div className="w-6 h-6 bg-green-500 rounded-full"></div>
+                <div className="w-6 h-6 bg-purple-500 rounded"></div>
+                <div className="w-6 h-6 bg-red-500 rounded-full"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
