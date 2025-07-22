@@ -249,6 +249,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                         <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                       </div>
                       
+                      <div className="space-y-3">
                       <div className="flex items-center space-x-3 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <div className="flex-1">
@@ -265,6 +266,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                         <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                       </div>
                     </div>
+                      </div>
                   </div>
                   
                   {/* Editor */}
