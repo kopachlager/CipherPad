@@ -107,27 +107,18 @@ const App: React.FC = () => {
   }
 
   // Show landing page for non-authenticated users
-  if (!user && showLanding) {
+  if (!user) {
     return (
       <div className="min-h-screen">
-        <LandingPage onGetStarted={() => setShowAuthModal(true)} />
-        <AuthModal 
-          isOpen={showAuthModal} 
-          onClose={() => setShowAuthModal(false)} 
-        />
-      </div>
-    );
-  }
-
-  // Show auth modal if user clicked get started but not authenticated
-  if (!user && !showLanding) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <LandingPage onGetStarted={() => {
+          setShowLanding(false);
+          setShowAuthModal(true);
+        }} />
         <AuthModal 
           isOpen={showAuthModal} 
           onClose={() => {
             setShowAuthModal(false);
-            setShowLanding(true); // Go back to landing page
+            setShowLanding(true);
           }} 
         />
       </div>
