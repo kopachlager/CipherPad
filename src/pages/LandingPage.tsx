@@ -813,62 +813,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Left - Illustration */}
-            <div className="relative">
-              <div className="bg-white rounded-3xl p-12 border border-gray-200">
-                {/* Simple illustration placeholder */}
-                <div className="text-center">
-                  <div className="w-40 h-40 bg-gray-100 rounded-full mx-auto mb-8 flex items-center justify-center">
-                    <Shield className="w-20 h-20 text-gray-400" />
-                  </div>
-                  <div className="text-8xl mb-6">🛡️</div>
-                  <div className="text-gray-600 text-lg">Your data is protected</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Content */}
-            <div>
-              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                <span>About us</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Hey there! We're the creative minds behind CipherWrite.
-              </h2>
-              <p className="text-lg text-gray-600 mb-12 leading-relaxed">
-                Guided by a relentless commitment to simplifying your writing 
-                journey through intuitive and secure note-taking tools.
-              </p>
-
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-12">
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">5K+</div>
-                  <div className="text-gray-700 font-bold text-lg">Notes Created Daily</div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">100+</div>
-                  <div className="text-gray-700 font-bold text-lg">Countries Served</div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">256</div>
-                  <div className="text-gray-700 font-bold text-lg">Bit Encryption</div>
-                </div>
-                <div>
-                  <div className="text-5xl font-bold text-orange-500 mb-3">24/7</div>
-                  <div className="text-gray-700 font-bold text-lg">Support Available</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-16">
         <div className="max-w-7xl mx-auto px-6">
