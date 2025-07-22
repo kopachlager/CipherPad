@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
@@ -13,6 +14,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 const App: React.FC = () => {
   const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings } = useStore();
   const { user, loading } = useAuth();
+  const [showLanding, setShowLanding] = React.useState(true);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   useTheme();
   useKeyboardShortcuts();
@@ -41,10 +43,11 @@ const App: React.FC = () => {
   // Show auth modal if not authenticated and not loading
   useEffect(() => {
     if (!loading && !user) {
-      console.log('User not authenticated, showing auth modal');
-      setShowAuthModal(true);
+      // Don't show auth modal immediately, let them see landing page first
+      setShowAuthModal(false);
     } else {
       setShowAuthModal(false);
+      setShowLanding(false); // Hide landing page when user is authenticated
     }
   }, [user, loading]);
 
@@ -103,10 +106,11 @@ const App: React.FC = () => {
     );
   }
 
-  // Show auth modal if user is not authenticated
-  if (!user) {
+  // Show landing page for non-authenticated users
+  if (!user && showLanding) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen">
+        <LandingPage onGetStarted={() => setShowAuthModal(true)} />
         <AuthModal 
           isOpen={showAuthModal} 
           onClose={() => setShowAuthModal(false)} 
@@ -114,6 +118,22 @@ const App: React.FC = () => {
       </div>
     );
   }
+
+  // Show auth modal if user clicked get started but not authenticated
+  if (!user && !showLanding) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => {
+            setShowAuthModal(false);
+            setShowLanding(true); // Go back to landing page
+          }} 
+        />
+      </div>
+    );
+  }
+  
   return (
     <Router>
       <div className={`min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 font-inter transition-all duration-300 ${
