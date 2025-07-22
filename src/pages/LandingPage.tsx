@@ -400,33 +400,135 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Testimonials</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
-              What our users say
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-5xl mx-auto leading-tight">
+              Your ultimate CipherWrite secure note-taking experience
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of writers, professionals, and teams who trust CipherWrite 
-              to keep their thoughts secure and organized.
+              The world's most advanced secure note-taking app. Meticulously crafted with 
+              end-to-end encryption, real-time sync, and distraction-free writing experience.
             </p>
           </div>
 
-          {/* Testimonials Grid */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {/* Testimonials Grid - 2 rows, 3 columns */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {/* Testimonial 1 */}
-            <div className="bg-white rounded-3xl p-10 border border-gray-200">
-              <div className="flex text-yellow-400 mb-6 text-lg">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
-              <p className="text-gray-700 mb-8 leading-relaxed text-lg">
-                "CipherWrite has completely transformed how I organize my thoughts. 
-                The encryption gives me peace of mind, and the interface is so clean."
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "🔒 CipherWrite is a security marvel! The end-to-end encryption keeps me confident, and 
+                the collaborative workspace fosters teamwork effortlessly. A total game-changer for secure 
+                note-taking workflows. 🛡️⚡ #SecurityBoost #CipherWrite"
               </p>
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">SJ</span>
+                <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Sarah Mitchell</div>
+                  <div className="text-gray-500 text-sm">Security Analyst</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "🌐 Explored various tools for secure note-taking, and 
+                nothing beats CipherWrite! Super impressed with the 
+                detailed encryption and the ease of navigating 
+                complex data. Highly recommended! 🚀📊 
+                #SecureNotes #CipherWrite"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-green-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">David Chen</div>
+                  <div className="text-gray-500 text-sm">Data Scientist</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "📝 @CipherWrite's brainchild, Secure Notes, is a 
+                testament to their commitment to simplifying 
+                business processes. Kudos for creating an 
+                invaluable toolkit for entrepreneurs like me! 🚀⚡"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-purple-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Emma Rodriguez</div>
+                  <div className="text-gray-500 text-sm">Creative Director</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 4 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "🔥 Major props to @CipherWrite for Secure Notes! 
+                Your vision for streamlining secure writing has made a 
+                significant impact on my business. Grateful for your 
+                dedication to excellence. 🛡️📊"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-orange-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Marcus Johnson</div>
+                  <div className="text-gray-500 text-sm">Business Owner</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 5 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "🚀 Elevate your business with CipherWrite! The 
+                encryption features are a perfect blend of security and 
+                functionality. As an entrepreneur, it's become my 
+                go-to toolkit for secure planning and organization."
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-red-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Lisa Park</div>
+                  <div className="text-gray-500 text-sm">Startup Founder</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 6 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "👑 Hats off to @CipherWrite for Secure Notes! 
+                Your templates have added immense value to my 
+                business. It's not just a toolkit; it's a game-changer 
+                for entrepreneurs. 🎯🔒 #BusinessGameChanger 
+                #SecureNotes #CipherWrite"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-teal-500 rounded-full"></div>
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900">Sarah Johnson</div>
-                  <div className="text-gray-500">Product Manager</div>
+                  <div className="font-medium text-gray-900">Alex Thompson</div>
+                  <div className="text-gray-500 text-sm">Tech Entrepreneur</div>
                 </div>
               </div>
             </div>
