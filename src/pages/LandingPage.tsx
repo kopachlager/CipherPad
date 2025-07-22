@@ -493,127 +493,220 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Free Plan */}
-            <div className="bg-gray-50 rounded-3xl p-10 border border-gray-200">
-              <div className="text-center mb-10">
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">Free</h3>
-                <div className="text-6xl font-bold text-gray-900 mb-3">$0</div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Basic Plan */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Basic Plan<span className="text-sm font-normal">*</span>
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Start with essentials for personal note-taking
+                </p>
+              </div>
+              
+              <div className="mb-8">
+                <div className="text-5xl font-bold text-gray-900 mb-2">Free</div>
                 <div className="text-gray-500">Forever free</div>
               </div>
               
-              <ul className="space-y-5 mb-10">
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="text-gray-700 text-lg">Unlimited notes</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="text-gray-700 text-lg">End-to-end encryption</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="text-gray-700 text-lg">Real-time sync</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="text-gray-700 text-lg">Code mode</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="text-gray-700 text-lg">Folder organization</span>
-                </li>
-              </ul>
-              
               <button
                 onClick={onGetStarted}
-                className="w-full py-4 px-6 border border-gray-300 hover:border-gray-400 text-gray-700 rounded-xl font-bold text-lg transition-colors"
+                className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors mb-8"
               >
-                Get Started Free
+                Get Started
               </button>
+              
+              <ul className="space-y-4">
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Full access to secure note-taking with end-to-end encryption
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Real-time sync across all your devices
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Code mode with syntax highlighting
+                  </span>
+                </li>
+              </ul>
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-gray-900 rounded-3xl p-10 border border-gray-800 relative">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm relative">
               {/* Popular Badge */}
               <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
-                <div className="bg-orange-500 text-white px-6 py-3 rounded-full font-bold">
+                <div className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-medium">
                   Most Popular
                 </div>
               </div>
               
-              <div className="text-center mb-10">
-                <h3 className="text-3xl font-bold text-white mb-4">Pro</h3>
-                <div className="text-6xl font-bold text-white mb-3">$9</div>
-                <div className="text-gray-400">per month</div>
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Pro plan</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Unlock advanced features for a more enhanced experience.
+                </p>
               </div>
               
-              <ul className="space-y-5 mb-10">
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  </div>
-                  <span className="text-gray-300 text-lg">Everything in Free</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  </div>
-                  <span className="text-white font-bold text-lg">AI writing assistant</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  </div>
-                  <span className="text-white font-bold text-lg">Smart suggestions</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  </div>
-                  <span className="text-white font-bold text-lg">Voice-to-text</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  </div>
-                  <span className="text-white font-bold text-lg">Advanced search</span>
-                </li>
-                <li className="flex items-center space-x-4">
-                  <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  </div>
-                  <span className="text-white font-bold text-lg">Priority support</span>
-                </li>
-              </ul>
+              <div className="mb-8">
+                <div className="text-5xl font-bold text-gray-900 mb-2">$9.99</div>
+                <div className="text-gray-500">One-time payment</div>
+              </div>
               
               <button
                 onClick={onGetStarted}
-                className="w-full py-4 px-6 bg-white hover:bg-gray-100 text-gray-900 rounded-xl font-bold text-lg transition-colors"
+                className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors mb-8"
               >
-                Start Pro Trial
+                Get Started
               </button>
+              
+              <ul className="space-y-4">
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Full access to secure note-taking with advanced features
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Be the first to receive AI-powered writing assistance
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Unlock additional templates available only to Pro members
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Join exclusive Q&A sessions and engage with our community at a deeper level
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Business Plan */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Business plan</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Tailored for serious creators and businesses seeking a premium experience.
+                </p>
+              </div>
+              
+              <div className="mb-8">
+                <div className="text-5xl font-bold text-gray-900 mb-2">$49.99</div>
+                <div className="text-gray-500">One-time payment</div>
+              </div>
+              
+              <button
+                onClick={onGetStarted}
+                className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors mb-8"
+              >
+                Contact Us
+              </button>
+              
+              <ul className="space-y-4">
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Full access to our library of templates for business products
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Be the first to receive new features and enhancements
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Unlock additional templates available only to Business members
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Enjoy priority support for any inquiries or assistance
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Get personalized help with template customization to suit your unique needs
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
 
           {/* FAQ or Additional Info */}
           <div className="text-center mt-16">
             <p className="text-gray-600 mb-6 text-lg">
-              All plans include 30-day money-back guarantee
+              All plans include lifetime updates and premium support
             </p>
             <div className="flex items-center justify-center space-x-8 text-gray-500">
               <span>✓ No setup fees</span>
-              <span>✓ Cancel anytime</span>
+              <span>✓ One-time payment</span>
               <span>✓ Secure payments</span>
             </div>
           </div>
