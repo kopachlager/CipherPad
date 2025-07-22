@@ -20,6 +20,7 @@ const App: React.FC = () => {
   // Load data when user is authenticated
   useEffect(() => {
     if (user) {
+      console.log('User authenticated, loading data...');
       loadNotes();
       loadFolders();
     }
@@ -28,6 +29,7 @@ const App: React.FC = () => {
   // Show auth modal if not authenticated and not loading
   useEffect(() => {
     if (!loading && !user) {
+      console.log('User not authenticated, showing auth modal');
       setShowAuthModal(true);
     } else {
       setShowAuthModal(false);
@@ -89,6 +91,17 @@ const App: React.FC = () => {
     );
   }
 
+  // Show auth modal if user is not authenticated
+  if (!user) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+        />
+      </div>
+    );
+  }
   return (
     <Router>
       <div className={`h-screen flex flex-col bg-gray-50 dark:bg-gray-900 font-inter ${
@@ -102,11 +115,6 @@ const App: React.FC = () => {
         </div>
         
         <FloatingActionButton />
-        
-        <AuthModal 
-          isOpen={showAuthModal} 
-          onClose={() => setShowAuthModal(false)} 
-        />
       </div>
     </Router>
   );
