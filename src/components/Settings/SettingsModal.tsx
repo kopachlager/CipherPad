@@ -24,14 +24,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { settings, updateSettings } = useStore();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('appearance');
-  const [tempSettings, setTempSettings] = useState(settings);
 
-  // Update temp settings when modal opens
-  React.useEffect(() => {
-    if (isOpen) {
-      setTempSettings(settings);
-    }
-  }, [isOpen, settings]);
 
   if (!isOpen) return null;
 

@@ -60,6 +60,28 @@ const defaultSettings: AppSettings = {
   distractionFreeMode: false,
 };
 
+// Load settings from localStorage
+const loadSettings = (): AppSettings => {
+  try {
+    const saved = localStorage.getItem('notepad-settings');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { ...defaultSettings, ...parsed };
+    }
+  } catch (error) {
+    console.error('Failed to load settings:', error);
+  }
+  return defaultSettings;
+};
+
+// Save settings to localStorage
+const saveSettings = (settings: AppSettings) => {
+  try {
+    localStorage.setItem('notepad-settings', JSON.stringify(settings));
+  } catch (error) {
+    console.error('Failed to save settings:', error);
+  }
+};
 const defaultAuth: AuthState = {
   isAuthenticated: false,
   isLocked: false,
@@ -73,7 +95,7 @@ export const useStore = create<Store>()(
       activeNoteId: null,
       folders: [],
       selectedFolderId: null,
-      settings: defaultSettings,
+      settings: loadSettings(),
       auth: defaultAuth,
       sidebarOpen: true,
       searchQuery: '',
@@ -335,9 +357,11 @@ export const useStore = create<Store>()(
       },
 
       updateSettings: (updates) => {
-        set((state) => ({
-          settings: { ...state.settings, ...updates },
-        }));
+        set((state) => {
+          const newSettings = { ...state.settings, ...updates };
+          saveSettings(newSettings);
+          return { settings: newSettings };
+        });
       },
 
       setSidebarOpen: (open) => {

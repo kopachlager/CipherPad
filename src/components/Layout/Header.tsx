@@ -6,7 +6,8 @@ import {
   Moon, 
   Settings, 
   Plus,
-  LogOut
+  LogOut,
+  Loader2
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
@@ -25,9 +26,22 @@ const Header: React.FC = () => {
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showSettings, setShowSettings] = React.useState(false);
+  const [isCreatingNote, setIsCreatingNote] = React.useState(false);
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
+
+  const handleCreateNote = async () => {
+    setIsCreatingNote(true);
+    try {
+      await createNote();
+    } finally {
+      setTimeout(() => setIsCreatingNote(false), 500); // Show animation briefly
+    }
+  };
 
   const handleSignOut = async () => {
+    setIsSigningOut(true);
     await signOut();
+    setIsSigningOut(false);
   };
 
   return (
@@ -60,41 +74,51 @@ const Header: React.FC = () => {
 
         <div className="flex items-center space-x-1 sm:space-x-2">
           <button
-            onClick={() => createNote()}
-            className="p-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors duration-150"
+            onClick={handleCreateNote}
+            disabled={isCreatingNote}
+            className="p-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-50"
             title="New note"
           >
-            <Plus className="w-5 h-5" />
+            {isCreatingNote ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Plus className="w-5 h-5 transition-transform duration-150 hover:rotate-90" />
+            )}
           </button>
 
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 hover:scale-105 active:scale-95"
             title="Toggle theme"
           >
             {theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) ? (
-              <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <Sun className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-300 hover:rotate-12" />
             ) : (
-              <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-300 hover:-rotate-12" />
             )}
           </button>
 
           {user && (
             <button
               onClick={handleSignOut}
-              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 hidden sm:block"
+              disabled={isSigningOut}
+              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 hover:scale-105 active:scale-95 hidden sm:block disabled:opacity-50"
               title="Sign out"
             >
-              <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              {isSigningOut ? (
+                <Loader2 className="w-5 h-5 animate-spin text-gray-600 dark:text-gray-400" />
+              ) : (
+                <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-150 hover:translate-x-1" />
+              )}
             </button>
           )}
 
           <button
             onClick={() => setShowSettings(true)}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 hover:scale-105 active:scale-95"
             title="Settings"
           >
-            <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-300 hover:rotate-90" />
           </button>
         </div>
       </header>
