@@ -442,7 +442,6 @@ const Sidebar: React.FC = () => {
                         <button
                           onClick={() => toggleGroup(groupName)}
                           className="w-full flex items-center justify-between px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-                        </div>
                         >
                           <div className="flex items-center space-x-2">
                             {collapsedGroups.has(groupName) ? 
