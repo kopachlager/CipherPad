@@ -9,8 +9,16 @@ export const useAuth = () => {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error);
+        setError('Failed to connect to authentication service. Please check your internet connection.');
+      }
       setUser(session?.user ?? null);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to get session:', error);
+      setError('Failed to connect to authentication service. Please check your internet connection.');
       setLoading(false);
     });
 
