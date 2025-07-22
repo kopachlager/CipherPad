@@ -220,6 +220,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                         <div className="h-4 bg-gray-100 rounded w-3/4"></div>
 
           {/* Social Proof */}
+                      </div>
           <div className="mt-16 flex items-center justify-center space-x-8">
             <div className="flex items-center space-x-2">
               <div className="flex -space-x-2">
