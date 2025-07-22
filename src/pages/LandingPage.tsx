@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Shield, Zap, Lock, Plus } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Lock, Plus, Eye, Code, Mic, Download, Star } from 'lucide-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -163,10 +163,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-gray-50">
+      <section id="features" className="py-24 bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
-          <div className="text-center mb-20">
+          <div className="text-center mb-20 animate-fade-in">
             <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
               <span>Features</span>
@@ -180,34 +180,143 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </p>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Feature 1 */}
-            <div className="bg-gray-50 rounded-3xl p-10 border border-gray-200">
-              <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                <Lock className="w-6 h-6 text-white" />
+          {/* Feature Cards - Asymmetric Layout */}
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* First Row - Large + Small */}
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Large Feature Card */}
+              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-left">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
+                  <Lock className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                  Military-Grade Encryption
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-lg mb-6">
+                  Your thoughts deserve the highest level of protection. Our end-to-end encryption 
+                  ensures that only you can access your notes, using the same security standards 
+                  trusted by governments and financial institutions worldwide.
+                </p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <span className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>AES-256 Encryption</span>
+                  </span>
+                  <span className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Zero-Knowledge Architecture</span>
+                  </span>
+                </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                End-to-End Encryption
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Navigate your digital privacy effortlessly with our meticulously designed 
-                encryption, offering a clear and organized view of your personal notes.
-              </p>
+              
+              {/* Small Feature Card */}
+              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-right">
+                <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Lightning Fast
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Instant sync across all your devices with real-time collaboration features.
+                </p>
+              </div>
             </div>
-
-            {/* Feature 2 */}
-            <div className="bg-gray-50 rounded-3xl p-10 border border-gray-200">
-              <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                <Zap className="w-6 h-6 text-white" />
+            
+            {/* Second Row - Small + Large */}
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Small Feature Card */}
+              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-left delay-200">
+                <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
+                  <Eye className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Focus Mode
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Distraction-free writing environment that helps you concentrate on what matters.
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                Streamlined Organization
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Navigate your workflow seamlessly with our meticulously designed 
-                organization, offering a clear and organized view of your notes.
-              </p>
+              
+              {/* Large Feature Card */}
+              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-slide-in-right delay-200">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
+                  <Code className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                  Smart Organization
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-lg mb-6">
+                  Organize your thoughts with intelligent folders, tags, and search. Our smart 
+                  categorization helps you find exactly what you're looking for, when you need it. 
+                  Perfect for writers, developers, and creative professionals.
+                </p>
+                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <span className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>Smart Search</span>
+                  </span>
+                  <span className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>Auto-tagging</span>
+                  </span>
+                  <span className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>Nested Folders</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Third Row - Additional Features */}
+            <div className="grid md:grid-cols-4 gap-6">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-300">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
+                  <Mic className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
+                  Voice Notes
+                </h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Convert speech to text with AI-powered transcription.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-400">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
+                  <Download className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
+                  Export Anywhere
+                </h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Export to PDF, Markdown, or plain text formats.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-500">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
+                  Offline First
+                </h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Work anywhere, anytime. Sync when you're back online.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 animate-fade-in delay-600">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
+                  <Star className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-900 mb-3">
+                  Favorites
+                </h4>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Quick access to your most important notes and ideas.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -410,9 +519,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
 
           {/* Testimonials Grid - 2 rows, 3 columns */}
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto animate-fade-in">
             {/* Testimonial 1 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -431,7 +540,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -452,7 +561,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -472,7 +581,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 4 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -492,7 +601,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 5 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -512,7 +621,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
 
             {/* Testimonial 6 */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="flex text-yellow-400 mb-6">
                 {'★'.repeat(5)}
               </div>
@@ -528,46 +637,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <div>
                   <div className="font-medium text-gray-900">Alex Thompson</div>
                   <div className="text-gray-500 text-sm">Tech Entrepreneur</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 2 */}
-            <div className="bg-white rounded-3xl p-10 border border-gray-200">
-              <div className="flex text-yellow-400 mb-6 text-lg">
-                {'★'.repeat(5)}
-              </div>
-              <p className="text-gray-700 mb-8 leading-relaxed text-lg">
-                "As a writer, I need my notes to be secure and accessible. CipherWrite 
-                delivers on both fronts with excellent sync across all my devices."
-              </p>
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">MC</span>
-                </div>
-                <div>
-                  <div className="font-bold text-gray-900">Michael Chen</div>
-                  <div className="text-gray-500">Freelance Writer</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="bg-white rounded-3xl p-10 border border-gray-200">
-              <div className="flex text-yellow-400 mb-6 text-lg">
-                {'★'.repeat(5)}
-              </div>
-              <p className="text-gray-700 mb-8 leading-relaxed text-lg">
-                "The code mode is perfect for my technical notes. Clean, fast, and 
-                the encryption means I can store sensitive project details safely."
-              </p>
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">AR</span>
-                </div>
-                <div>
-                  <div className="font-bold text-gray-900">Alex Rodriguez</div>
-                  <div className="text-gray-500">Software Engineer</div>
                 </div>
               </div>
             </div>
@@ -593,9 +662,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Basic Plan */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
                   Basic Plan<span className="text-sm font-normal">*</span>
@@ -651,8 +720,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </ul>
             </div>
 
-            {/* Pro Plan */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm relative">
+            {/* Writer's Plan */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm relative hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               {/* Popular Badge */}
               <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
                 <div className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-medium">
@@ -661,9 +730,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               </div>
               
               <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Pro plan</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Writer's Plan</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Unlock advanced features for a more enhanced experience.
+                  Perfect for writers, creators, and professionals who need advanced features.
                 </p>
               </div>
               
@@ -687,7 +756,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     </svg>
                   </div>
                   <span className="text-gray-700 text-sm leading-relaxed">
-                    Full access to secure note-taking with advanced features
+                    Everything in Basic plus advanced writing tools and AI assistance
                   </span>
                 </li>
                 <li className="flex items-start space-x-3">
@@ -697,7 +766,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     </svg>
                   </div>
                   <span className="text-gray-700 text-sm leading-relaxed">
-                    Be the first to receive AI-powered writing assistance
+                    AI-powered writing assistance and grammar checking
                   </span>
                 </li>
                 <li className="flex items-start space-x-3">
@@ -707,7 +776,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     </svg>
                   </div>
                   <span className="text-gray-700 text-sm leading-relaxed">
-                    Unlock additional templates available only to Pro members
+                    Advanced export options (PDF, DOCX, LaTeX)
                   </span>
                 </li>
                 <li className="flex items-start space-x-3">
@@ -717,82 +786,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                     </svg>
                   </div>
                   <span className="text-gray-700 text-sm leading-relaxed">
-                    Join exclusive Q&A sessions and engage with our community at a deeper level
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Business Plan */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Business plan</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Tailored for serious creators and businesses seeking a premium experience.
-                </p>
-              </div>
-              
-              <div className="mb-8">
-                <div className="text-5xl font-bold text-gray-900 mb-2">$49.99</div>
-                <div className="text-gray-500">One-time payment</div>
-              </div>
-              
-              <button
-                onClick={onGetStarted}
-                className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors mb-8"
-              >
-                Contact Us
-              </button>
-              
-              <ul className="space-y-4">
-                <li className="flex items-start space-x-3">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 text-sm leading-relaxed">
-                    Full access to our library of templates for business products
-                  </span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 text-sm leading-relaxed">
-                    Be the first to receive new features and enhancements
-                  </span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 text-sm leading-relaxed">
-                    Unlock additional templates available only to Business members
-                  </span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 text-sm leading-relaxed">
-                    Enjoy priority support for any inquiries or assistance
-                  </span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 text-sm leading-relaxed">
-                    Get personalized help with template customization to suit your unique needs
+                    Priority support and exclusive community access
                   </span>
                 </li>
               </ul>
@@ -814,30 +808,61 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-16">
+      <footer className="bg-gray-900 py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
-                <Lock className="w-4 h-4 text-white" />
+          <div className="grid md:grid-cols-4 gap-12">
+            {/* Brand */}
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                  <Lock className="w-4 h-4 text-gray-900" />
+                </div>
+                <div className="font-bold text-white text-2xl">CipherWrite</div>
               </div>
-              <div>
-                <div className="font-bold text-gray-900 text-lg">CipherWrite</div>
-                <div className="text-sm text-gray-500">Secure Notes</div>
+              <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-md">
+                The most secure and intuitive note-taking app for writers, developers, and creative professionals.
+              </p>
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2 text-gray-400">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm">All systems operational</span>
+                </div>
               </div>
             </div>
-            <p className="text-gray-600 mb-12 text-lg">
-              Helping individuals and teams organize their thoughts securely.
-            </p>
             
-            {/* Simple company logos */}
-            <div className="flex items-center justify-center space-x-12 opacity-60">
-              <div className="text-gray-400 font-medium text-lg">Trusted by teams at</div>
-              <div className="flex items-center space-x-8">
-                <div className="w-8 h-8 bg-blue-500 rounded"></div>
-                <div className="w-8 h-8 bg-green-500 rounded-full"></div>
-                <div className="w-8 h-8 bg-purple-500 rounded"></div>
-                <div className="w-8 h-8 bg-red-500 rounded-full"></div>
+            {/* Product */}
+            <div>
+              <h4 className="font-semibold text-white mb-6">Product</h4>
+              <ul className="space-y-4">
+                <li><a href="#features" className="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                <li><a href="#pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Security</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Updates</a></li>
+              </ul>
+            </div>
+            
+            {/* Company */}
+            <div>
+              <h4 className="font-semibold text-white mb-6">Company</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">About</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          {/* Bottom */}
+          <div className="border-t border-gray-800 mt-16 pt-8">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="text-gray-400 text-sm mb-4 md:mb-0">
+                © 2024 CipherWrite. All rights reserved.
+              </div>
+              <div className="flex items-center space-x-6 text-sm text-gray-400">
+                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
               </div>
             </div>
           </div>
