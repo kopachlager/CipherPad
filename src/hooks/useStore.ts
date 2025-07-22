@@ -21,7 +21,6 @@ interface Store {
   // UI State
   sidebarOpen: boolean;
   searchQuery: string;
-  selectedFolderId: string | null;
   
   // Actions
   createNote: (folderId?: string) => Promise<Note>;
@@ -41,7 +40,6 @@ interface Store {
   
   setSidebarOpen: (open: boolean) => void;
   setSearchQuery: (query: string) => void;
-  setSelectedFolder: (id: string | null) => void;
   
   updateLastActivity: () => void;
 }
@@ -75,7 +73,6 @@ export const useStore = create<Store>()(
       auth: defaultAuth,
       sidebarOpen: true,
       searchQuery: '',
-      selectedFolderId: null,
 
       loadNotes: async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -338,10 +335,6 @@ export const useStore = create<Store>()(
 
       setSearchQuery: (query) => {
         set({ searchQuery: query });
-      },
-
-      setSelectedFolder: (id) => {
-        set({ selectedFolderId: id });
       },
 
       updateLastActivity: () => {
