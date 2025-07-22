@@ -311,6 +311,235 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>Testimonials</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              What our users say
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Join thousands of writers, professionals, and teams who trust CipherWrite 
+              to keep their thoughts secure and organized.
+            </p>
+          </div>
+
+          {/* Testimonials Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <div className="flex text-yellow-400 mb-4">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "CipherWrite has completely transformed how I organize my thoughts. 
+                The encryption gives me peace of mind, and the interface is so clean."
+              </p>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">SJ</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Sarah Johnson</div>
+                  <div className="text-sm text-gray-500">Product Manager</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <div className="flex text-yellow-400 mb-4">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "As a writer, I need my notes to be secure and accessible. CipherWrite 
+                delivers on both fronts with excellent sync across all my devices."
+              </p>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">MC</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Michael Chen</div>
+                  <div className="text-sm text-gray-500">Freelance Writer</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <div className="flex text-yellow-400 mb-4">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                "The code mode is perfect for my technical notes. Clean, fast, and 
+                the encryption means I can store sensitive project details safely."
+              </p>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">AR</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">Alex Rodriguez</div>
+                  <div className="text-sm text-gray-500">Software Engineer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>Pricing</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Simple, transparent pricing
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Start free with all essential features. Upgrade to unlock AI-powered 
+              writing assistance and advanced capabilities.
+            </p>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
+                <div className="text-5xl font-bold text-gray-900 mb-2">$0</div>
+                <div className="text-gray-500">Forever free</div>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-700">Unlimited notes</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-700">End-to-end encryption</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-700">Real-time sync</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-700">Code mode</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-700">Folder organization</span>
+                </li>
+              </ul>
+              
+              <button
+                onClick={onGetStarted}
+                className="w-full py-3 px-6 border border-gray-300 hover:border-gray-400 text-gray-700 rounded-lg font-semibold transition-colors"
+              >
+                Get Started Free
+              </button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="bg-gray-900 rounded-2xl p-8 shadow-sm border border-gray-800 relative">
+              {/* Popular Badge */}
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                  Most Popular
+                </div>
+              </div>
+              
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
+                <div className="text-5xl font-bold text-white mb-2">$9</div>
+                <div className="text-gray-400">per month</div>
+              </div>
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-300">Everything in Free</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  </div>
+                  <span className="text-white font-medium">AI writing assistant</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  </div>
+                  <span className="text-white font-medium">Smart suggestions</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  </div>
+                  <span className="text-white font-medium">Voice-to-text</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  </div>
+                  <span className="text-white font-medium">Advanced search</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-orange-100 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  </div>
+                  <span className="text-white font-medium">Priority support</span>
+                </li>
+              </ul>
+              
+              <button
+                onClick={onGetStarted}
+                className="w-full py-3 px-6 bg-white hover:bg-gray-100 text-gray-900 rounded-lg font-semibold transition-colors"
+              >
+                Start Pro Trial
+              </button>
+            </div>
+          </div>
+
+          {/* FAQ or Additional Info */}
+          <div className="text-center mt-12">
+            <p className="text-gray-600 mb-4">
+              All plans include 30-day money-back guarantee
+            </p>
+            <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
+              <span>✓ No setup fees</span>
+              <span>✓ Cancel anytime</span>
+              <span>✓ Secure payments</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6">
