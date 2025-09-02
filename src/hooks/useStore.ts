@@ -46,6 +46,10 @@ interface Store {
   updateLastActivity: () => void;
   lockApp: () => void;
   unlockApp: () => void;
+  // Bridge for requesting encryption modal globally
+  encryptionRequestForNoteId?: string | null;
+  requestEncryption?: (noteId: string) => void;
+  clearEncryptionRequest?: () => void;
 }
 
 export const defaultSettings: AppSettings = {
@@ -101,6 +105,7 @@ export const useStore = create<Store>()(
       auth: defaultAuth,
       sidebarOpen: true,
       searchQuery: '',
+      encryptionRequestForNoteId: null,
 
       loadNotes: async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -454,6 +459,12 @@ export const useStore = create<Store>()(
       },
       unlockApp: () => {
         set((state) => ({ auth: { ...state.auth, isLocked: false, lastActivity: new Date() } }));
+      },
+      requestEncryption: (noteId: string) => {
+        set({ encryptionRequestForNoteId: noteId });
+      },
+      clearEncryptionRequest: () => {
+        set({ encryptionRequestForNoteId: null });
       },
     })
 );

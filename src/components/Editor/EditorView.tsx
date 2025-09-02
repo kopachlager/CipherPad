@@ -16,7 +16,9 @@ const EditorView: React.FC = () => {
     activeNoteId, 
     updateNote, 
     toggleNoteFavorite,
-    settings 
+    settings,
+    encryptionRequestForNoteId,
+    clearEncryptionRequest
   } = useStore();
 
   const activeNote = notes.find((note) => note.id === activeNoteId);
@@ -42,6 +44,14 @@ const EditorView: React.FC = () => {
       // Sync title display from active note
     }
   }, [activeNote]);
+
+  // Open encryption modal when requested from elsewhere (e.g., sidebar)
+  useEffect(() => {
+    if (activeNote && encryptionRequestForNoteId === activeNote.id) {
+      setShowEncryptionModal(true);
+      clearEncryptionRequest?.();
+    }
+  }, [encryptionRequestForNoteId, activeNote, clearEncryptionRequest]);
 
   const startRecording = async () => {
     try {
