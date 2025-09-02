@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -354,10 +355,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="flex-1 p-6 overflow-y-auto">
-            {activeTab === 'appearance' && renderAppearanceSettings()}
-            {activeTab === 'editor' && renderEditorSettings()}
-            {activeTab === 'security' && renderSecuritySettings()}
-            {activeTab === 'shortcuts' && renderShortcutsSettings()}
+            <motion.div layout>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {activeTab === 'appearance' && renderAppearanceSettings()}
+                  {activeTab === 'editor' && renderEditorSettings()}
+                  {activeTab === 'security' && renderSecuritySettings()}
+                  {activeTab === 'shortcuts' && renderShortcutsSettings()}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
           </div>
         </div>
       </div>

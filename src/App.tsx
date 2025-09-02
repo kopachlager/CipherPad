@@ -157,6 +157,20 @@ const App: React.FC = () => {
         </div>
         
         {!settings.distractionFreeMode && <FloatingActionButton />}
+        {settings.distractionFreeMode && (
+          <button
+            onClick={() => {
+              // Exit focus mode quickly
+              useStore.getState().updateSettings({ distractionFreeMode: false });
+            }}
+            className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
+            aria-label="Exit Focus Mode"
+            title="Exit Focus Mode"
+          >
+            <span className="inline-block w-2 h-2 bg-green-500 rounded-full" />
+            Exit Focus
+          </button>
+        )}
       </div>
     </Router>
   );

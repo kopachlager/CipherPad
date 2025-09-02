@@ -339,6 +339,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
               onClick={() => onRichCommand?.('bold')}
               active={contentAnalysis.boldActive}
               suggested={contentAnalysis.hasSelection}
+              disabled={note.isEncrypted}
             />
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
@@ -346,18 +347,21 @@ const Toolbar: React.FC<ToolbarProps> = ({
               onClick={() => onRichCommand?.('italic')}
               active={contentAnalysis.italicActive}
               suggested={contentAnalysis.hasSelection}
+              disabled={note.isEncrypted}
             />
             <ToolbarButton
               icon={<Underline className="w-4 h-4" />}
               tooltip="Underline"
               onClick={() => onRichCommand?.('underline')}
               active={contentAnalysis.underlineActive}
+              disabled={note.isEncrypted}
             />
             <ToolbarButton
               icon={<Strikethrough className="w-4 h-4" />}
               tooltip="Strikethrough"
               onClick={() => onRichCommand?.('strikeThrough')}
               active={contentAnalysis.strikethroughActive}
+              disabled={note.isEncrypted}
             />
 
             <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
@@ -367,6 +371,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
               onClick={() => onRichCommand?.('insertUnorderedList')}
               active={contentAnalysis.bulletActive}
               suggested={true}
+              disabled={note.isEncrypted}
             />
             <ToolbarButton
               icon={<ListOrdered className="w-4 h-4" />}
@@ -374,6 +379,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
               onClick={() => onRichCommand?.('insertOrderedList')}
               active={contentAnalysis.orderedActive}
               suggested={true}
+              disabled={note.isEncrypted}
             />
 
             <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
@@ -382,6 +388,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
               tooltip="Insert Link"
               onClick={() => onRichCommand?.('createLink')}
               suggested={contentAnalysis.hasLinks}
+              disabled={note.isEncrypted}
             />
 
             {/* More tools in dropdown */}
@@ -390,6 +397,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 icon={<MoreHorizontal className="w-4 h-4" />}
                 tooltip="More Tools"
                 onClick={() => setShowMoreMenu(!showMoreMenu)}
+                disabled={note.isEncrypted}
               />
               
               {showMoreMenu && (

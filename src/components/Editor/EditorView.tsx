@@ -3,6 +3,7 @@ import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
 import RichTextEditor, { RichTextEditorHandle } from './RichTextEditor';
+import { Lock, Unlock, EyeOff } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
@@ -304,7 +305,26 @@ const EditorView: React.FC = () => {
           <div className="absolute top-2 left-2 text-[10px] text-gray-400 bg-white/80 dark:bg-gray-800/60 rounded px-1 pointer-events-none">
             selVer:{selectionVersion} len:{localContent.length}
           </div>
-          {activeNote.isCodeMode ? (
+          {/* Encrypted placeholder */}
+          {activeNote.isEncrypted ? (
+            <div className="h-full flex items-center justify-center p-8">
+              <div className="max-w-md w-full text-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-8">
+                <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                  <Lock className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">This note is encrypted</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Unlock it to view and edit the contents.</p>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => setShowEncryptionModal(true)}
+                    className="px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+                  >
+                    Decrypt Note
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : activeNote.isCodeMode ? (
             <MonacoEditor
               note={activeNote}
               onChange={handleContentChange}
