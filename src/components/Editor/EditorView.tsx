@@ -32,6 +32,7 @@ const EditorView: React.FC = () => {
   const richRef = React.useRef<RichTextEditorHandle>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
   const langDebounceRef = React.useRef<number | null>(null);
+  const titleDebounceRef = React.useRef<number | null>(null);
 
   useAutoSave(activeNoteId, localContent);
 
@@ -260,7 +261,6 @@ const EditorView: React.FC = () => {
     setLocalContent(content);
   };
 
-  const titleDebounceRef = React.useRef<number | null>(null);
   const handleTitleInput = (value: string) => {
     setLocalTitle(value);
     setManualTitle(true);
