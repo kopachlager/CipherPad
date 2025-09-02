@@ -24,6 +24,7 @@ const EditorView: React.FC = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
+  const [selectionVersion, setSelectionVersion] = useState(0);
   const langDebounceRef = React.useRef<number | null>(null);
 
   useAutoSave(activeNoteId, localContent);
@@ -143,9 +144,25 @@ const EditorView: React.FC = () => {
     const hasLists = /^[\s]*[-*+]\s|^[\s]*\d+\.\s/m.test(content);
     const hasLinks = /https?:\/\/|www\.|\.com|\.org|\.net/i.test(content) || /\[.*?\]\(.*?\)/.test(content);
     const hasCode = /```|`[^`]+`|<code>/.test(content);
-    const selectionLength = editorRef ? editorRef.selectionEnd - editorRef.selectionStart : 0;
-    const selectedText = editorRef ? editorRef.value.substring(editorRef.selectionStart, editorRef.selectionEnd) : '';
+    const s = editorRef ? editorRef.selectionStart : 0;
+    const e = editorRef ? editorRef.selectionEnd : 0;
+    const selectionLength = e - s;
+    const selectedText = editorRef ? editorRef.value.substring(s, e) : '';
     const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
+    const safeSlice = (start: number, end: number) => content.substring(Math.max(0, start), Math.max(0, end));
+    const boldActive = s >= 2 && safeSlice(s - 2, s) === '**' && safeSlice(e, e + 2) === '**';
+    const italicActive = s >= 1 && safeSlice(s - 1, s) === '*' && safeSlice(e, e + 1) === '*';
+    const strikeActive = s >= 2 && safeSlice(s - 2, s) === '~~' && safeSlice(e, e + 2) === '~~';
+    const underlineActive = s >= 3 && safeSlice(s - 3, s) === '<u>' && safeSlice(e, e + 4) === '</u>';
+    // Line-based states
+    const lineStart = content.lastIndexOf('\n', s - 1) + 1;
+    const lineEnd = content.indexOf('\n', e);
+    const endIndex = lineEnd === -1 ? content.length : lineEnd;
+    const block = content.substring(lineStart, endIndex);
+    const lines = block.split('\n');
+    const bulletActive = lines.length > 0 && lines.every(l => l.startsWith('- '));
+    const orderedActive = lines.length > 0 && lines.every(l => /^\d+\.\s/.test(l));
+    const quoteActive = lines.length > 0 && lines.every(l => l.startsWith('> '));
     return {
       hasLists,
       hasLinks,
@@ -153,7 +170,15 @@ const EditorView: React.FC = () => {
       hasSelection: selectionLength > 0,
       selectedText,
       wordCount,
-    };
+      boldActive,
+      italicActive,
+      underlineActive,
+      strikethroughActive: strikeActive,
+      bulletActive,
+      orderedActive,
+      quoteActive,
+      selectionVersion, // forces recalculation on selection changes
+    } as any;
   };
 
   const handleToggleCodeMode = () => {
@@ -222,13 +247,9 @@ const EditorView: React.FC = () => {
                 handleContentChange(newContent);
               }}
               onSelect={(e) => {
-                // Update selection for toolbar context
-                const target = e.target as HTMLTextAreaElement;
-                const start = target.selectionStart;
-                const end = target.selectionEnd;
-                const selectedText = target.value.substring(start, end);
-                // Trigger toolbar update if needed
+                setSelectionVersion((v) => v + 1);
               }}
+              onKeyUp={() => setSelectionVersion((v) => v + 1)}
               placeholder="Start writing your note..."
               className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full w-full resize-none bg-transparent border-none text-gray-900 dark:text-gray-100"
               style={{

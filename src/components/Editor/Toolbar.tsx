@@ -46,6 +46,14 @@ interface ToolbarProps {
     hasSelection: boolean;
     selectedText: string;
     wordCount: number;
+    boldActive?: boolean;
+    italicActive?: boolean;
+    underlineActive?: boolean;
+    strikethroughActive?: boolean;
+    bulletActive?: boolean;
+    orderedActive?: boolean;
+    quoteActive?: boolean;
+    selectionVersion?: number;
   };
 }
 
@@ -297,23 +305,27 @@ const Toolbar: React.FC<ToolbarProps> = ({
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold"
               onClick={() => formatText('bold')}
+              active={contentAnalysis.boldActive}
               suggested={contentAnalysis.hasSelection}
             />
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
               tooltip="Italic"
               onClick={() => formatText('italic')}
+              active={contentAnalysis.italicActive}
               suggested={contentAnalysis.hasSelection}
             />
             <ToolbarButton
               icon={<Underline className="w-4 h-4" />}
               tooltip="Underline"
               onClick={() => formatText('underline')}
+              active={contentAnalysis.underlineActive}
             />
             <ToolbarButton
               icon={<Strikethrough className="w-4 h-4" />}
               tooltip="Strikethrough"
               onClick={() => formatText('strikethrough')}
+              active={contentAnalysis.strikethroughActive}
             />
 
             <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
@@ -321,13 +333,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
               icon={<List className="w-4 h-4" />}
               tooltip="Bullet List"
               onClick={() => toggleLinePrefix('- ')}
-              suggested={contentAnalysis.hasLists}
+              active={contentAnalysis.bulletActive}
+              suggested={true}
             />
             <ToolbarButton
               icon={<ListOrdered className="w-4 h-4" />}
               tooltip="Numbered List"
               onClick={() => toggleLinePrefix('1. ')}
-              suggested={contentAnalysis.hasLists}
+              active={contentAnalysis.orderedActive}
+              suggested={true}
             />
 
             <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
