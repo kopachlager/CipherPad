@@ -115,13 +115,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
     suggested = false 
   }) => (
     <button
+      type="button"
       onClick={() => {
         try { console.log('[Toolbar Click]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
         onClick();
       }}
+      onMouseDown={(e) => { try { console.log('[Toolbar MouseDown]', tooltip, e.button); } catch {} }}
       disabled={disabled}
       title={tooltip}
-      className={`p-2 rounded-md transition-all duration-150 ${
+      aria-label={tooltip}
+      className={`p-2 rounded-md transition-all duration-150 pointer-events-auto ${
         disabled
           ? 'opacity-50 cursor-not-allowed'
           : active
@@ -318,7 +321,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
           </div>
         ) : (
           /* Rich Text Mode - Contextual Tools */
-          <div className="flex items-center space-x-1 ml-2">
+          <div className="flex items-center space-x-1 ml-2 pointer-events-auto">
+            <button
+              type="button"
+              onClick={() => alert('Left debug click')}
+              className="px-1.5 py-0.5 text-[10px] border border-gray-300 rounded text-gray-600 hover:bg-gray-50"
+            >
+              LeftDbg
+            </button>
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold"
