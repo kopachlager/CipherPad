@@ -430,7 +430,8 @@ const Sidebar: React.FC = () => {
             {sortedNotes.length > 0 && (
               <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-300 dark:border-gray-600">
                 <button
-                  onClick={() => toggleSection('notesList')}
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); toggleSection('notesList'); }}
                   className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150 rounded-t-xl"
                 >
                   <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
@@ -441,7 +442,8 @@ const Sidebar: React.FC = () => {
                   </h3>
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={(e) => {
+                      type="button"
+                      onMouseDown={(e) => {
                         e.stopPropagation();
                         setShowFilters(!showFilters);
                       }}
@@ -478,7 +480,8 @@ const Sidebar: React.FC = () => {
                               <option value="size">Size</option>
                             </select>
                             <button
-                              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                              type="button"
+                              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}
                               className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                               title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
                             >
@@ -511,7 +514,8 @@ const Sidebar: React.FC = () => {
                         <div key={groupName}>
                           {groupBy !== 'none' && (
                             <button
-                              onClick={() => toggleGroup(groupName)}
+                              type="button"
+                              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); toggleGroup(groupName); }}
                               className="w-full flex items-center justify-between px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                             >
                               <div className="flex items-center space-x-2">
@@ -537,7 +541,7 @@ const Sidebar: React.FC = () => {
                                       ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
                                       : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                                   }`}
-                                  onClick={() => handleNoteClick(note.id)}
+                                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); handleNoteClick(note.id); }}
                                 >
                                   <div className="flex items-center space-x-2 flex-1 min-w-0">
                                     <div className="flex items-center space-x-1 flex-shrink-0">
@@ -561,7 +565,8 @@ const Sidebar: React.FC = () => {
                                   <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                                     <div className="relative">
                                       <button
-                                        onClick={(e) => {
+                                        type="button"
+                                        onMouseDown={(e) => {
                                           e.stopPropagation();
                                           setShowMoveMenu(showMoveMenu === note.id ? null : note.id);
                                         }}
@@ -576,7 +581,8 @@ const Sidebar: React.FC = () => {
                                     </div>
                                     
                                     <button
-                                      onClick={(e) => {
+                                      type="button"
+                                      onMouseDown={(e) => {
                                         e.stopPropagation();
                                         updateNote(note.id, { isEncrypted: !note.isEncrypted });
                                       }}
@@ -591,7 +597,8 @@ const Sidebar: React.FC = () => {
                                     </button>
                                     
                                     <button
-                                      onClick={(e) => {
+                                      type="button"
+                                      onMouseDown={(e) => {
                                         e.stopPropagation();
                                         exportNote(note, 'txt');
                                       }}
@@ -602,7 +609,8 @@ const Sidebar: React.FC = () => {
                                     </button>
                                     
                                     <button
-                                      onClick={async (e) => {
+                                      type="button"
+                                      onMouseDown={async (e) => {
                                         e.stopPropagation();
                                         if (navigator.share) {
                                           try {
@@ -625,7 +633,8 @@ const Sidebar: React.FC = () => {
                                     
                                     {viewMode === 'trash' ? (
                                       <button
-                                        onClick={(e) => handleRestoreNote(note.id, e)}
+                                        type="button"
+                                        onMouseDown={(e) => handleRestoreNote(note.id, e as any)}
                                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
                                         title="Restore note"
                                       >
@@ -633,7 +642,8 @@ const Sidebar: React.FC = () => {
                                       </button>
                                     ) : (
                                       <button
-                                        onClick={(e) => handleDeleteNote(note.id, e)}
+                                        type="button"
+                                        onMouseDown={(e) => handleDeleteNote(note.id, e as any)}
                                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150"
                                         title="Delete note"
                                       >

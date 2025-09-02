@@ -3,7 +3,7 @@ import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
 import RichTextEditor, { RichTextEditorHandle } from './RichTextEditor';
-import { Lock, Unlock, EyeOff } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
@@ -20,6 +20,8 @@ const EditorView: React.FC = () => {
 
   const activeNote = notes.find((note) => note.id === activeNoteId);
   const [localContent, setLocalContent] = useState('');
+  const [localTitle, setLocalTitle] = useState('');
+  const [manualTitle, setManualTitle] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | undefined>();
   const [showEncryptionModal, setShowEncryptionModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -35,6 +37,8 @@ const EditorView: React.FC = () => {
   useEffect(() => {
     if (activeNote) {
       setLocalContent(activeNote.content);
+      setLocalTitle(activeNote.title || '');
+      setManualTitle(false);
     }
   }, [activeNote]);
 
@@ -131,11 +135,12 @@ const EditorView: React.FC = () => {
       }
     }
     
-    // Update title if empty and content has text
-    if (activeNote && (!activeNote.title || activeNote.title === 'Untitled Note')) {
-      const firstLine = content.split('\n')[0].substring(0, 50).trim();
-      if (firstLine) {
-        updateNote(activeNote.id, { title: firstLine });
+    // Improve: derive title only if user hasn't set one manually
+    if (activeNote && !manualTitle) {
+      const derived = deriveSmartTitle(content, !!activeNote.isCodeMode);
+      if (derived && derived !== activeNote.title) {
+        updateNote(activeNote.id, { title: derived });
+        setLocalTitle(derived);
       }
     }
     
@@ -254,9 +259,52 @@ const EditorView: React.FC = () => {
     setLocalContent(content);
   };
 
+  const titleDebounceRef = React.useRef<number | null>(null);
+  const handleTitleInput = (value: string) => {
+    setLocalTitle(value);
+    setManualTitle(true);
+    if (!activeNote) return;
+    if (titleDebounceRef.current) window.clearTimeout(titleDebounceRef.current);
+    titleDebounceRef.current = window.setTimeout(() => {
+      updateNote(activeNote.id!, { title: value || 'Untitled Note' });
+      setLastSaved(new Date());
+    }, 300) as unknown as number;
+  };
+
+  const deriveSmartTitle = (content: string, isCode: boolean): string => {
+    try {
+      if (isCode) {
+        const line = (content || '').split('\n').find(l => l.trim().length > 0) || '';
+        return (line.trim() || 'Untitled Note').slice(0, 80);
+      }
+      // content is HTML from rich editor
+      const div = document.createElement('div');
+      div.innerHTML = content || '';
+      const heading = div.querySelector('h1,h2,h3');
+      const text = heading?.textContent?.trim() || div.textContent?.trim() || '';
+      return (text || 'Untitled Note').slice(0, 80);
+    } catch {
+      const line = (content || '').split('\n')[0] || '';
+      return (line.trim() || 'Untitled Note').slice(0, 80);
+    }
+  };
+
   return (
     <>
       <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden rounded-r-2xl">
+        {/* Title Bar */}
+        {activeNote && (
+          <div className="px-4 pt-3">
+            <input
+              type="text"
+              value={localTitle}
+              onChange={(e) => handleTitleInput(e.target.value)}
+              disabled={!!activeNote.isEncrypted}
+              placeholder="Untitled Note"
+              className="w-full bg-transparent text-xl font-semibold text-gray-900 dark:text-gray-100 outline-none border-b border-transparent focus:border-gray-300 dark:focus:border-gray-700 pb-2"
+            />
+          </div>
+        )}
         <Toolbar
           note={activeNote}
           onToggleCodeMode={handleToggleCodeMode}

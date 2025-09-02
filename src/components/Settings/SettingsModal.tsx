@@ -275,14 +275,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
       <SettingItem
         label="Biometric Authentication"
-        description="Use fingerprint or face recognition when available"
+        description="Coming soon — Passkeys/FaceID/TouchID integration"
       >
         <Toggle
-          checked={settings.biometricAuth}
-          onChange={(checked) => {
-            updateSettings({ biometricAuth: checked });
-          }}
-          disabled={!('credentials' in navigator)}
+          checked={false}
+          onChange={() => {}}
+          disabled={true}
         />
       </SettingItem>
     </div>
