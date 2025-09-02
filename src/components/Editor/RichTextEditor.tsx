@@ -40,6 +40,8 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
   isCodeMode = false,
 }, ref) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const lastHtmlRef = useRef<string>('');
+  const [isFocused, setIsFocused] = useState(false);
   const { settings } = useStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -47,15 +49,20 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== content) {
-      editorRef.current.innerHTML = content;
+    const el = editorRef.current;
+    if (!el) return;
+    // Avoid clobbering user typing: only sync when not focused
+    if (!isFocused && el.innerHTML !== content) {
+      el.innerHTML = content || '';
+      lastHtmlRef.current = el.innerHTML;
     }
-  }, [content]);
+  }, [content, isFocused]);
 
   const handleInput = () => {
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
-    }
+    if (!editorRef.current) return;
+    const html = editorRef.current.innerHTML;
+    lastHtmlRef.current = html;
+    onChange(html);
   };
 
   const insertText = (text: string) => {
@@ -148,6 +155,8 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
           ref={editorRef}
           contentEditable
           onInput={handleInput}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed"
           style={{
             minHeight: '200px',
