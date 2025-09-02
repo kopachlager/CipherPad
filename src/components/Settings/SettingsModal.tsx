@@ -57,8 +57,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     disabled?: boolean;
   }> = ({ checked, onChange, disabled = false }) => (
     <button
+      type="button"
       disabled={disabled}
-      onClick={() => onChange(!checked)}
+      onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); onChange(!checked); }}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
         disabled 
           ? 'opacity-50 cursor-not-allowed bg-gray-200 dark:bg-gray-700'
@@ -89,9 +90,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           ].map((themeOption) => (
             <button
               key={themeOption.value}
-              onClick={() => {
-                updateSettings({ theme: themeOption.value as any });
-              }}
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ theme: themeOption.value as any }); }}
               className={`p-2 rounded-md border transition-colors ${
                 settings.theme === themeOption.value
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
@@ -120,7 +120,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           ].map((color) => (
             <button
               key={color.value}
-              onClick={() => updateSettings({ accentColor: color.value })}
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ accentColor: color.value }); }}
               className={`w-6 h-6 rounded-full border-2 transition-all ${
                 settings.accentColor === color.value
                   ? 'border-gray-900 dark:border-gray-100 scale-110'
@@ -177,20 +178,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       >
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => {
-              const newSize = Math.max(settings.fontSize - 2, 12);
-              updateSettings({ fontSize: newSize });
-            }}
+            type="button"
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); const newSize = Math.max(settings.fontSize - 2, 12); updateSettings({ fontSize: newSize }); }}
             className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <Type className="w-3 h-3" />
           </button>
           <span className="text-sm font-mono w-8 text-center">{settings.fontSize}</span>
           <button
-            onClick={() => {
-              const newSize = Math.min(settings.fontSize + 2, 24);
-              updateSettings({ fontSize: newSize });
-            }}
+            type="button"
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); const newSize = Math.min(settings.fontSize + 2, 24); updateSettings({ fontSize: newSize }); }}
             className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <Type className="w-4 h-4" />
@@ -322,8 +319,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   );
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200] p-4 pointer-events-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col pointer-events-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Settings</h2>
           <div className="flex items-center gap-2">
@@ -348,12 +345,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          <div className="w-48 border-r border-gray-200 dark:border-gray-700 p-4">
+          <div className="w-48 border-r border-gray-200 dark:border-gray-700 p-4 pointer-events-auto">
             <nav className="space-y-1">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setActiveTab(tab.id); }}
                   className={`w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition-colors ${
                     activeTab === tab.id
                       ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
