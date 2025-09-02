@@ -229,7 +229,7 @@ const Sidebar: React.FC = () => {
     onClick: () => void;
   }> = ({ icon, label, count, active, onClick }) => (
     <button
-      onClick={onClick}
+      onClick={() => { try { console.log('[Sidebar] QuickAccess:', label); } catch {}; onClick(); }}
       className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors duration-150 ${
         active
           ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
