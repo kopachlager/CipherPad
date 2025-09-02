@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   X, 
   Moon, 
@@ -354,25 +354,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             </nav>
           </div>
 
-          <div className="flex-1 p-6">
-            <div className="relative min-h-[420px] max-h-[60vh]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  className="absolute inset-0 overflow-y-auto"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  {activeTab === 'appearance' && renderAppearanceSettings()}
-                  {activeTab === 'editor' && renderEditorSettings()}
-                  {activeTab === 'security' && renderSecuritySettings()}
-                  {activeTab === 'shortcuts' && renderShortcutsSettings()}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
+          <SettingsContentPane activeTab={activeTab}
+            renderAppearance={renderAppearanceSettings}
+            renderEditor={renderEditorSettings}
+            renderSecurity={renderSecuritySettings}
+            renderShortcuts={renderShortcutsSettings}
+          />
         </div>
       </div>
     </div>
@@ -380,3 +367,43 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 };
 
 export default SettingsModal;
+
+// Fixed-top, fade-switched content pane with stable frame height.
+const SettingsContentPane: React.FC<{
+  activeTab: string;
+  renderAppearance: () => React.ReactNode;
+  renderEditor: () => React.ReactNode;
+  renderSecurity: () => React.ReactNode;
+  renderShortcuts: () => React.ReactNode;
+}> = ({ activeTab, renderAppearance, renderEditor, renderSecurity, renderShortcuts }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [activeTab]);
+
+  return (
+    <div className="flex-1 p-6">
+      <div className="relative h-[460px] md:h-[500px] lg:h-[520px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            ref={contentRef}
+            className="absolute inset-0 overflow-auto pr-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.14, ease: 'easeOut' }}
+          >
+            {activeTab === 'appearance' && renderAppearance()}
+            {activeTab === 'editor' && renderEditor()}
+            {activeTab === 'security' && renderSecurity()}
+            {activeTab === 'shortcuts' && renderShortcuts()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
