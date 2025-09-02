@@ -133,38 +133,35 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
     getRoot: () => editorRef.current,
   }));
 
-  if (isCodeMode) {
-    return (
-      <div className="flex-1 relative">
+  return (
+    <div className="flex-1 flex flex-col relative">
+      {isCodeMode ? (
         <textarea
           value={content}
           onChange={(e) => onChange(e.target.value)}
           className="w-full h-full p-6 bg-transparent border-none outline-none resize-none font-mono text-sm leading-relaxed"
           placeholder="Start coding..."
+          aria-label="Code editor"
         />
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex-1 flex flex-col relative">
-      <div
-        ref={editorRef}
-        contentEditable
-        onInput={handleInput}
-        className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed"
-        style={{
-          minHeight: '200px',
-          wordWrap: 'break-word',
-          whiteSpace: 'pre-wrap',
-          fontSize: `${settings.fontSize}px`,
-          lineHeight: settings.lineHeight as unknown as string,
-          fontFamily: settings.fontFamily,
-        }}
-        placeholder="Start writing..."
-        suppressContentEditableWarning={true}
-        aria-label="Rich text editor"
-      />
+      ) : (
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={handleInput}
+          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed"
+          style={{
+            minHeight: '200px',
+            wordWrap: 'break-word',
+            whiteSpace: 'pre-wrap',
+            fontSize: `${settings.fontSize}px`,
+            lineHeight: settings.lineHeight as unknown as string,
+            fontFamily: settings.fontFamily,
+          }}
+          placeholder="Start writing..."
+          suppressContentEditableWarning={true}
+          aria-label="Rich text editor"
+        />
+      )}
 
       {/* Recording Indicator */}
       {isRecording && (
