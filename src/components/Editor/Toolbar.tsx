@@ -110,7 +110,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   }) => (
     <button
       onClick={() => {
-        try { console.debug('[Toolbar]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
+        try { console.log('[Toolbar Click]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
         onClick();
       }}
       disabled={disabled}
@@ -152,7 +152,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
   const handleToggleFocusMode = () => {
     const next = !settings.distractionFreeMode;
-    try { console.debug('[Toolbar] Toggle Focus Mode ->', next); } catch {}
+    try { console.log('[Toolbar] Toggle Focus Mode ->', next); } catch {}
     updateSettings({ distractionFreeMode: next });
   };
 
@@ -168,18 +168,27 @@ const Toolbar: React.FC<ToolbarProps> = ({
     }
   ) => {
     const textarea = getTextarea();
-    if (!textarea || !onChangeContent) return;
+    if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const { value, nextStart, nextEnd } = compute(textarea.value, start, end);
-    onChangeContent(value);
-    requestAnimationFrame(() => {
-      const ta = getTextarea();
-      if (ta) {
-        ta.setSelectionRange(nextStart, nextEnd);
-        ta.focus();
-      }
-    });
+    if (onChangeContent) {
+      onChangeContent(value);
+      requestAnimationFrame(() => {
+        const ta = getTextarea();
+        if (ta) {
+          ta.setSelectionRange(nextStart, nextEnd);
+          ta.focus();
+        }
+      });
+    } else {
+      // Fallback: mutate DOM and dispatch input so React picks it up
+      textarea.value = value;
+      const event = new Event('input', { bubbles: true });
+      textarea.dispatchEvent(event);
+      textarea.setSelectionRange(nextStart, nextEnd);
+      textarea.focus();
+    }
   };
 
   const surroundSelection = (beforeText: string, afterText: string = beforeText) => {
@@ -260,7 +269,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0 relative z-20">
+    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0 relative z-40">
       <div className="flex items-center space-x-1">
         {/* Essential Tools Only */}
         <ToolbarButton
