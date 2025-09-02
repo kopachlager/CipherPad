@@ -11,7 +11,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
   const { settings } = useStore();
   const editorRef = useRef<any>(null);
 
-  const handleEditorDidMount = (editor: any) => {
+  const handleEditorDidMount = (editor: any, monaco: any) => {
     editorRef.current = editor;
     editor.focus();
     
@@ -24,8 +24,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
       wrappingStrategy: 'advanced',
     });
 
-    // Define custom themes
-    const monaco = editor.getModel()?.getLanguageService?.() || window.monaco;
+    // Define custom themes using monaco provided by onMount
     if (monaco?.editor) {
       // Light monochromatic theme
       monaco.editor.defineTheme('light-mono', {

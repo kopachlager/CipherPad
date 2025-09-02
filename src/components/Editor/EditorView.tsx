@@ -24,6 +24,7 @@ const EditorView: React.FC = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [editorRef, setEditorRef] = useState<HTMLDivElement | null>(null);
+  const langDebounceRef = React.useRef<number | null>(null);
 
   useAutoSave(activeNoteId, localContent);
 
@@ -113,16 +114,16 @@ const EditorView: React.FC = () => {
   const handleContentChange = (content: string) => {
     setLocalContent(content);
     
-    // Update the note immediately for real-time sync
-    if (activeNote) {
-      updateNote(activeNote.id, { content });
-    }
-    
     // Auto-detect language if in code mode
     if (activeNote && activeNote.isCodeMode) {
       const detectedLanguage = detectLanguage(content);
       if (detectedLanguage !== activeNote.language) {
-        updateNote(activeNote.id, { language: detectedLanguage });
+        if (langDebounceRef.current) {
+          clearTimeout(langDebounceRef.current);
+        }
+        langDebounceRef.current = window.setTimeout(() => {
+          updateNote(activeNote.id, { language: detectedLanguage });
+        }, 800) as unknown as number;
       }
     }
     

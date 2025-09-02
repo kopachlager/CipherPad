@@ -23,7 +23,7 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -35,7 +35,7 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
     if (isDecrypting) {
       // Decrypt the note
       try {
-        const decryptedContent = decryptData(note.content, password);
+        const decryptedContent = await decryptData(note.content, password);
         if (!decryptedContent) {
           setError('Invalid password or corrupted data');
           return;
@@ -60,7 +60,7 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
       }
 
       try {
-        const encryptedContent = encryptData(note.content, password);
+        const encryptedContent = await encryptData(note.content, password);
         onSave(encryptedContent, true);
         setPassword('');
         setConfirmPassword('');

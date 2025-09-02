@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 import { Note, Folder, AppSettings, AuthState } from '../types';
-import { generateUuid } from '../utils/crypto';
 import { supabase } from '../lib/supabase';
-import { useAuth } from './useAuth';
 
 interface Store {
   // Notes
@@ -139,7 +137,7 @@ export const useStore = create<Store>()(
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('User not authenticated');
 
-        const id = generateUuid();
+        const id = crypto.randomUUID();
         const note: Note = {
           id,
           title: 'Untitled Note',
@@ -269,7 +267,7 @@ export const useStore = create<Store>()(
         if (!user) return;
 
         const folder: Folder = {
-          id: generateUuid(),
+          id: crypto.randomUUID(),
           name,
           color: '#6b7280',
           parentId,
