@@ -376,6 +376,22 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-48">
                   <button
                     onClick={() => {
+                      console.log('[Toolbar Debug] Inserting [TEST]');
+                      applyEdit((v, s, e) => {
+                        const ins = '[TEST]';
+                        const value = v.substring(0, s) + ins + v.substring(e);
+                        const next = s + ins.length;
+                        console.log('[Toolbar Debug] before len', v.length, 'after len', value.length);
+                        return { value, nextStart: next, nextEnd: next };
+                      });
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 text-red-600"
+                  >
+                    <span>Debug: Insert [TEST]</span>
+                  </button>
+                  <button
+                    onClick={() => {
                       toggleLinePrefix('# ');
                       setShowMoreMenu(false);
                     }}

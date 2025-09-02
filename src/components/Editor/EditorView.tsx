@@ -256,6 +256,10 @@ const EditorView: React.FC = () => {
         />
         
         <div className="flex-1 overflow-hidden relative">
+          {/* Debug: selection/content length */}
+          <div className="absolute top-2 left-2 text-[10px] text-gray-400 bg-white/80 dark:bg-gray-800/60 rounded px-1 pointer-events-none">
+            selVer:{selectionVersion} len:{localContent.length}
+          </div>
           {activeNote.isCodeMode ? (
             <MonacoEditor
               note={activeNote}
