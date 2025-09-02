@@ -267,7 +267,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0 relative z-40">
+    <div
+      className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0 relative z-50 pointer-events-auto"
+      onMouseDown={(e) => {
+        try { console.log('[Toolbar] container mousedown', { x: e.clientX, y: e.clientY }); } catch {}
+      }}
+      aria-label="Editor toolbar"
+    >
       <div className="flex items-center space-x-1">
         {/* Essential Tools Only */}
         <ToolbarButton
@@ -505,6 +511,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
           tooltip="Focus Mode"
           onClick={handleToggleFocusMode}
         />
+        <button
+          onClick={() => {
+            try { console.log('[Toolbar Debug] Plain button clicked'); } catch {}
+            alert('Toolbar click OK');
+          }}
+          className="ml-2 px-2 py-1 text-[10px] border border-gray-300 rounded text-gray-600 hover:bg-gray-50"
+          aria-label="Toolbar debug click"
+        >
+          Debug Click
+        </button>
         <span className="ml-2 text-[10px] text-gray-400 select-none" title="Build marker">v-2025-09-02-a</span>
       </div>
 
