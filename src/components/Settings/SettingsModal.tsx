@@ -386,7 +386,7 @@ const SettingsContentPane: React.FC<{
 
   return (
     <div className="flex-1 p-6">
-      <div className="relative h-[460px] md:h-[500px] lg:h-[520px]">
+      <div className="relative h-[380px] md:h-[420px] lg:h-[460px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
