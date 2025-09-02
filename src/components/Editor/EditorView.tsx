@@ -22,7 +22,6 @@ const EditorView: React.FC = () => {
   const activeNote = notes.find((note) => note.id === activeNoteId);
   const [localContent, setLocalContent] = useState('');
   const [localTitle, setLocalTitle] = useState('');
-  const [manualTitle, setManualTitle] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | undefined>();
   const [showEncryptionModal, setShowEncryptionModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -40,7 +39,7 @@ const EditorView: React.FC = () => {
     if (activeNote) {
       setLocalContent(activeNote.content);
       setLocalTitle(activeNote.title || '');
-      setManualTitle(false);
+      // Sync title display from active note
     }
   }, [activeNote]);
 
@@ -134,15 +133,6 @@ const EditorView: React.FC = () => {
         langDebounceRef.current = window.setTimeout(() => {
           updateNote(activeNote.id, { language: detectedLanguage });
         }, 800) as unknown as number;
-      }
-    }
-    
-    // Improve: derive title only if user hasn't set one manually
-    if (activeNote && !manualTitle) {
-      const derived = deriveSmartTitle(content, !!activeNote.isCodeMode);
-      if (derived && derived !== activeNote.title) {
-        updateNote(activeNote.id, { title: derived });
-        setLocalTitle(derived);
       }
     }
     
@@ -263,31 +253,12 @@ const EditorView: React.FC = () => {
 
   const handleTitleInput = (value: string) => {
     setLocalTitle(value);
-    setManualTitle(true);
     if (!activeNote) return;
     if (titleDebounceRef.current) window.clearTimeout(titleDebounceRef.current);
     titleDebounceRef.current = window.setTimeout(() => {
       updateNote(activeNote.id!, { title: value || 'Untitled Note' });
       setLastSaved(new Date());
     }, 300) as unknown as number;
-  };
-
-  const deriveSmartTitle = (content: string, isCode: boolean): string => {
-    try {
-      if (isCode) {
-        const line = (content || '').split('\n').find(l => l.trim().length > 0) || '';
-        return (line.trim() || 'Untitled Note').slice(0, 80);
-      }
-      // content is HTML from rich editor
-      const div = document.createElement('div');
-      div.innerHTML = content || '';
-      const heading = div.querySelector('h1,h2,h3');
-      const text = heading?.textContent?.trim() || div.textContent?.trim() || '';
-      return (text || 'Untitled Note').slice(0, 80);
-    } catch {
-      const line = (content || '').split('\n')[0] || '';
-      return (line.trim() || 'Untitled Note').slice(0, 80);
-    }
   };
 
   return (
@@ -350,10 +321,6 @@ const EditorView: React.FC = () => {
         />
         
         <div className="flex-1 overflow-hidden relative">
-          {/* Debug: selection/content length */}
-          <div className="absolute top-2 left-2 text-[10px] text-gray-400 bg-white/80 dark:bg-gray-800/60 rounded px-1 pointer-events-none">
-            selVer:{selectionVersion} len:{localContent.length}
-          </div>
           {/* Encrypted placeholder */}
           {activeNote.isEncrypted ? (
             <div className="h-full flex items-center justify-center p-8">

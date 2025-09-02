@@ -21,6 +21,7 @@ const Sidebar: React.FC = () => {
   const [viewMode, setViewMode] = useState<'all'|'favorites'|'trash'>('all');
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const [showMoveMenuFor, setShowMoveMenuFor] = useState<string | null>(null);
 
   const filteredNotes = useMemo(() => {
     const byView = notes.filter(n => viewMode==='trash' ? n.isDeleted : viewMode==='favorites' ? n.isFavorite && !n.isDeleted : !n.isDeleted);
@@ -106,15 +107,78 @@ const Sidebar: React.FC = () => {
           </div>
           <div className="px-3 pb-3 space-y-1 max-h-96 overflow-y-auto framed-scrollbar">
             {filteredNotes.map(n => (
-              <button key={n.id} onClick={()=>setActiveNote(n.id)} className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm ${activeNoteId===n.id?'bg-gray-100 dark:bg-gray-800':'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
-                <div className="flex items-center gap-2 min-w-0">
+              <div key={n.id} className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm ${activeNoteId===n.id?'bg-gray-100 dark:bg-gray-800':'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+                <button onClick={()=>setActiveNote(n.id)} className="flex items-center gap-2 min-w-0 flex-1 text-left">
                   {n.isFavorite && (<Star className="w-3 h-3 text-yellow-500 fill-current" />)}
                   {n.isEncrypted && (<Lock className="w-3 h-3 text-gray-500" />)}
                   {n.isCodeMode && (<Code className="w-3 h-3 text-gray-500" />)}
                   <span className="truncate">{n.title || 'Untitled'}</span>
+                </button>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={(e)=>{ e.stopPropagation(); setActiveNote(n.id); }}
+                    className="px-1.5 py-0.5 text-[10px] rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                    title={formatDate(new Date(n.updatedAt))}
+                  >
+                    {formatDate(new Date(n.updatedAt))}
+                  </button>
+                  <button
+                    onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isFavorite: !n.isFavorite }); }}
+                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                    title={n.isFavorite ? 'Unfavorite' : 'Favorite'}
+                  >
+                    <Star className={`w-3 h-3 ${n.isFavorite ? 'text-yellow-500 fill-current' : 'text-gray-500'}`} />
+                  </button>
+                  <button
+                    onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isEncrypted: !n.isEncrypted }); }}
+                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                    title={n.isEncrypted ? 'Unlock (remove encryption)' : 'Encrypt note'}
+                  >
+                    <Lock className={`w-3 h-3 ${n.isEncrypted ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500'}`} />
+                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={(e)=>{ e.stopPropagation(); setShowMoveMenuFor(showMoveMenuFor===n.id?null:n.id); }}
+                      className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      title="Move to folder"
+                    >Move</button>
+                    {showMoveMenuFor===n.id && (
+                      <div className="absolute right-0 top-6 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg min-w-40 p-1">
+                        <button
+                          onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { folderId: undefined }); setShowMoveMenuFor(null); }}
+                          className={`w-full text-left px-3 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 ${!n.folderId ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
+                        >No Folder</button>
+                        {folders.map(f => (
+                          <button key={f.id}
+                            onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { folderId: f.id }); setShowMoveMenuFor(null); }}
+                            className={`w-full text-left px-3 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 ${n.folderId===f.id ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
+                          >
+                            <span className="inline-block w-2 h-2 rounded-sm mr-2" style={{ backgroundColor: f.color }} />{f.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={(e)=>{ e.stopPropagation(); const { exportNote } = require('../../utils/helpers'); exportNote(n, 'txt'); }}
+                    className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    title="Download"
+                  >DL</button>
+                  {viewMode==='trash' ? (
+                    <button
+                      onClick={(e)=>{ e.stopPropagation(); useStore.getState().restoreNote(n.id); }}
+                      className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      title="Restore"
+                    >Restore</button>
+                  ) : (
+                    <button
+                      onClick={(e)=>{ e.stopPropagation(); useStore.getState().deleteNote(n.id); }}
+                      className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      title="Delete"
+                    >Delete</button>
+                  )}
                 </div>
-                <span className="text-[10px] text-gray-500">{formatDate(new Date(n.updatedAt))}</span>
-              </button>
+              </div>
             ))}
             {filteredNotes.length===0 && (
               <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">No notes</div>
@@ -127,4 +191,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-
