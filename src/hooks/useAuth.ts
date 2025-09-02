@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabase, supabaseConfigured } from '../lib/supabase';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -8,24 +8,29 @@ export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!supabase || !supabaseConfigured) {
+      setUser(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('Error getting session:', error);
-        setError('Failed to connect to authentication service. Please check your internet connection.');
+        setError('Failed to connect to authentication service.');
       }
       setUser(session?.user ?? null);
       setLoading(false);
     }).catch((error) => {
       console.error('Failed to get session:', error);
-      setError('Failed to connect to authentication service. Please check your internet connection.');
+      setError('Failed to connect to authentication service.');
       setLoading(false);
     });
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
       setError(null);
@@ -38,6 +43,10 @@ export const useAuth = () => {
     setError(null);
     setLoading(true);
     
+    if (!supabase || !supabaseConfigured) {
+      setLoading(false);
+      return { data: null, error: { message: 'Authentication not configured' } as any };
+    }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -58,6 +67,10 @@ export const useAuth = () => {
     setError(null);
     setLoading(true);
     
+    if (!supabase || !supabaseConfigured) {
+      setLoading(false);
+      return { data: null, error: { message: 'Authentication not configured' } as any };
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -73,6 +86,9 @@ export const useAuth = () => {
 
   const signOut = async () => {
     setError(null);
+    if (!supabase || !supabaseConfigured) {
+      return { error: { message: 'Authentication not configured' } as any };
+    }
     const { error } = await supabase.auth.signOut();
     if (error) {
       setError(error.message);
