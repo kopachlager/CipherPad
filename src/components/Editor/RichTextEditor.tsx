@@ -160,6 +160,11 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
           placeholder="Start writing..."
           suppressContentEditableWarning={true}
           aria-label="Rich text editor"
+          data-gramm="false"
+          data-gramm_editor="false"
+          spellCheck={false}
+          autoCorrect="off"
+          autoCapitalize="off"
         />
       )}
 
