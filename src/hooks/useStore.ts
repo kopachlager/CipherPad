@@ -48,7 +48,7 @@ interface Store {
   unlockApp: () => void;
 }
 
-const defaultSettings: AppSettings = {
+export const defaultSettings: AppSettings = {
   theme: 'light',
   accentColor: '#6b7280',
   fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
