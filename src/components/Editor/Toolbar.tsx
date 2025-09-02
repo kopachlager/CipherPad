@@ -38,6 +38,7 @@ interface ToolbarProps {
   isRecording?: boolean;
   isTranscribing?: boolean;
   editorRef?: HTMLTextAreaElement | null;
+  onChangeContent?: (content: string) => void;
   contentAnalysis: {
     hasLists: boolean;
     hasLinks: boolean;
@@ -59,6 +60,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   isRecording = false,
   isTranscribing = false,
   editorRef,
+  onChangeContent,
   contentAnalysis,
 }) => {
   const { settings, updateSettings } = useStore();
@@ -145,43 +147,58 @@ const Toolbar: React.FC<ToolbarProps> = ({
     return editorRef ?? (document.querySelector('textarea') as HTMLTextAreaElement | null);
   };
 
-  const surroundSelection = (beforeText: string, afterText: string = beforeText) => {
+  const applyEdit = (
+    compute: (value: string, start: number, end: number) => {
+      value: string;
+      nextStart: number;
+      nextEnd: number;
+    }
+  ) => {
     const textarea = getTextarea();
-    if (!textarea) return;
+    if (!textarea || !onChangeContent) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-    const newText = `${beforeText}${selectedText}${afterText}`;
-    const newValue = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
-    const nextCursor = start + beforeText.length + selectedText.length + afterText.length;
-    textarea.value = newValue;
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    textarea.setSelectionRange(nextCursor, nextCursor);
-    textarea.focus();
+    const { value, nextStart, nextEnd } = compute(textarea.value, start, end);
+    onChangeContent(value);
+    requestAnimationFrame(() => {
+      const ta = getTextarea();
+      if (ta) {
+        ta.setSelectionRange(nextStart, nextEnd);
+        ta.focus();
+      }
+    });
+  };
+
+  const surroundSelection = (beforeText: string, afterText: string = beforeText) => {
+    applyEdit((v, s, e) => {
+      const selected = v.substring(s, e);
+      const insert = `${beforeText}${selected}${afterText}`;
+      const value = v.substring(0, s) + insert + v.substring(e);
+      const next = s + insert.length;
+      return { value, nextStart: next, nextEnd: next };
+    });
   };
 
   const toggleLinePrefix = (prefix: string) => {
-    const textarea = getTextarea();
-    if (!textarea) return;
-    const value = textarea.value;
-    const selStart = textarea.selectionStart;
-    const selEnd = textarea.selectionEnd;
-    const lineStart = value.lastIndexOf('\n', selStart - 1) + 1;
-    const lineEnd = value.indexOf('\n', selEnd);
-    const endIndex = lineEnd === -1 ? value.length : lineEnd;
-    const block = value.substring(lineStart, endIndex);
-    const lines = block.split('\n');
-    const allPrefixed = lines.every(l => l.startsWith(prefix));
-    const newLines = lines.map(l => (allPrefixed ? l.replace(new RegExp('^' + prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), '') : prefix + l));
-    const newBlock = newLines.join('\n');
-    const newValue = value.substring(0, lineStart) + newBlock + value.substring(endIndex);
-    const delta = newBlock.length - block.length;
-    textarea.value = newValue;
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    textarea.setSelectionRange(selStart + (allPrefixed ? -prefix.length : prefix.length), selEnd + delta);
-    textarea.focus();
+    applyEdit((value, selStart, selEnd) => {
+      const lineStart = value.lastIndexOf('\n', selStart - 1) + 1;
+      const lineEnd = value.indexOf('\n', selEnd);
+      const endIndex = lineEnd === -1 ? value.length : lineEnd;
+      const block = value.substring(lineStart, endIndex);
+      const lines = block.split('\n');
+      const allPrefixed = lines.every(l => l.startsWith(prefix));
+      const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const newLines = lines.map(l => (allPrefixed ? l.replace(new RegExp('^' + escaped), '') : prefix + l));
+      const newBlock = newLines.join('\n');
+      const newValue = value.substring(0, lineStart) + newBlock + value.substring(endIndex);
+      const delta = newBlock.length - block.length;
+      const adjust = allPrefixed ? -prefix.length : prefix.length;
+      return {
+        value: newValue,
+        nextStart: selStart + adjust,
+        nextEnd: selEnd + delta,
+      };
+    });
   };
 
   const insertLink = () => {
@@ -189,34 +206,24 @@ const Toolbar: React.FC<ToolbarProps> = ({
     if (!textarea) return;
     const url = prompt('Enter URL:');
     if (!url) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = textarea.value.substring(start, end) || 'Link';
-    const md = `[${selected}](${url})`;
-    const newValue = textarea.value.substring(0, start) + md + textarea.value.substring(end);
-    textarea.value = newValue;
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    const cursor = start + md.length;
-    textarea.setSelectionRange(cursor, cursor);
-    textarea.focus();
+    applyEdit((v, s, e) => {
+      const selected = v.substring(s, e) || 'Link';
+      const md = `[${selected}](${url})`;
+      const value = v.substring(0, s) + md + v.substring(e);
+      const cursor = s + md.length;
+      return { value, nextStart: cursor, nextEnd: cursor };
+    });
   };
 
   const wrapCodeBlock = () => {
-    const textarea = getTextarea();
-    if (!textarea) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = textarea.value.substring(start, end);
     const lang = note.language && note.language !== 'plaintext' ? note.language : '';
-    const block = '```' + lang + '\n' + (selected || '') + '\n```';
-    const newValue = textarea.value.substring(0, start) + block + textarea.value.substring(end);
-    textarea.value = newValue;
-    const event = new Event('input', { bubbles: true });
-    textarea.dispatchEvent(event);
-    const cursor = start + block.length;
-    textarea.setSelectionRange(cursor, cursor);
-    textarea.focus();
+    applyEdit((v, s, e) => {
+      const selected = v.substring(s, e);
+      const block = '```' + lang + '\n' + (selected || '') + '\n```';
+      const value = v.substring(0, s) + block + v.substring(e);
+      const cursor = s + block.length;
+      return { value, nextStart: cursor, nextEnd: cursor };
+    });
   };
 
   const formatText = (format: 'bold' | 'italic' | 'underline' | 'strikethrough' | 'code') => {

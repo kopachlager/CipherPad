@@ -200,6 +200,10 @@ const EditorView: React.FC = () => {
           isTranscribing={isTranscribing}
           contentAnalysis={getContentAnalysis()}
           editorRef={editorRef}
+          onChangeContent={(content) => {
+            setLocalContent(content);
+            handleContentChange(content);
+          }}
         />
         
         <div className="flex-1 overflow-hidden relative">
