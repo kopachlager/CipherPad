@@ -116,11 +116,20 @@ const Toolbar: React.FC<ToolbarProps> = ({
   }) => (
     <button
       type="button"
-      onClick={() => {
-        try { console.log('[Toolbar Click]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
+      onMouseDown={(e) => {
+        try { console.log('[Toolbar MouseDown]', tooltip, e.button); } catch {}
+        // Prevent focus from leaving the textarea, which can cancel click.
+        e.preventDefault();
+        e.stopPropagation();
+        // Execute action on mousedown to avoid mouseup being intercepted.
         onClick();
       }}
-      onMouseDown={(e) => { try { console.log('[Toolbar MouseDown]', tooltip, e.button); } catch {} }}
+      onMouseUp={(e) => { e.preventDefault(); e.stopPropagation(); }}
+      onClick={(e) => {
+        try { console.log('[Toolbar Click]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
+        e.preventDefault();
+        e.stopPropagation();
+      }}
       disabled={disabled}
       title={tooltip}
       aria-label={tooltip}
