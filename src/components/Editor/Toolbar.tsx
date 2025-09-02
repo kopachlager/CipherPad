@@ -109,7 +109,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
     suggested = false 
   }) => (
     <button
-      onClick={onClick}
+      onClick={() => {
+        try { console.debug('[Toolbar]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
+        onClick();
+      }}
       disabled={disabled}
       title={tooltip}
       className={`p-2 rounded-md transition-all duration-150 ${
@@ -148,7 +151,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   const handleToggleFocusMode = () => {
-    updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
+    const next = !settings.distractionFreeMode;
+    try { console.debug('[Toolbar] Toggle Focus Mode ->', next); } catch {}
+    updateSettings({ distractionFreeMode: next });
   };
 
   const getTextarea = () => {
@@ -255,7 +260,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0">
+    <div className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0 relative z-20">
       <div className="flex items-center space-x-1">
         {/* Essential Tools Only */}
         <ToolbarButton
