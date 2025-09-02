@@ -117,7 +117,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
   );
 
   const handleDownload = () => {
-    exportNote(note, note.isCodeMode ? 'txt' : 'md');
+    const currentContent = editorRef?.value ?? note.content;
+    const enriched = { ...note, content: currentContent };
+    exportNote(enriched, note.isCodeMode ? 'txt' : 'md');
   };
 
   const handleShare = async () => {
@@ -125,13 +127,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
       try {
         await navigator.share({
           title: note.title,
-          text: note.content,
+          text: editorRef?.value ?? note.content,
         });
       } catch (err) {
         console.log('Share cancelled');
       }
     } else {
-      navigator.clipboard.writeText(note.content);
+      navigator.clipboard.writeText(editorRef?.value ?? note.content);
     }
   };
 

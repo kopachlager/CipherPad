@@ -182,6 +182,18 @@ export const useStore = create<Store>()(
 
       updateNote: async (id, updates) => {
         const { data: { user } } = await supabase.auth.getUser();
+
+        // Update local state immediately
+        set((state) => ({
+          notes: state.notes.map((note) =>
+            note.id === id
+              ? { ...note, ...updates, updatedAt: new Date() }
+              : note
+          ),
+        }));
+        get().updateLastActivity();
+
+        // If not authenticated, skip remote persistence
         if (!user) return;
 
         const dbUpdates: any = {};
@@ -194,7 +206,6 @@ export const useStore = create<Store>()(
         if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
         if (updates.isDeleted !== undefined) dbUpdates.is_deleted = updates.isDeleted;
         if (updates.isFavorite !== undefined) dbUpdates.is_favorite = updates.isFavorite;
-        
         dbUpdates.updated_at = new Date().toISOString();
 
         const { error } = await supabase
@@ -205,17 +216,7 @@ export const useStore = create<Store>()(
 
         if (error) {
           console.error('Error updating note:', error);
-          return;
         }
-
-        set((state) => ({
-          notes: state.notes.map((note) =>
-            note.id === id
-              ? { ...note, ...updates, updatedAt: new Date() }
-              : note
-          ),
-        }));
-        get().updateLastActivity();
       },
 
       deleteNote: async (id) => {
@@ -357,16 +358,15 @@ export const useStore = create<Store>()(
       },
 
       updateSettings: (updates) => {
-        const updateSettingsAsync = async () => {
+        const newSettings = { ...get().settings, ...updates };
+        // Apply immediately and persist to localStorage
+        set({ settings: newSettings });
+        saveSettings(newSettings);
+
+        // Best-effort save to Supabase if authenticated
+        (async () => {
           const { data: { user } } = await supabase.auth.getUser();
           if (!user) return;
-
-          const newSettings = { ...get().settings, ...updates };
-          
-          // Save to localStorage as backup
-          saveSettings(newSettings);
-          
-          // Save to Supabase
           const dbUpdates: any = {};
           if (updates.theme !== undefined) dbUpdates.theme = updates.theme;
           if (updates.accentColor !== undefined) dbUpdates.accent_color = updates.accentColor;
@@ -382,19 +382,9 @@ export const useStore = create<Store>()(
 
           const { error } = await supabase
             .from('user_settings')
-            .upsert({
-              user_id: user.id,
-              ...dbUpdates,
-            });
-
-          if (error) {
-            console.error('Error saving settings:', error);
-          }
-
-          set({ settings: newSettings });
-        };
-        
-        updateSettingsAsync();
+            .upsert({ user_id: user.id, ...dbUpdates });
+          if (error) console.error('Error saving settings:', error);
+        })();
       },
 
       loadSettings: async () => {
