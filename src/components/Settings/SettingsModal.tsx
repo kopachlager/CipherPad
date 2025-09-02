@@ -354,22 +354,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             </nav>
           </div>
 
-          <div className="flex-1 p-6 overflow-y-auto">
-            <motion.div layout>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {activeTab === 'appearance' && renderAppearanceSettings()}
-                  {activeTab === 'editor' && renderEditorSettings()}
-                  {activeTab === 'security' && renderSecuritySettings()}
-                  {activeTab === 'shortcuts' && renderShortcutsSettings()}
-                </motion.div>
-              </AnimatePresence>
+          <div className="flex-1 p-6">
+            <motion.div layout transition={{ duration: 0.22 }}>
+              {activeTab === 'appearance' && renderAppearanceSettings()}
+              {activeTab === 'editor' && renderEditorSettings()}
+              {activeTab === 'security' && renderSecuritySettings()}
+              {activeTab === 'shortcuts' && renderShortcutsSettings()}
             </motion.div>
           </div>
         </div>
