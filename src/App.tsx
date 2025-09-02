@@ -12,7 +12,7 @@ import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const App: React.FC = () => {
-  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings } = useStore();
+  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings, auth, lockApp, unlockApp } = useStore();
   const { user, loading } = useAuth();
   const [showLanding, setShowLanding] = React.useState(!user);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
@@ -57,15 +57,19 @@ const App: React.FC = () => {
 
   // Auto-lock functionality
   useEffect(() => {
-    if (!settings.autoLock || !user) return;
-
+    if (!user || !settings.autoLock) return;
     const checkAutoLock = () => {
-      // Auto-lock logic would go here
+      const last = useStore.getState().auth.lastActivity;
+      const now = new Date();
+      const diff = now.getTime() - last.getTime();
+      if (diff >= settings.autoLockTimeout && !useStore.getState().auth.isLocked) {
+        lockApp();
+      }
     };
-
-    const interval = setInterval(checkAutoLock, 60000); // Check every minute
+    // Check every 10 seconds for responsiveness
+    const interval = setInterval(checkAutoLock, 10000);
     return () => clearInterval(interval);
-  }, [settings.autoLock, settings.autoLockTimeout, user]);
+  }, [settings.autoLock, settings.autoLockTimeout, user, lockApp]);
 
   // Track user activity
   useEffect(() => {
@@ -157,7 +161,23 @@ const App: React.FC = () => {
         </div>
         
         {!settings.distractionFreeMode && <FloatingActionButton />}
-        {settings.distractionFreeMode && (
+        {auth.isLocked && (
+          <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">
+              <div className="mb-3 text-lg font-semibold">Session Locked</div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-5">You've been inactive for a while. Unlock to continue.</p>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => unlockApp()}
+                  className="px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+                >
+                  Unlock
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {settings.distractionFreeMode && !auth.isLocked && (
           <button
             onClick={() => {
               // Exit focus mode quickly

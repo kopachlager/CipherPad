@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useStore } from '../../hooks/useStore';
 import {
   Bold,
   Italic,
@@ -39,6 +40,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
   isCodeMode = false,
 }, ref) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const { settings } = useStore();
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
@@ -155,6 +157,9 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
           minHeight: '200px',
           wordWrap: 'break-word',
           whiteSpace: 'pre-wrap',
+          fontSize: `${settings.fontSize}px`,
+          lineHeight: settings.lineHeight as unknown as string,
+          fontFamily: settings.fontFamily,
         }}
         placeholder="Start writing..."
         suppressContentEditableWarning={true}

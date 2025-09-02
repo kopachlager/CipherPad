@@ -44,6 +44,8 @@ interface Store {
   setSearchQuery: (query: string) => void;
   
   updateLastActivity: () => void;
+  lockApp: () => void;
+  unlockApp: () => void;
 }
 
 const defaultSettings: AppSettings = {
@@ -446,6 +448,12 @@ export const useStore = create<Store>()(
         set((state) => ({
           auth: { ...state.auth, lastActivity: new Date() },
         }));
+      },
+      lockApp: () => {
+        set((state) => ({ auth: { ...state.auth, isLocked: true } }));
+      },
+      unlockApp: () => {
+        set((state) => ({ auth: { ...state.auth, isLocked: false, lastActivity: new Date() } }));
       },
     })
 );

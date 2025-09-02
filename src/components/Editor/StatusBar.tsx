@@ -15,8 +15,11 @@ const StatusBar: React.FC<StatusBarProps> = ({ note, lastSaved }) => {
     return null;
   }
 
-  const wordCount = getWordCount(note.content);
-  const charCount = getCharCount(note.content);
+  const plainText = note.isCodeMode
+    ? note.content || ''
+    : (note.content || '').replace(/<[^>]*>/g, ' ');
+  const wordCount = getWordCount(plainText);
+  const charCount = getCharCount(plainText);
 
   return (
     <div className="h-8 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 text-xs text-gray-500 dark:text-gray-400">
