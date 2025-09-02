@@ -45,6 +45,7 @@ interface ToolbarProps {
       nextEnd: number;
     }
   ) => void;
+  onRichCommand?: (cmd: 'bold' | 'italic' | 'underline' | 'strikeThrough' | 'insertUnorderedList' | 'insertOrderedList' | 'formatBlock' | 'createLink' | 'pre', value?: string) => void;
   contentAnalysis: {
     hasLists: boolean;
     hasLinks: boolean;
@@ -75,6 +76,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   isTranscribing = false,
   editorRef,
   onApplyEdit,
+  onRichCommand,
   contentAnalysis,
 }) => {
   const { settings, updateSettings } = useStore();
@@ -331,37 +333,30 @@ const Toolbar: React.FC<ToolbarProps> = ({
         ) : (
           /* Rich Text Mode - Contextual Tools */
           <div className="flex items-center space-x-1 ml-2 pointer-events-auto">
-            <button
-              type="button"
-              onClick={() => alert('Left debug click')}
-              className="px-1.5 py-0.5 text-[10px] border border-gray-300 rounded text-gray-600 hover:bg-gray-50"
-            >
-              LeftDbg
-            </button>
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold"
-              onClick={() => formatText('bold')}
+              onClick={() => onRichCommand?.('bold')}
               active={contentAnalysis.boldActive}
               suggested={contentAnalysis.hasSelection}
             />
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
               tooltip="Italic"
-              onClick={() => formatText('italic')}
+              onClick={() => onRichCommand?.('italic')}
               active={contentAnalysis.italicActive}
               suggested={contentAnalysis.hasSelection}
             />
             <ToolbarButton
               icon={<Underline className="w-4 h-4" />}
               tooltip="Underline"
-              onClick={() => formatText('underline')}
+              onClick={() => onRichCommand?.('underline')}
               active={contentAnalysis.underlineActive}
             />
             <ToolbarButton
               icon={<Strikethrough className="w-4 h-4" />}
               tooltip="Strikethrough"
-              onClick={() => formatText('strikethrough')}
+              onClick={() => onRichCommand?.('strikeThrough')}
               active={contentAnalysis.strikethroughActive}
             />
 
@@ -369,14 +364,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<List className="w-4 h-4" />}
               tooltip="Bullet List"
-              onClick={() => toggleLinePrefix('- ')}
+              onClick={() => onRichCommand?.('insertUnorderedList')}
               active={contentAnalysis.bulletActive}
               suggested={true}
             />
             <ToolbarButton
               icon={<ListOrdered className="w-4 h-4" />}
               tooltip="Numbered List"
-              onClick={() => toggleLinePrefix('1. ')}
+              onClick={() => onRichCommand?.('insertOrderedList')}
               active={contentAnalysis.orderedActive}
               suggested={true}
             />
@@ -385,7 +380,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<Link className="w-4 h-4" />}
               tooltip="Insert Link"
-              onClick={insertLink}
+              onClick={() => onRichCommand?.('createLink')}
               suggested={contentAnalysis.hasLinks}
             />
 
@@ -401,23 +396,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-48">
                   <button
                     onClick={() => {
-                      console.log('[Toolbar Debug] Inserting [TEST]');
-                      applyEdit((v, s, e) => {
-                        const ins = '[TEST]';
-                        const value = v.substring(0, s) + ins + v.substring(e);
-                        const next = s + ins.length;
-                        console.log('[Toolbar Debug] before len', v.length, 'after len', value.length);
-                        return { value, nextStart: next, nextEnd: next };
-                      });
-                      setShowMoreMenu(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3 text-red-600"
-                  >
-                    <span>Debug: Insert [TEST]</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      toggleLinePrefix('# ');
+                      onRichCommand?.('formatBlock', 'h1');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -427,7 +406,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      toggleLinePrefix('## ');
+                      onRichCommand?.('formatBlock', 'h2');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -438,7 +417,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                   <button
                     onClick={() => {
-                      insertLink();
+                      onRichCommand?.('createLink');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -448,7 +427,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      toggleLinePrefix('> ');
+                      onRichCommand?.('formatBlock', 'blockquote');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -458,7 +437,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      wrapCodeBlock();
+                      onRichCommand?.('pre');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -530,17 +509,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           tooltip="Focus Mode"
           onClick={handleToggleFocusMode}
         />
-        <button
-          onClick={() => {
-            try { console.log('[Toolbar Debug] Plain button clicked'); } catch {}
-            alert('Toolbar click OK');
-          }}
-          className="ml-2 px-2 py-1 text-[10px] border border-gray-300 rounded text-gray-600 hover:bg-gray-50"
-          aria-label="Toolbar debug click"
-        >
-          Debug Click
-        </button>
-        <span className="ml-2 text-[10px] text-gray-400 select-none" title="Build marker">v-2025-09-02-a</span>
+        <span className="ml-2 text-[10px] text-gray-400 select-none" title="Build marker">v-2025-09-02-b</span>
       </div>
 
       {/* Click outside handlers */}

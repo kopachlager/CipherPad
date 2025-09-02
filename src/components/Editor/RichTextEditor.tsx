@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import {
   Bold,
   Italic,
@@ -22,17 +22,22 @@ import {
   Loader,
 } from 'lucide-react';
 
+export interface RichTextEditorHandle {
+  focus: () => void;
+  getRoot: () => HTMLDivElement | null;
+}
+
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
   isCodeMode?: boolean;
 }
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({
+const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
   content,
   onChange,
   isCodeMode = false,
-}) => {
+}, ref) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -121,6 +126,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    focus: () => editorRef.current?.focus(),
+    getRoot: () => editorRef.current,
+  }));
+
   if (isCodeMode) {
     return (
       <div className="flex-1 relative">
@@ -148,6 +158,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }}
         placeholder="Start writing..."
         suppressContentEditableWarning={true}
+        aria-label="Rich text editor"
       />
 
       {/* Recording Indicator */}
@@ -167,6 +178,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default RichTextEditor;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
+import RichTextEditor, { RichTextEditorHandle } from './RichTextEditor';
 import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
@@ -24,6 +25,7 @@ const EditorView: React.FC = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
+  const richRef = React.useRef<RichTextEditorHandle>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
   const langDebounceRef = React.useRef<number | null>(null);
 
@@ -141,43 +143,57 @@ const EditorView: React.FC = () => {
 
   const getContentAnalysis = () => {
     const content = localContent || '';
-    const hasLists = /^[\s]*[-*+]\s|^[\s]*\d+\.\s/m.test(content);
-    const hasLinks = /https?:\/\/|www\.|\.com|\.org|\.net/i.test(content) || /\[.*?\]\(.*?\)/.test(content);
-    const hasCode = /```|`[^`]+`|<code>/.test(content);
-    const s = editorRef ? editorRef.selectionStart : 0;
-    const e = editorRef ? editorRef.selectionEnd : 0;
-    const selectionLength = e - s;
-    const selectedText = editorRef ? editorRef.value.substring(s, e) : '';
-    const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
-    const safeSlice = (start: number, end: number) => content.substring(Math.max(0, start), Math.max(0, end));
-    const boldActive = s >= 2 && safeSlice(s - 2, s) === '**' && safeSlice(e, e + 2) === '**';
-    const italicActive = s >= 1 && safeSlice(s - 1, s) === '*' && safeSlice(e, e + 1) === '*';
-    const strikeActive = s >= 2 && safeSlice(s - 2, s) === '~~' && safeSlice(e, e + 2) === '~~';
-    const underlineActive = s >= 3 && safeSlice(s - 3, s) === '<u>' && safeSlice(e, e + 4) === '</u>';
-    // Line-based states
-    const lineStart = content.lastIndexOf('\n', s - 1) + 1;
-    const lineEnd = content.indexOf('\n', e);
-    const endIndex = lineEnd === -1 ? content.length : lineEnd;
-    const block = content.substring(lineStart, endIndex);
-    const lines = block.split('\n');
-    const bulletActive = lines.length > 0 && lines.every(l => l.startsWith('- '));
-    const orderedActive = lines.length > 0 && lines.every(l => /^\d+\.\s/.test(l));
-    const quoteActive = lines.length > 0 && lines.every(l => l.startsWith('> '));
+    const wordCount = content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(w => w.length > 0).length;
+    if (!activeNote.isCodeMode) {
+      // WYSIWYG mode: use queryCommandState where possible
+      const hasSelection = (window.getSelection()?.toString() || '').length > 0;
+      const boldActive = document.queryCommandState('bold');
+      const italicActive = document.queryCommandState('italic');
+      const underlineActive = document.queryCommandState('underline');
+      const strikethroughActive = document.queryCommandState('strikeThrough');
+      const bulletActive = document.queryCommandState('insertUnorderedList');
+      const orderedActive = document.queryCommandState('insertOrderedList');
+      // Detect blockquote by walking up DOM
+      let quoteActive = false;
+      const sel = window.getSelection();
+      if (sel && sel.anchorNode) {
+        let node: Node | null = sel.anchorNode;
+        while (node) {
+          if ((node as HTMLElement).tagName === 'BLOCKQUOTE') { quoteActive = true; break; }
+          node = (node as Node).parentNode;
+        }
+      }
+      const hasLinks = /<a\b[^>]*>/i.test(content);
+      const hasCode = /<pre|<code/i.test(content);
+      return {
+        hasLists: bulletActive || orderedActive,
+        hasLinks,
+        hasCode,
+        hasSelection,
+        selectedText: window.getSelection()?.toString() || '',
+        wordCount,
+        boldActive,
+        italicActive,
+        underlineActive,
+        strikethroughActive,
+        bulletActive,
+        orderedActive,
+        quoteActive,
+        selectionVersion,
+      } as any;
+    }
+    // Code mode (plain textarea/Monaco)
+    const hasLists = /[-*+]\s|\d+\.\s/.test(content);
+    const hasLinks = /https?:\/\//i.test(content) || /<a\b/i.test(content);
+    const hasCode = /```|<code|<pre/i.test(content);
     return {
       hasLists,
       hasLinks,
       hasCode,
-      hasSelection: selectionLength > 0,
-      selectedText,
+      hasSelection: false,
+      selectedText: '',
       wordCount,
-      boldActive,
-      italicActive,
-      underlineActive,
-      strikethroughActive: strikeActive,
-      bulletActive,
-      orderedActive,
-      quoteActive,
-      selectionVersion, // forces recalculation on selection changes
+      selectionVersion,
     } as any;
   };
 
@@ -253,6 +269,34 @@ const EditorView: React.FC = () => {
           contentAnalysis={getContentAnalysis()}
           editorRef={editorRef}
           onApplyEdit={applyEditFromToolbar}
+          onRichCommand={(cmd, value) => {
+            // Focus the rich editor to keep selection
+            richRef.current?.focus();
+            try {
+              if (cmd === 'bold' || cmd === 'italic' || cmd === 'underline' || cmd === 'strikeThrough') {
+                document.execCommand(cmd);
+              } else if (cmd === 'insertUnorderedList' || cmd === 'insertOrderedList') {
+                document.execCommand(cmd);
+              } else if (cmd === 'formatBlock') {
+                document.execCommand('formatBlock', false, value || 'blockquote');
+              } else if (cmd === 'createLink') {
+                const url = value || prompt('Enter URL:') || '';
+                if (url) document.execCommand('createLink', false, url);
+              } else if (cmd === 'pre') {
+                document.execCommand('formatBlock', false, 'pre');
+              }
+            } catch (e) {
+              console.error('Rich command failed', cmd, e);
+            }
+            // After execCommand, trigger change
+            const root = richRef.current?.getRoot();
+            if (root) {
+              const html = root.innerHTML;
+              setLocalContent(html);
+              handleContentChange(html);
+              setSelectionVersion((v) => v + 1);
+            }
+          }}
         />
         
         <div className="flex-1 overflow-hidden relative">
@@ -266,34 +310,12 @@ const EditorView: React.FC = () => {
               onChange={handleContentChange}
             />
           ) : (
-            <textarea
-              ref={(ref) => setEditorRef(ref)}
-              value={localContent}
-              onChange={(e) => {
-                const newContent = e.target.value;
-                setLocalContent(newContent);
-                handleContentChange(newContent);
-              }}
-              onSelect={(e) => {
-                setSelectionVersion((v) => v + 1);
-              }}
-              onKeyUp={() => setSelectionVersion((v) => v + 1)}
-              aria-label="Note editor"
-              data-gramm="false"
-              data-gramm_editor="false"
-              spellCheck={false}
-              autoCapitalize="off"
-              autoCorrect="off"
-              placeholder="Start writing your note..."
-              className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full w-full resize-none bg-transparent border-none text-gray-900 dark:text-gray-100"
-              style={{
-                fontSize: `${settings.fontSize}px`,
-                lineHeight: settings.lineHeight,
-                fontFamily: settings.fontFamily,
-                whiteSpace: 'pre-wrap', // Preserve whitespace and wrap
-                wordWrap: 'break-word', // Break long words
-                overflowWrap: 'break-word', // Modern word breaking
-                wordBreak: 'break-word', // Break words when necessary
+            <RichTextEditor
+              ref={richRef}
+              content={localContent}
+              onChange={(html) => {
+                setLocalContent(html);
+                handleContentChange(html);
               }}
             />
           )}
