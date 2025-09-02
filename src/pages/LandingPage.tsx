@@ -306,74 +306,390 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="py-16">
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Loved by writers and developers</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { name: 'Ava, Product Designer', text: 'CipherWrite is my daily writing space — simple, fast, and beautiful.' },
-              { name: 'Liam, Software Engineer', text: 'I use code mode all the time. Autosave and sync just work.' },
-              { name: 'Mia, Researcher', text: 'Encryption gives me peace of mind for sensitive notes.' },
-            ].map((t, i) => (
-              <div key={i} className="p-6 rounded-xl border border-gray-200 bg-white">
-                <div className="flex items-center gap-1 text-yellow-500 mb-3">
-                  {Array.from({ length: 5 }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-current" />
-                  ))}
+          {/* Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>Testimonials</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-5xl mx-auto leading-tight">
+              Your ultimate CipherWrite secure note-taking experience
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              The world's most advanced secure note-taking app. Meticulously crafted with 
+              end-to-end encryption, real-time sync, and distraction-free writing experience.
+            </p>
+          </div>
+
+          {/* Testimonials Grid - 2 rows, 3 columns */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto animate-fade-in">
+            {/* Testimonial 1 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                " CipherWrite is a security marvel! The end-to-end encryption keeps me confident, and 
+                the collaborative workspace fosters teamwork effortlessly. A total game-changer for secure 
+                note-taking workflows. ️⚡ #SecurityBoost #CipherWrite"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-blue-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Sarah Mitchell</div>
+                  <div className="text-gray-500 text-sm">Security Analyst</div>
                 </div>
-                <p className="text-gray-700 mb-3">{t.text}</p>
-                <div className="text-sm text-gray-500">{t.name}</div>
               </div>
-            ))}
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                " Explored various tools for secure note-taking, and 
+                nothing beats CipherWrite! Super impressed with the 
+                detailed encryption and the ease of navigating 
+                complex data. Highly recommended!  
+                #SecureNotes #CipherWrite"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-green-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">David Chen</div>
+                  <div className="text-gray-500 text-sm">Data Scientist</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                " @CipherWrite's brainchild, Secure Notes, is a 
+                testament to their commitment to simplifying 
+                business processes. Kudos for creating an 
+                invaluable toolkit for entrepreneurs like me! ⚡
+"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-purple-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Emma Rodriguez</div>
+                  <div className="text-gray-500 text-sm">Creative Director</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 4 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                " Major props to @CipherWrite for Secure Notes! 
+                Your vision for streamlining secure writing has made a 
+                significant impact on my business. Grateful for your 
+                dedication to excellence. ️
+"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-orange-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Marcus Johnson</div>
+                  <div className="text-gray-500 text-sm">Business Owner</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 5 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                " Elevate your business with CipherWrite! The 
+                encryption features are a perfect blend of security and 
+                functionality. As an entrepreneur, it's become my 
+                go-to toolkit for secure planning and organization."
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-red-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Lisa Park</div>
+                  <div className="text-gray-500 text-sm">Startup Founder</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial 6 */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="flex text-yellow-400 mb-6">
+                {'★'.repeat(5)}
+              </div>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                " Hats off to @CipherWrite for Secure Notes! 
+                Your templates have added immense value to my 
+                business. It's not just a toolkit; it's a game-changer 
+                for entrepreneurs.  #BusinessGameChanger 
+                #SecureNotes #CipherWrite"
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-teal-500 rounded-full"></div>
+                <div>
+                  <div className="font-medium text-gray-900">Alex Thompson</div>
+                  <div className="text-gray-500 text-sm">Tech Entrepreneur</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-16 border-t border-gray-200">
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Simple, transparent pricing</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { title: 'Starter', price: 'Free', features: ['Unlimited notes', 'Local encryption', 'Basic export'] },
-              { title: 'Pro', price: '$29 one-time', features: ['Sync across devices', 'Code mode & themes', 'Priority support'] },
-              { title: 'Team', price: 'Contact', features: ['Shared folders', 'Role-based access', 'SLA & support'] },
-            ].map((plan, i) => (
-              <div key={i} className="p-6 rounded-xl border border-gray-200 bg-white flex flex-col">
-                <h3 className="font-semibold text-gray-900 mb-2">{plan.title}</h3>
-                <div className="text-2xl font-bold text-gray-900 mb-4">{plan.price}</div>
-                <ul className="space-y-2 text-gray-700 flex-1">
-                  {plan.features.map((f, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span className="text-green-600">✓</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button className="mt-6 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Choose {plan.title}</button>
+          {/* Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+              <span>Pricing</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
+              Choose the plan that's right for you
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Compare our pricing plans to find the one that best suits your needs and budget.
+            </p>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Basic Plan */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Basic Plan<span className="text-sm font-normal">*</span>
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Start with essentials for personal note-taking
+                </p>
               </div>
-            ))}
+              
+              <div className="mb-8">
+                <div className="text-5xl font-bold text-gray-900 mb-2">Free</div>
+                <div className="text-gray-500">Forever free</div>
+              </div>
+              
+              <button
+                onClick={onGetStarted}
+                className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors mb-8"
+              >
+                Get Started
+              </button>
+              
+              <ul className="space-y-4">
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Full access to secure note-taking with end-to-end encryption
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Real-time sync across all your devices
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Code mode with syntax highlighting
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Writer's Plan */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm relative hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+              {/* Popular Badge */}
+              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
+                <div className="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-medium">
+                  Most Popular
+                </div>
+              </div>
+              
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">Writer's Plan</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Perfect for writers, creators, and professionals who need advanced features.
+                </p>
+              </div>
+              
+              <div className="mb-8">
+                <div className="text-5xl font-bold text-gray-900 mb-2">$9.99</div>
+                <div className="text-gray-500">One-time payment</div>
+              </div>
+              
+              <button
+                onClick={onGetStarted}
+                className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-medium transition-colors mb-8"
+              >
+                Get Started
+              </button>
+              
+              <ul className="space-y-4">
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Everything in Basic plus advanced writing tools and AI assistance
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    AI-powered writing assistance and grammar checking
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Advanced export options (PDF, DOCX, LaTeX)
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 text-sm leading-relaxed">
+                    Priority support and exclusive community access
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* FAQ or Additional Info */}
+          <div className="text-center mt-16">
+            <p className="text-gray-600 mb-6 text-lg">
+              All plans include lifetime updates and premium support
+            </p>
+            <div className="flex items-center justify-center space-x-8 text-gray-500">
+              <span>✓ No setup fees</span>
+              <span>✓ One-time payment</span>
+              <span>✓ Secure payments</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="py-16">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Frequently asked questions</h2>
-          <div className="space-y-6">
+      {/* FAQ (Guide) */}
+      <section id="faq" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            {/* Left Content */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">Do you store my password?</h3>
-              <p className="text-gray-600">No. Your password never leaves your device. Notes are encrypted locally with a key derived from your password.</p>
+              <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                <span>FAQ</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Your guide to CipherWrite wisdom
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Explore the answers to common queries and make the 
+                most of your CipherWrite experience.
+              </p>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">Can I use it offline?</h3>
-              <p className="text-gray-600">Yes. The app is a PWA and works offline. Sync resumes when you’re online.</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">Can I export my notes?</h3>
-              <p className="text-gray-600">Export as TXT, Markdown, or JSON at any time from the editor.</p>
+
+            {/* Right - FAQ Items */}
+            <div className="space-y-4">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    How do I encrypt my notes?
+                  </h3>
+                  <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Can I customize the editor to suit my needs?
+                  </h3>
+                  <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Are my notes synced across all devices?
+                  </h3>
+                  <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    What if I encounter issues with the app?
+                  </h3>
+                  <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-2xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Can I share my notes with my team?
+                  </h3>
+                  <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
