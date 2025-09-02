@@ -6,9 +6,9 @@ export const useTheme = () => {
 
   useEffect(() => {
     const root = document.documentElement;
-    const isDark = 
-      settings.theme === 'dark' || 
-      (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    const computeIsDark = () => settings.theme === 'dark' || (settings.theme === 'system' && mql.matches);
+    const isDark = computeIsDark();
 
     root.classList.toggle('dark', isDark);
     
@@ -24,6 +24,15 @@ export const useTheme = () => {
     root.style.setProperty('--font-size', `${settings.fontSize}px`);
     root.style.setProperty('--line-height', settings.lineHeight.toString());
     root.style.setProperty('--font-family', settings.fontFamily);
+
+    const handleChange = () => {
+      if (settings.theme === 'system') {
+        const nextDark = computeIsDark();
+        root.classList.toggle('dark', nextDark);
+      }
+    };
+    mql.addEventListener?.('change', handleChange);
+    return () => mql.removeEventListener?.('change', handleChange);
   }, [settings.theme, settings.accentColor, settings.fontSize, settings.lineHeight, settings.fontFamily]);
 
   // Helper function to adjust color brightness

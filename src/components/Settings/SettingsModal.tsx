@@ -76,7 +76,21 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   );
 
   const renderAppearanceSettings = () => (
-    <div className="space-y-1">
+    <div className="space-y-4">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">Preview</div>
+        <div className="flex items-center gap-3">
+          <button
+            className="px-3 py-1.5 rounded-md text-white text-xs"
+            style={{ backgroundColor: settings.accentColor }}
+            aria-label="Accent preview"
+          >
+            Accent Button
+          </button>
+          <div className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600" style={{ backgroundColor: settings.accentColor }} />
+          <span className="text-xs text-gray-600 dark:text-gray-400">Theme: {settings.theme}</span>
+        </div>
+      </div>
       <SettingItem
         label="Theme"
         description="Choose your preferred color scheme"
@@ -148,7 +162,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   );
 
   const renderEditorSettings = () => (
-    <div className="space-y-1">
+    <div className="space-y-4">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">Preview</div>
+        <div
+          className="rounded-md p-3 bg-gray-50 dark:bg-gray-800"
+          style={{
+            fontFamily: settings.fontFamily,
+            fontSize: settings.fontSize,
+            lineHeight: settings.lineHeight as unknown as string,
+          }}
+        >
+          <p className="mb-2 text-gray-800 dark:text-gray-200">The quick brown fox jumps over the lazy dog.</p>
+          <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">
+            <li>Bulleted item</li>
+            <li>Another line</li>
+          </ul>
+        </div>
+      </div>
       <SettingItem
         label="Font Family"
         description="Choose your preferred font for the editor"
