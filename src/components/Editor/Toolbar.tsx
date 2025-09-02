@@ -21,6 +21,8 @@ import {
   ChevronDown,
   Languages,
   MoreHorizontal,
+  Heading1,
+  Heading2,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
@@ -35,6 +37,7 @@ interface ToolbarProps {
   onLanguageChange?: (language: string) => void;
   isRecording?: boolean;
   isTranscribing?: boolean;
+  editorRef?: HTMLTextAreaElement | null;
   contentAnalysis: {
     hasLists: boolean;
     hasLinks: boolean;
@@ -55,6 +58,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onLanguageChange,
   isRecording = false,
   isTranscribing = false,
+  editorRef,
   contentAnalysis,
 }) => {
   const { settings, updateSettings } = useStore();
@@ -135,38 +139,100 @@ const Toolbar: React.FC<ToolbarProps> = ({
     updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
   };
 
-  const insertTextAtCursor = (beforeText: string, afterText: string = '') => {
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (!textarea) return;
+  const getTextarea = () => {
+    return editorRef ?? (document.querySelector('textarea') as HTMLTextAreaElement | null);
+  };
 
+  const surroundSelection = (beforeText: string, afterText: string = beforeText) => {
+    const textarea = getTextarea();
+    if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = textarea.value.substring(start, end);
-    const newText = beforeText + selectedText + afterText;
-    
+    const newText = `${beforeText}${selectedText}${afterText}`;
     const newValue = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+    const nextCursor = start + beforeText.length + selectedText.length + afterText.length;
     textarea.value = newValue;
-    
-    // Trigger change event
     const event = new Event('input', { bubbles: true });
     textarea.dispatchEvent(event);
-    
-    // Set cursor position
-    const newCursorPos = start + beforeText.length + selectedText.length + afterText.length;
-    textarea.setSelectionRange(newCursorPos, newCursorPos);
+    textarea.setSelectionRange(nextCursor, nextCursor);
+    textarea.focus();
+  };
+
+  const toggleLinePrefix = (prefix: string) => {
+    const textarea = getTextarea();
+    if (!textarea) return;
+    const value = textarea.value;
+    const selStart = textarea.selectionStart;
+    const selEnd = textarea.selectionEnd;
+    const lineStart = value.lastIndexOf('\n', selStart - 1) + 1;
+    const lineEnd = value.indexOf('\n', selEnd);
+    const endIndex = lineEnd === -1 ? value.length : lineEnd;
+    const block = value.substring(lineStart, endIndex);
+    const lines = block.split('\n');
+    const allPrefixed = lines.every(l => l.startsWith(prefix));
+    const newLines = lines.map(l => (allPrefixed ? l.replace(new RegExp('^' + prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), '') : prefix + l));
+    const newBlock = newLines.join('\n');
+    const newValue = value.substring(0, lineStart) + newBlock + value.substring(endIndex);
+    const delta = newBlock.length - block.length;
+    textarea.value = newValue;
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    textarea.setSelectionRange(selStart + (allPrefixed ? -prefix.length : prefix.length), selEnd + delta);
+    textarea.focus();
+  };
+
+  const insertLink = () => {
+    const textarea = getTextarea();
+    if (!textarea) return;
+    const url = prompt('Enter URL:');
+    if (!url) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.substring(start, end) || 'Link';
+    const md = `[${selected}](${url})`;
+    const newValue = textarea.value.substring(0, start) + md + textarea.value.substring(end);
+    textarea.value = newValue;
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    const cursor = start + md.length;
+    textarea.setSelectionRange(cursor, cursor);
+    textarea.focus();
+  };
+
+  const wrapCodeBlock = () => {
+    const textarea = getTextarea();
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.substring(start, end);
+    const lang = note.language && note.language !== 'plaintext' ? note.language : '';
+    const block = '```' + lang + '\n' + (selected || '') + '\n```';
+    const newValue = textarea.value.substring(0, start) + block + textarea.value.substring(end);
+    textarea.value = newValue;
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    const cursor = start + block.length;
+    textarea.setSelectionRange(cursor, cursor);
     textarea.focus();
   };
 
   const formatText = (format: 'bold' | 'italic' | 'underline' | 'strikethrough' | 'code') => {
     switch (format) {
       case 'bold':
-        insertTextAtCursor('**', '**');
+        surroundSelection('**', '**');
         break;
       case 'italic':
-        insertTextAtCursor('*', '*');
+        surroundSelection('*', '*');
         break;
       case 'code':
-        insertTextAtCursor('`', '`');
+        surroundSelection('`', '`');
+        break;
+      case 'underline':
+        surroundSelection('<u>', '</u>');
+        break;
+      case 'strikethrough':
+        surroundSelection('~~', '~~');
         break;
     }
   };
@@ -230,39 +296,38 @@ const Toolbar: React.FC<ToolbarProps> = ({
               onClick={() => formatText('italic')}
               suggested={contentAnalysis.hasSelection}
             />
+            <ToolbarButton
+              icon={<Underline className="w-4 h-4" />}
+              tooltip="Underline"
+              onClick={() => formatText('underline')}
+            />
+            <ToolbarButton
+              icon={<Strikethrough className="w-4 h-4" />}
+              tooltip="Strikethrough"
+              onClick={() => formatText('strikethrough')}
+            />
 
-            {contentAnalysis.hasLists && (
-              <>
-                <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
-                <ToolbarButton
-                  icon={<List className="w-4 h-4" />}
-                  tooltip="Bullet List"
-                  onClick={() => insertTextAtCursor('- ', '')}
-                  suggested={true}
-                />
-                <ToolbarButton
-                  icon={<ListOrdered className="w-4 h-4" />}
-                  tooltip="Numbered List"
-                  onClick={() => insertTextAtCursor('1. ', '')}
-                  suggested={true}
-                />
-              </>
-            )}
+            <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
+            <ToolbarButton
+              icon={<List className="w-4 h-4" />}
+              tooltip="Bullet List"
+              onClick={() => toggleLinePrefix('- ')}
+              suggested={contentAnalysis.hasLists}
+            />
+            <ToolbarButton
+              icon={<ListOrdered className="w-4 h-4" />}
+              tooltip="Numbered List"
+              onClick={() => toggleLinePrefix('1. ')}
+              suggested={contentAnalysis.hasLists}
+            />
 
-            {contentAnalysis.hasLinks && (
-              <>
-                <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
-                <ToolbarButton
-                  icon={<Link className="w-4 h-4" />}
-                  tooltip="Insert Link"
-                  onClick={() => {
-                    const url = prompt('Enter URL:');
-                    if (url) insertTextAtCursor(`[Link](${url})`, '');
-                  }}
-                  suggested={true}
-                />
-              </>
-            )}
+            <div className="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1" />
+            <ToolbarButton
+              icon={<Link className="w-4 h-4" />}
+              tooltip="Insert Link"
+              onClick={insertLink}
+              suggested={contentAnalysis.hasLinks}
+            />
 
             {/* More tools in dropdown */}
             <div className="relative">
@@ -276,29 +341,28 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-48">
                   <button
                     onClick={() => {
-                      insertTextAtCursor('<u>', '</u>');
+                      toggleLinePrefix('# ');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
                   >
-                    <Underline className="w-4 h-4" />
-                    <span>Underline</span>
+                    <Heading1 className="w-4 h-4" />
+                    <span>Heading 1</span>
                   </button>
                   <button
                     onClick={() => {
-                      insertTextAtCursor('~~', '~~');
+                      toggleLinePrefix('## ');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
                   >
-                    <Strikethrough className="w-4 h-4" />
-                    <span>Strikethrough</span>
+                    <Heading2 className="w-4 h-4" />
+                    <span>Heading 2</span>
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                   <button
                     onClick={() => {
-                      const url = prompt('Enter URL:');
-                      if (url) insertTextAtCursor(`[Link](${url})`, '');
+                      insertLink();
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -308,13 +372,23 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      insertTextAtCursor('> ', '');
+                      toggleLinePrefix('> ');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
                   >
                     <Quote className="w-4 h-4" />
                     <span>Quote</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      wrapCodeBlock();
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
+                  >
+                    <Code className="w-4 h-4" />
+                    <span>Code Block</span>
                   </button>
                   <div className="border-t border-gray-300 dark:border-gray-600 my-1"></div>
                   <button

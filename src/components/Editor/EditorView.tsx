@@ -23,7 +23,7 @@ const EditorView: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [editorRef, setEditorRef] = useState<HTMLDivElement | null>(null);
+  const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
   const langDebounceRef = React.useRef<number | null>(null);
 
   useAutoSave(activeNoteId, localContent);
@@ -139,16 +139,20 @@ const EditorView: React.FC = () => {
   };
 
   const getContentAnalysis = () => {
-    if (!activeNote) return { hasLists: false, hasLinks: false, hasCode: false, hasSelection: false };
-    
-    const content = activeNote.content || '';
+    const content = localContent || '';
+    const hasLists = /^[\s]*[-*+]\s|^[\s]*\d+\.\s/m.test(content);
+    const hasLinks = /https?:\/\/|www\.|\.com|\.org|\.net/i.test(content) || /\[.*?\]\(.*?\)/.test(content);
+    const hasCode = /```|`[^`]+`|<code>/.test(content);
+    const selectionLength = editorRef ? editorRef.selectionEnd - editorRef.selectionStart : 0;
+    const selectedText = editorRef ? editorRef.value.substring(editorRef.selectionStart, editorRef.selectionEnd) : '';
+    const wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
     return {
-      hasLists: /^[\s]*[-*+]\s|^[\s]*\d+\.\s/m.test(content),
-      hasLinks: /https?:\/\/|www\.|\.com|\.org|\.net/i.test(content) || /\[.*?\]\(.*?\)/.test(content),
-      hasCode: /```|`[^`]+`|<code>/.test(content),
-      hasSelection: window.getSelection()?.toString().length > 0,
-      selectedText: window.getSelection()?.toString() || '',
-      wordCount: content.split(/\s+/).filter(w => w.length > 0).length
+      hasLists,
+      hasLinks,
+      hasCode,
+      hasSelection: selectionLength > 0,
+      selectedText,
+      wordCount,
     };
   };
 
@@ -195,6 +199,7 @@ const EditorView: React.FC = () => {
           isRecording={isRecording}
           isTranscribing={isTranscribing}
           contentAnalysis={getContentAnalysis()}
+          editorRef={editorRef}
         />
         
         <div className="flex-1 overflow-hidden relative">
