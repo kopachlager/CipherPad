@@ -274,6 +274,12 @@ const EditorView: React.FC = () => {
                 setSelectionVersion((v) => v + 1);
               }}
               onKeyUp={() => setSelectionVersion((v) => v + 1)}
+              aria-label="Note editor"
+              data-gramm="false"
+              data-gramm_editor="false"
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
               placeholder="Start writing your note..."
               className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full w-full resize-none bg-transparent border-none text-gray-900 dark:text-gray-100"
               style={{
