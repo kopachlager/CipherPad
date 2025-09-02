@@ -38,7 +38,13 @@ interface ToolbarProps {
   isRecording?: boolean;
   isTranscribing?: boolean;
   editorRef?: HTMLTextAreaElement | null;
-  onChangeContent?: (content: string) => void;
+  onApplyEdit?: (
+    compute: (value: string, start: number, end: number) => {
+      value: string;
+      nextStart: number;
+      nextEnd: number;
+    }
+  ) => void;
   contentAnalysis: {
     hasLists: boolean;
     hasLinks: boolean;
@@ -68,7 +74,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   isRecording = false,
   isTranscribing = false,
   editorRef,
-  onChangeContent,
+  onApplyEdit,
   contentAnalysis,
 }) => {
   const { settings, updateSettings } = useStore();
@@ -168,27 +174,19 @@ const Toolbar: React.FC<ToolbarProps> = ({
     }
   ) => {
     const textarea = getTextarea();
+    if (onApplyEdit) {
+      onApplyEdit((value, start, end) => compute(value, start, end));
+      return;
+    }
     if (!textarea) return;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const { value, nextStart, nextEnd } = compute(textarea.value, start, end);
-    if (onChangeContent) {
-      onChangeContent(value);
-      requestAnimationFrame(() => {
-        const ta = getTextarea();
-        if (ta) {
-          ta.setSelectionRange(nextStart, nextEnd);
-          ta.focus();
-        }
-      });
-    } else {
-      // Fallback: mutate DOM and dispatch input so React picks it up
-      textarea.value = value;
-      const event = new Event('input', { bubbles: true });
-      textarea.dispatchEvent(event);
-      textarea.setSelectionRange(nextStart, nextEnd);
-      textarea.focus();
-    }
+    textarea.value = value;
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
+    textarea.setSelectionRange(nextStart, nextEnd);
+    textarea.focus();
   };
 
   const surroundSelection = (beforeText: string, afterText: string = beforeText) => {
@@ -491,6 +489,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           tooltip="Focus Mode"
           onClick={handleToggleFocusMode}
         />
+        <span className="ml-2 text-[10px] text-gray-400 select-none" title="Build marker">v-2025-09-02-a</span>
       </div>
 
       {/* Click outside handlers */}

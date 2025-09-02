@@ -181,6 +181,33 @@ const EditorView: React.FC = () => {
     } as any;
   };
 
+  const applyEditFromToolbar = (
+    compute: (value: string, start: number, end: number) => {
+      value: string;
+      nextStart: number;
+      nextEnd: number;
+    }
+  ) => {
+    // Only for Rich Text mode (textarea)
+    if (activeNote.isCodeMode) return;
+    const ta = editorRef;
+    const value = localContent;
+    const start = ta ? ta.selectionStart : value.length;
+    const end = ta ? ta.selectionEnd : value.length;
+    const result = compute(value, start, end);
+    setLocalContent(result.value);
+    handleContentChange(result.value);
+    // Restore selection
+    requestAnimationFrame(() => {
+      const el = editorRef;
+      if (el) {
+        el.setSelectionRange(result.nextStart, result.nextEnd);
+        el.focus();
+      }
+      setSelectionVersion(v => v + 1);
+    });
+  };
+
   const handleToggleCodeMode = () => {
     const newCodeMode = !activeNote.isCodeMode;
     const language = newCodeMode ? detectLanguage(activeNote.content) : 'plaintext';
@@ -225,10 +252,7 @@ const EditorView: React.FC = () => {
           isTranscribing={isTranscribing}
           contentAnalysis={getContentAnalysis()}
           editorRef={editorRef}
-          onChangeContent={(content) => {
-            setLocalContent(content);
-            handleContentChange(content);
-          }}
+          onApplyEdit={applyEditFromToolbar}
         />
         
         <div className="flex-1 overflow-hidden relative">
