@@ -336,7 +336,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<Bold className="w-4 h-4" />}
               tooltip="Bold"
-              onClick={() => onRichCommand?.('bold')}
+              onClick={() => (onRichCommand ? onRichCommand('bold') : formatText('bold'))}
               active={contentAnalysis.boldActive}
               suggested={contentAnalysis.hasSelection}
               disabled={note.isEncrypted}
@@ -344,7 +344,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<Italic className="w-4 h-4" />}
               tooltip="Italic"
-              onClick={() => onRichCommand?.('italic')}
+              onClick={() => (onRichCommand ? onRichCommand('italic') : formatText('italic'))}
               active={contentAnalysis.italicActive}
               suggested={contentAnalysis.hasSelection}
               disabled={note.isEncrypted}
@@ -352,14 +352,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<Underline className="w-4 h-4" />}
               tooltip="Underline"
-              onClick={() => onRichCommand?.('underline')}
+              onClick={() => (onRichCommand ? onRichCommand('underline') : formatText('underline'))}
               active={contentAnalysis.underlineActive}
               disabled={note.isEncrypted}
             />
             <ToolbarButton
               icon={<Strikethrough className="w-4 h-4" />}
               tooltip="Strikethrough"
-              onClick={() => onRichCommand?.('strikeThrough')}
+              onClick={() => (onRichCommand ? onRichCommand('strikeThrough') : formatText('strikethrough'))}
               active={contentAnalysis.strikethroughActive}
               disabled={note.isEncrypted}
             />
@@ -368,7 +368,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<List className="w-4 h-4" />}
               tooltip="Bullet List"
-              onClick={() => onRichCommand?.('insertUnorderedList')}
+              onClick={() => (onRichCommand ? onRichCommand('insertUnorderedList') : toggleLinePrefix('- '))}
               active={contentAnalysis.bulletActive}
               suggested={true}
               disabled={note.isEncrypted}
@@ -376,7 +376,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<ListOrdered className="w-4 h-4" />}
               tooltip="Numbered List"
-              onClick={() => onRichCommand?.('insertOrderedList')}
+              onClick={() => (onRichCommand ? onRichCommand('insertOrderedList') : toggleLinePrefix('1. '))}
               active={contentAnalysis.orderedActive}
               suggested={true}
               disabled={note.isEncrypted}
@@ -386,7 +386,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <ToolbarButton
               icon={<Link className="w-4 h-4" />}
               tooltip="Insert Link"
-              onClick={() => onRichCommand?.('createLink')}
+              onClick={() => (onRichCommand ? onRichCommand('createLink') : insertLink())}
               suggested={contentAnalysis.hasLinks}
               disabled={note.isEncrypted}
             />
@@ -404,7 +404,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-48">
                   <button
                     onClick={() => {
-                      onRichCommand?.('formatBlock', 'h1');
+                      if (onRichCommand) onRichCommand('formatBlock', 'h1');
+                      else toggleLinePrefix('# ');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -414,7 +415,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      onRichCommand?.('formatBlock', 'h2');
+                      if (onRichCommand) onRichCommand('formatBlock', 'h2');
+                      else toggleLinePrefix('## ');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -425,7 +427,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                   <button
                     onClick={() => {
-                      onRichCommand?.('createLink');
+                      if (onRichCommand) onRichCommand('createLink');
+                      else insertLink();
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -435,7 +438,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      onRichCommand?.('formatBlock', 'blockquote');
+                      if (onRichCommand) onRichCommand('formatBlock', 'blockquote');
+                      else toggleLinePrefix('> ');
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
@@ -445,7 +449,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   </button>
                   <button
                     onClick={() => {
-                      onRichCommand?.('pre');
+                      if (onRichCommand) onRichCommand('pre');
+                      else wrapCodeBlock();
                       setShowMoreMenu(false);
                     }}
                     className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
-import RichTextEditor, { RichTextEditorHandle } from './RichTextEditor';
+// Temporarily render textarea for stability; rich editor can be re-enabled later
 import { Lock } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
@@ -28,7 +28,7 @@ const EditorView: React.FC = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
-  const richRef = React.useRef<RichTextEditorHandle>(null);
+  // const richRef = React.useRef<RichTextEditorHandle>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
   const langDebounceRef = React.useRef<number | null>(null);
 
@@ -318,34 +318,7 @@ const EditorView: React.FC = () => {
           contentAnalysis={getContentAnalysis()}
           editorRef={editorRef}
           onApplyEdit={applyEditFromToolbar}
-          onRichCommand={(cmd, value) => {
-            // Focus the rich editor to keep selection
-            richRef.current?.focus();
-            try {
-              if (cmd === 'bold' || cmd === 'italic' || cmd === 'underline' || cmd === 'strikeThrough') {
-                document.execCommand(cmd);
-              } else if (cmd === 'insertUnorderedList' || cmd === 'insertOrderedList') {
-                document.execCommand(cmd);
-              } else if (cmd === 'formatBlock') {
-                document.execCommand('formatBlock', false, value || 'blockquote');
-              } else if (cmd === 'createLink') {
-                const url = value || prompt('Enter URL:') || '';
-                if (url) document.execCommand('createLink', false, url);
-              } else if (cmd === 'pre') {
-                document.execCommand('formatBlock', false, 'pre');
-              }
-            } catch (e) {
-              console.error('Rich command failed', cmd, e);
-            }
-            // After execCommand, trigger change
-            const root = richRef.current?.getRoot();
-            if (root) {
-              const html = root.innerHTML;
-              setLocalContent(html);
-              handleContentChange(html);
-              setSelectionVersion((v) => v + 1);
-            }
-          }}
+          // onRichCommand is intentionally omitted while we stabilize editor
         />
         
         <div className="flex-1 overflow-hidden relative">
@@ -378,12 +351,25 @@ const EditorView: React.FC = () => {
               onChange={handleContentChange}
             />
           ) : (
-            <RichTextEditor
-              ref={richRef}
-              content={localContent}
-              onChange={(html) => {
-                setLocalContent(html);
-                handleContentChange(html);
+            <textarea
+              ref={(ref) => setEditorRef(ref)}
+              value={localContent}
+              onChange={(e) => {
+                const newContent = e.target.value;
+                setLocalContent(newContent);
+                handleContentChange(newContent);
+              }}
+              onSelect={() => setSelectionVersion((v) => v + 1)}
+              placeholder="Start writing your note..."
+              className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed min-h-full w-full resize-none bg-transparent border-none text-gray-900 dark:text-gray-100"
+              style={{
+                fontSize: `${settings.fontSize}px`,
+                lineHeight: settings.lineHeight,
+                fontFamily: settings.fontFamily,
+                whiteSpace: 'pre-wrap',
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
               }}
             />
           )}
