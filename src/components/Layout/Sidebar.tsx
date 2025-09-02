@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { FileText, Folder, Star, Trash2, Plus, Search, Lock, Code } from 'lucide-react';
+import { FileText, Folder, Star, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, FolderOpen, X } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
-import { formatDate } from '../../utils/helpers';
+import { formatDate, exportNote } from '../../utils/helpers';
 
 const Sidebar: React.FC = () => {
   const {
@@ -133,15 +133,19 @@ const Sidebar: React.FC = () => {
                     onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isEncrypted: !n.isEncrypted }); }}
                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                     title={n.isEncrypted ? 'Unlock (remove encryption)' : 'Encrypt note'}
+                    aria-label={n.isEncrypted ? 'Unlock note' : 'Encrypt note'}
                   >
-                    <Lock className={`w-3 h-3 ${n.isEncrypted ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500'}`} />
+                    {n.isEncrypted ? (<Unlock className="w-3 h-3 text-gray-600" />) : (<Lock className="w-3 h-3 text-gray-500" />)}
                   </button>
                   <div className="relative">
                     <button
                       onClick={(e)=>{ e.stopPropagation(); setShowMoveMenuFor(showMoveMenuFor===n.id?null:n.id); }}
-                      className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                       title="Move to folder"
-                    >Move</button>
+                      aria-label="Move to folder"
+                    >
+                      <FolderOpen className="w-3 h-3 text-gray-500" />
+                    </button>
                     {showMoveMenuFor===n.id && (
                       <div className="absolute right-0 top-6 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg min-w-40 p-1">
                         <button
@@ -160,22 +164,39 @@ const Sidebar: React.FC = () => {
                     )}
                   </div>
                   <button
-                    onClick={(e)=>{ e.stopPropagation(); const { exportNote } = require('../../utils/helpers'); exportNote(n, 'txt'); }}
-                    className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    onClick={(e)=>{ e.stopPropagation(); exportNote(n, 'txt'); }}
+                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                     title="Download"
-                  >DL</button>
+                    aria-label="Download note"
+                  >
+                    <Download className="w-3 h-3 text-gray-500" />
+                  </button>
+                  <button
+                    onClick={async (e)=>{ e.stopPropagation(); if (navigator.share) { try { await navigator.share({ title: n.title, text: n.content }); } catch {} } else { navigator.clipboard.writeText(n.content); } }}
+                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                    title="Share"
+                    aria-label="Share note"
+                  >
+                    <Share className="w-3 h-3 text-gray-500" />
+                  </button>
                   {viewMode==='trash' ? (
                     <button
                       onClick={(e)=>{ e.stopPropagation(); useStore.getState().restoreNote(n.id); }}
-                      className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                       title="Restore"
-                    >Restore</button>
+                      aria-label="Restore note"
+                    >
+                      <Plus className="w-3 h-3 text-gray-500" />
+                    </button>
                   ) : (
                     <button
                       onClick={(e)=>{ e.stopPropagation(); useStore.getState().deleteNote(n.id); }}
-                      className="px-2 py-0.5 text-[10px] rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                       title="Delete"
-                    >Delete</button>
+                      aria-label="Delete note"
+                    >
+                      <X className="w-3 h-3 text-gray-500" />
+                    </button>
                   )}
                 </div>
               </div>
