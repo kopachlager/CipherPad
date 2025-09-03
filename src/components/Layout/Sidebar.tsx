@@ -109,9 +109,7 @@ const Sidebar: React.FC = () => {
             {filteredNotes.map(n => (
               <div key={n.id} className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm ${activeNoteId===n.id?'bg-gray-100 dark:bg-gray-800':'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
                 <button onClick={()=>setActiveNote(n.id)} className="flex items-center gap-2 min-w-0 flex-1 text-left">
-                  {n.isFavorite && (<Star className="w-3 h-3 text-yellow-500 fill-current" />)}
-                  {/* Remove static lock next to title to reduce clutter */}
-                  {n.isCodeMode && (<Code className="w-3 h-3 text-gray-500" />)}
+                  {/* Remove duplicate status icons next to title; keep clean title */}
                   <span className="truncate">{n.title || 'Untitled'}</span>
                 </button>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
