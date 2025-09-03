@@ -26,6 +26,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { settings, updateSettings } = useStore();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('appearance');
+  const [showFontMenu, setShowFontMenu] = useState(false);
+  const [showLineHeightMenu, setShowLineHeightMenu] = useState(false);
+  const fontMenuRef = useRef<HTMLDivElement | null>(null);
+  const lhMenuRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (showFontMenu && fontMenuRef.current && !fontMenuRef.current.contains(target)) setShowFontMenu(false);
+      if (showLineHeightMenu && lhMenuRef.current && !lhMenuRef.current.contains(target)) setShowLineHeightMenu(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, [showFontMenu, showLineHeightMenu]);
 
   if (!isOpen) return null;
 
@@ -156,23 +169,40 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         label="Font Family"
         description="Choose your preferred font for the editor"
       >
-        <select
-          value={settings.fontFamily || defaultSettings.fontFamily}
-          onChange={(e) => {
-            updateSettings({ fontFamily: e.target.value });
-          }}
-          className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        >
-          <option value={settings.fontFamily || defaultSettings.fontFamily} hidden>Current</option>
-          <option value={defaultSettings.fontFamily}>Inter (Default)</option>
-          <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
-          <option value="'Fira Code', monospace">Fira Code</option>
-          <option value="'Source Code Pro', monospace">Source Code Pro</option>
-          <option value="Monaco, monospace">Monaco</option>
-          <option value="Consolas, monospace">Consolas</option>
-          <option value="'Roboto Mono', monospace">Roboto Mono</option>
-          <option value="'Ubuntu Mono', monospace">Ubuntu Mono</option>
-        </select>
+        <div className="relative" ref={fontMenuRef}>
+          <button
+            type="button"
+            onClick={() => setShowFontMenu(v => !v)}
+            className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[200px] text-left"
+            title="Select font family"
+          >
+            {settings.fontFamily || defaultSettings.fontFamily}
+          </button>
+          {showFontMenu && (
+            <div className="absolute z-50 mt-1 w-full max-h-48 overflow-auto rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+              {[
+                { label: 'Inter (Default)', value: defaultSettings.fontFamily },
+                { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
+                { label: 'Fira Code', value: "'Fira Code', monospace" },
+                { label: 'Source Code Pro', value: "'Source Code Pro', monospace" },
+                { label: 'Monaco', value: 'Monaco, monospace' },
+                { label: 'Consolas', value: 'Consolas, monospace' },
+                { label: 'Roboto Mono', value: "'Roboto Mono', monospace" },
+                { label: 'Ubuntu Mono', value: "'Ubuntu Mono', monospace" },
+              ].map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => { updateSettings({ fontFamily: opt.value }); setShowFontMenu(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${settings.fontFamily===opt.value ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
+                  style={{ fontFamily: opt.value as any }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </SettingItem>
 
       <SettingItem
@@ -202,18 +232,30 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         label="Line Height"
         description="Adjust line spacing for better readability"
       >
-        <select
-          value={String(settings.lineHeight)}
-          onChange={(e) => {
-            updateSettings({ lineHeight: parseFloat(e.target.value) });
-          }}
-          className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        >
-          <option value="1.2">Tight (1.2)</option>
-          <option value="1.4">Normal (1.4)</option>
-          <option value="1.6">Relaxed (1.6)</option>
-          <option value="1.8">Loose (1.8)</option>
-        </select>
+        <div className="relative" ref={lhMenuRef}>
+          <button
+            type="button"
+            onClick={() => setShowLineHeightMenu(v => !v)}
+            className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[200px] text-left"
+            title="Select line height"
+          >
+            {settings.lineHeight}
+          </button>
+          {showLineHeightMenu && (
+            <div className="absolute z-50 mt-1 w-full rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+              {['1.2','1.4','1.6','1.8'].map(v => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => { updateSettings({ lineHeight: parseFloat(v) }); setShowLineHeightMenu(false); }}
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${String(settings.lineHeight)===v ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </SettingItem>
 
       <SettingItem
