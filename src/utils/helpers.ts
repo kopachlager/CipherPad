@@ -56,15 +56,38 @@ export const exportNote = (note: any, format: 'txt' | 'md' | 'json'): void => {
   let content = '';
   let filename = '';
   let mimeType = '';
+  const looksLikeHtml = (s: string) => /<\w+[^>]*>/.test(s) || /<\/\w+>/.test(s);
+  const htmlToText = (html: string): string => {
+    try {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      // innerText preserves line breaks better than textContent
+      const text = (div as any).innerText ?? div.textContent ?? '';
+      return text.replace(/\u00A0/g, ' ').trim();
+    } catch {
+      // Fallback strip tags
+      return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+  };
 
   switch (format) {
     case 'txt':
-      content = note.content;
+      content = looksLikeHtml(note.content) ? htmlToText(note.content) : note.content;
+      // Prepend title if not already part of content
+      if ((note.title || '').trim()) {
+        content = `${note.title}\n\n${content}`;
+      }
       filename = `${note.title}.txt`;
       mimeType = 'text/plain';
       break;
     case 'md':
-      content = `# ${note.title}\n\n${note.content}`;
+      if (looksLikeHtml(note.content)) {
+        // naive HTML -> text for now to avoid raw tags in MD
+        const text = htmlToText(note.content);
+        content = `# ${note.title}\n\n${text}`;
+      } else {
+        content = `# ${note.title}\n\n${note.content}`;
+      }
       filename = `${note.title}.md`;
       mimeType = 'text/markdown';
       break;
