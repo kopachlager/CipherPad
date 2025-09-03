@@ -38,21 +38,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (showFontMenu && fontMenuRef.current && !fontMenuRef.current.contains(target)) setShowFontMenu(false);
-      if (showLineHeightMenu && lhMenuRef.current && !lhMenuRef.current.contains(target)) setShowLineHeightMenu(false);
+      // Ignore clicks on the trigger buttons themselves
+      const clickedFontBtn = fontBtnRef.current?.contains(target) ?? false;
+      const clickedLhBtn = lhBtnRef.current?.contains(target) ?? false;
+      if (!clickedFontBtn && showFontMenu && fontMenuRef.current && !fontMenuRef.current.contains(target)) setShowFontMenu(false);
+      if (!clickedLhBtn && showLineHeightMenu && lhMenuRef.current && !lhMenuRef.current.contains(target)) setShowLineHeightMenu(false);
     };
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
   }, [showFontMenu, showLineHeightMenu]);
 
   const openFontMenu = () => {
     const rect = fontBtnRef.current?.getBoundingClientRect();
-    if (rect) setFontMenuPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX, width: rect.width });
+    if (rect) setFontMenuPos({ top: rect.bottom, left: rect.left, width: rect.width });
     setShowFontMenu(true);
   };
   const openLhMenu = () => {
     const rect = lhBtnRef.current?.getBoundingClientRect();
-    if (rect) setLhMenuPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX, width: rect.width });
+    if (rect) setLhMenuPos({ top: rect.bottom, left: rect.left, width: rect.width });
     setShowLineHeightMenu(true);
   };
 
@@ -199,7 +202,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             <div
               ref={fontMenuRef}
               className="z-[9999] max-h-48 overflow-auto rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
-              style={{ position: 'absolute', top: fontMenuPos.top, left: fontMenuPos.left, width: fontMenuPos.width }}
+              style={{ position: 'fixed', top: fontMenuPos.top, left: fontMenuPos.left, width: fontMenuPos.width }}
             >
               {[
                 { label: 'Inter (Default)', value: defaultSettings.fontFamily },
@@ -268,7 +271,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             <div
               ref={lhMenuRef}
               className="z-[9999] rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
-              style={{ position: 'absolute', top: lhMenuPos.top, left: lhMenuPos.left, width: lhMenuPos.width }}
+              style={{ position: 'fixed', top: lhMenuPos.top, left: lhMenuPos.left, width: lhMenuPos.width }}
             >
               {['1.2','1.4','1.6','1.8'].map(v => (
                 <button
