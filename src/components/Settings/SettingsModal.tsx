@@ -188,45 +188,32 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         label="Font Family"
         description="Choose your preferred font for the editor"
       >
-        <div className="relative">
-          <button
-            ref={fontBtnRef}
-            type="button"
-            onClick={() => (showFontMenu ? setShowFontMenu(false) : openFontMenu())}
-            className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[200px] text-left"
-            title="Select font family"
-          >
-            {settings.fontFamily || defaultSettings.fontFamily}
-          </button>
-          {showFontMenu && createPortal(
-            <div
-              ref={fontMenuRef}
-              className="z-[9999] max-h-48 overflow-auto rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
-              style={{ position: 'fixed', top: fontMenuPos.top, left: fontMenuPos.left, width: fontMenuPos.width }}
+        <div className="flex flex-wrap gap-2 max-w-md">
+          {[
+            { label: 'Inter (Default)', value: defaultSettings.fontFamily },
+            { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
+            { label: 'Fira Code', value: "'Fira Code', monospace" },
+            { label: 'Source Code Pro', value: "'Source Code Pro', monospace" },
+            { label: 'Monaco', value: 'Monaco, monospace' },
+            { label: 'Consolas', value: 'Consolas, monospace' },
+            { label: 'Roboto Mono', value: "'Roboto Mono', monospace" },
+            { label: 'Ubuntu Mono', value: "'Ubuntu Mono', monospace" },
+          ].map(opt => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => updateSettings({ fontFamily: opt.value })}
+              className={`px-3 py-1 text-sm rounded border transition-colors ${
+                settings.fontFamily===opt.value
+                  ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
+                  : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+              }`}
+              style={{ fontFamily: opt.value as any }}
+              title={opt.label}
             >
-              {[
-                { label: 'Inter (Default)', value: defaultSettings.fontFamily },
-                { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
-                { label: 'Fira Code', value: "'Fira Code', monospace" },
-                { label: 'Source Code Pro', value: "'Source Code Pro', monospace" },
-                { label: 'Monaco', value: 'Monaco, monospace' },
-                { label: 'Consolas', value: 'Consolas, monospace' },
-                { label: 'Roboto Mono', value: "'Roboto Mono', monospace" },
-                { label: 'Ubuntu Mono', value: "'Ubuntu Mono', monospace" },
-              ].map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => { updateSettings({ fontFamily: opt.value }); setShowFontMenu(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${settings.fontFamily===opt.value ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
-                  style={{ fontFamily: opt.value as any }}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>,
-            document.body
-          )}
+              {opt.label}
+            </button>
+          ))}
         </div>
       </SettingItem>
 
@@ -257,35 +244,21 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         label="Line Height"
         description="Adjust line spacing for better readability"
       >
-        <div className="relative">
-          <button
-            ref={lhBtnRef}
-            type="button"
-            onClick={() => (showLineHeightMenu ? setShowLineHeightMenu(false) : openLhMenu())}
-            className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[200px] text-left"
-            title="Select line height"
-          >
-            {settings.lineHeight}
-          </button>
-          {showLineHeightMenu && createPortal(
-            <div
-              ref={lhMenuRef}
-              className="z-[9999] rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
-              style={{ position: 'fixed', top: lhMenuPos.top, left: lhMenuPos.left, width: lhMenuPos.width }}
+        <div className="flex gap-2">
+          {['1.2','1.4','1.6','1.8'].map(v => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => updateSettings({ lineHeight: parseFloat(v) })}
+              className={`px-3 py-1 text-sm rounded border transition-colors ${
+                String(settings.lineHeight)===v
+                  ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
+                  : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+              }`}
             >
-              {['1.2','1.4','1.6','1.8'].map(v => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => { updateSettings({ lineHeight: parseFloat(v) }); setShowLineHeightMenu(false); }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${String(settings.lineHeight)===v ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
-                >
-                  {v}
-                </button>
-              ))}
-            </div>,
-            document.body
-          )}
+              {v}
+            </button>
+          ))}
         </div>
       </SettingItem>
 
