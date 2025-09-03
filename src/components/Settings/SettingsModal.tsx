@@ -13,6 +13,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useStore, defaultSettings } from '../../hooks/useStore';
+import PopoverSelect from '../Common/PopoverSelect';
 import { useTheme } from '../../hooks/useTheme';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -152,12 +153,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   const renderEditorSettings = () => (
     <div className="space-y-4">
-      <SettingItem
-        label="Font Family"
-        description="Choose your preferred font"
-      >
-        <div className="max-w-md overflow-x-auto whitespace-nowrap pr-1 framed-scrollbar">
-          {[
+      <SettingItem label="Font Family" description="Choose your preferred font">
+        <PopoverSelect
+          value={settings.fontFamily || defaultSettings.fontFamily}
+          onChange={(val) => updateSettings({ fontFamily: val })}
+          options={[
             { label: 'Inter (Default)', value: defaultSettings.fontFamily },
             { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
             { label: 'Fira Code', value: "'Fira Code', monospace" },
@@ -166,23 +166,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             { label: 'Consolas', value: 'Consolas, monospace' },
             { label: 'Roboto Mono', value: "'Roboto Mono', monospace" },
             { label: 'Ubuntu Mono', value: "'Ubuntu Mono', monospace" },
-          ].map(opt => (
-            <button
-              key={opt.value}
-              type="button"
-              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ fontFamily: opt.value }); }}
-              className={`inline-block mr-2 mb-2 px-2.5 py-1 text-xs rounded-full border transition-colors ${
-                settings.fontFamily===opt.value
-                  ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
-                  : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
-              }`}
-              style={{ fontFamily: opt.value as any }}
-              title={opt.label}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+          ]}
+          buttonClassName="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[220px] text-left"
+          menuClassName="max-h-56 overflow-auto rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
+          optionClassName={(opt, sel) => `w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 ${sel ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
+        />
       </SettingItem>
 
       <SettingItem
@@ -208,26 +196,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         </div>
       </SettingItem>
 
-      <SettingItem
-        label="Line Height"
-        description="Adjust editor line spacing"
-      >
-        <div className="flex gap-1">
-          {['1.2','1.4','1.6','1.8'].map(v => (
-            <button
-              key={v}
-              type="button"
-              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ lineHeight: parseFloat(v) }); }}
-              className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
-                String(settings.lineHeight)===v
-                  ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
-                  : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
-              }`}
-            >
-              {v}
-            </button>
-          ))}
-        </div>
+      <SettingItem label="Line Height" description="Adjust editor line spacing">
+        <PopoverSelect
+          value={String(settings.lineHeight)}
+          onChange={(val) => updateSettings({ lineHeight: parseFloat(val) })}
+          options={[
+            { label: '1.2', value: '1.2' },
+            { label: '1.4', value: '1.4' },
+            { label: '1.6', value: '1.6' },
+            { label: '1.8', value: '1.8' },
+          ]}
+          buttonClassName="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[120px] text-left"
+          menuClassName="rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
+        />
       </SettingItem>
 
       <SettingItem
