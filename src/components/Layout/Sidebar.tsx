@@ -129,22 +129,7 @@ const Sidebar: React.FC = () => {
                   >
                     {n.isEncrypted ? (<Unlock className="w-3 h-3 text-gray-600" />) : (<Lock className="w-3 h-3 text-gray-500" />)}
                   </button>
-                  <button
-                    onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isFavorite: !n.isFavorite }); }}
-                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    title={n.isFavorite ? 'Unfavorite' : 'Favorite'}
-                    aria-label={n.isFavorite ? 'Unfavorite' : 'Favorite'}
-                  >
-                    <Heart className={`w-3 h-3 ${n.isFavorite ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
-                  </button>
-                  <button
-                    onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isEncrypted: !n.isEncrypted }); }}
-                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    title={n.isEncrypted ? 'Unlock (remove encryption)' : 'Encrypt note'}
-                    aria-label={n.isEncrypted ? 'Unlock note' : 'Encrypt note'}
-                  >
-                    {n.isEncrypted ? (<Unlock className="w-3 h-3 text-gray-600" />) : (<Lock className="w-3 h-3 text-gray-500" />)}
-                  </button>
+                  
                   <div className="relative">
                     <button
                       onClick={(e)=>{ e.stopPropagation(); setShowMoveMenuFor(showMoveMenuFor===n.id?null:n.id); }}
