@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Moon, 
@@ -30,6 +31,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [showLineHeightMenu, setShowLineHeightMenu] = useState(false);
   const fontMenuRef = useRef<HTMLDivElement | null>(null);
   const lhMenuRef = useRef<HTMLDivElement | null>(null);
+  const fontBtnRef = useRef<HTMLButtonElement | null>(null);
+  const lhBtnRef = useRef<HTMLButtonElement | null>(null);
+  const [fontMenuPos, setFontMenuPos] = useState<{top:number; left:number; width:number}>({top:0,left:0,width:0});
+  const [lhMenuPos, setLhMenuPos] = useState<{top:number; left:number; width:number}>({top:0,left:0,width:0});
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -39,6 +44,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [showFontMenu, showLineHeightMenu]);
+
+  const openFontMenu = () => {
+    const rect = fontBtnRef.current?.getBoundingClientRect();
+    if (rect) setFontMenuPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX, width: rect.width });
+    setShowFontMenu(true);
+  };
+  const openLhMenu = () => {
+    const rect = lhBtnRef.current?.getBoundingClientRect();
+    if (rect) setLhMenuPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX, width: rect.width });
+    setShowLineHeightMenu(true);
+  };
 
   if (!isOpen) return null;
 
@@ -169,17 +185,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         label="Font Family"
         description="Choose your preferred font for the editor"
       >
-        <div className="relative" ref={fontMenuRef}>
+        <div className="relative">
           <button
+            ref={fontBtnRef}
             type="button"
-            onClick={() => setShowFontMenu(v => !v)}
+            onClick={() => (showFontMenu ? setShowFontMenu(false) : openFontMenu())}
             className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[200px] text-left"
             title="Select font family"
           >
             {settings.fontFamily || defaultSettings.fontFamily}
           </button>
-          {showFontMenu && (
-            <div className="absolute z-50 mt-1 w-full max-h-48 overflow-auto rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+          {showFontMenu && createPortal(
+            <div
+              ref={fontMenuRef}
+              className="z-[9999] max-h-48 overflow-auto rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
+              style={{ position: 'absolute', top: fontMenuPos.top, left: fontMenuPos.left, width: fontMenuPos.width }}
+            >
               {[
                 { label: 'Inter (Default)', value: defaultSettings.fontFamily },
                 { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
@@ -200,7 +221,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                   {opt.label}
                 </button>
               ))}
-            </div>
+            </div>,
+            document.body
           )}
         </div>
       </SettingItem>
@@ -232,17 +254,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         label="Line Height"
         description="Adjust line spacing for better readability"
       >
-        <div className="relative" ref={lhMenuRef}>
+        <div className="relative">
           <button
+            ref={lhBtnRef}
             type="button"
-            onClick={() => setShowLineHeightMenu(v => !v)}
+            onClick={() => (showLineHeightMenu ? setShowLineHeightMenu(false) : openLhMenu())}
             className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 min-w-[200px] text-left"
             title="Select line height"
           >
             {settings.lineHeight}
           </button>
-          {showLineHeightMenu && (
-            <div className="absolute z-50 mt-1 w-full rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+          {showLineHeightMenu && createPortal(
+            <div
+              ref={lhMenuRef}
+              className="z-[9999] rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
+              style={{ position: 'absolute', top: lhMenuPos.top, left: lhMenuPos.left, width: lhMenuPos.width }}
+            >
               {['1.2','1.4','1.6','1.8'].map(v => (
                 <button
                   key={v}
@@ -253,7 +280,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                   {v}
                 </button>
               ))}
-            </div>
+            </div>,
+            document.body
           )}
         </div>
       </SettingItem>
