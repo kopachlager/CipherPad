@@ -157,14 +157,13 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
           onInput={handleInput}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed"
+          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed editor-content"
           style={{
             minHeight: '200px',
             wordWrap: 'break-word',
             whiteSpace: 'pre-wrap',
             fontSize: `${settings.fontSize}px`,
             lineHeight: settings.lineHeight as unknown as string,
-            fontFamily: settings.fontFamily,
           }}
           placeholder="Start writing..."
           suppressContentEditableWarning={true}

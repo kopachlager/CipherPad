@@ -301,3 +301,10 @@ body {
 .tilt-on-scroll {
   animation: tiltOnScroll 1s ease-out forwards;
 }
+:root {
+  --editor-font-family: var(--font-family);
+}
+
+.editor-content {
+  font-family: var(--editor-font-family) !important;
+}
