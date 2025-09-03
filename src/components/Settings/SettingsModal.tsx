@@ -157,10 +157,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Choose your preferred font for the editor"
       >
         <select
+          key={`font-family-${settings.fontFamily}`}
           value={settings.fontFamily || defaultSettings.fontFamily}
           onChange={(e) => {
             updateSettings({ fontFamily: e.target.value });
           }}
+          onMouseDown={(e) => { e.stopPropagation(); }}
           className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
           <option value={settings.fontFamily || defaultSettings.fontFamily} hidden>Current</option>
@@ -203,10 +205,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Adjust line spacing for better readability"
       >
         <select
+          key={`line-height-${settings.lineHeight}`}
           value={String(settings.lineHeight)}
           onChange={(e) => {
             updateSettings({ lineHeight: parseFloat(e.target.value) });
           }}
+          onMouseDown={(e) => { e.stopPropagation(); }}
           className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
           <option value="1.2">Tight (1.2)</option>
