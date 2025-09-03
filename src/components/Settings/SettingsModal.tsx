@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { 
   X, 
   Moon, 
@@ -26,37 +25,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { settings, updateSettings } = useStore();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('appearance');
-  const [showFontMenu, setShowFontMenu] = useState(false);
-  const [showLineHeightMenu, setShowLineHeightMenu] = useState(false);
-  const fontMenuRef = useRef<HTMLDivElement | null>(null);
-  const lhMenuRef = useRef<HTMLDivElement | null>(null);
-  const fontBtnRef = useRef<HTMLButtonElement | null>(null);
-  const lhBtnRef = useRef<HTMLButtonElement | null>(null);
-  const [fontMenuPos, setFontMenuPos] = useState<{top:number; left:number; width:number}>({top:0,left:0,width:0});
-  const [lhMenuPos, setLhMenuPos] = useState<{top:number; left:number; width:number}>({top:0,left:0,width:0});
-  useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      const target = e.target as Node;
-      // Ignore clicks on the trigger buttons themselves
-      const clickedFontBtn = fontBtnRef.current?.contains(target) ?? false;
-      const clickedLhBtn = lhBtnRef.current?.contains(target) ?? false;
-      if (!clickedFontBtn && showFontMenu && fontMenuRef.current && !fontMenuRef.current.contains(target)) setShowFontMenu(false);
-      if (!clickedLhBtn && showLineHeightMenu && lhMenuRef.current && !lhMenuRef.current.contains(target)) setShowLineHeightMenu(false);
-    };
-    document.addEventListener('click', onDocClick);
-    return () => document.removeEventListener('click', onDocClick);
-  }, [showFontMenu, showLineHeightMenu]);
-
-  const openFontMenu = () => {
-    const rect = fontBtnRef.current?.getBoundingClientRect();
-    if (rect) setFontMenuPos({ top: rect.bottom, left: rect.left, width: rect.width });
-    setShowFontMenu(true);
-  };
-  const openLhMenu = () => {
-    const rect = lhBtnRef.current?.getBoundingClientRect();
-    if (rect) setLhMenuPos({ top: rect.bottom, left: rect.left, width: rect.width });
-    setShowLineHeightMenu(true);
-  };
+  // Simplified: no dropdown state to avoid event conflicts
 
   if (!isOpen) return null;
 
@@ -201,7 +170,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             <button
               key={opt.value}
               type="button"
-              onClick={() => updateSettings({ fontFamily: opt.value })}
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ fontFamily: opt.value }); }}
               className={`px-3 py-1 text-sm rounded border transition-colors ${
                 settings.fontFamily===opt.value
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
@@ -248,7 +217,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             <button
               key={v}
               type="button"
-              onClick={() => updateSettings({ lineHeight: parseFloat(v) })}
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ lineHeight: parseFloat(v) }); }}
               className={`px-3 py-1 text-sm rounded border transition-colors ${
                 String(settings.lineHeight)===v
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
