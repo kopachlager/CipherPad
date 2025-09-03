@@ -130,13 +130,6 @@ const Sidebar: React.FC = () => {
                     {n.isEncrypted ? (<Unlock className="w-3 h-3 text-gray-600" />) : (<Lock className="w-3 h-3 text-gray-500" />)}
                   </button>
                   <button
-                    onClick={(e)=>{ e.stopPropagation(); setActiveNote(n.id); }}
-                    className="px-1.5 py-0.5 text-[10px] rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
-                    title={formatDate(new Date(n.updatedAt))}
-                  >
-                    {formatDate(new Date(n.updatedAt))}
-                  </button>
-                  <button
                     onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isFavorite: !n.isFavorite }); }}
                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                     title={n.isFavorite ? 'Unfavorite' : 'Favorite'}
