@@ -152,7 +152,7 @@ const App: React.FC = () => {
               {!settings.distractionFreeMode && <Header />}
               
               <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden`}>
-                {!settings.distractionFreeMode && <Sidebar />}
+                {!settings.distractionFreeMode && !showDashboard && <Sidebar />}
                 {showDashboard ? <DashboardPage /> : <EditorView />}
               </div>
             </div>

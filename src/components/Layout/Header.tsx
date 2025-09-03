@@ -7,7 +7,8 @@ import {
   Settings, 
   Plus,
   LogOut,
-  Loader2
+  Loader2,
+  LayoutDashboard
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
@@ -61,14 +62,15 @@ const Header: React.FC = () => {
 
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">CipherWrite</h1>
           <button
-            onClick={async () => { 
-              setShowDashboard(!showDashboard); 
+            onClick={async () => {
+              setShowDashboard(!showDashboard);
               if (!showDashboard) { await loadProjects(); setSelectedProject(null); }
             }}
-            className="px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
             title={showDashboard ? 'Back to Editor' : 'Open Dashboard'}
+            aria-label={showDashboard ? 'Back to Editor' : 'Open Dashboard'}
           >
-            {showDashboard ? 'Editor' : 'Dashboard'}
+            <LayoutDashboard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 
