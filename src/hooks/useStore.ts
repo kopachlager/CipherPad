@@ -42,6 +42,21 @@ interface Store {
   
   setSidebarOpen: (open: boolean) => void;
   setSearchQuery: (query: string) => void;
+  // Dashboard
+  projects: Project[];
+  lanes: Lane[];
+  selectedProjectId: string | null;
+  showDashboard: boolean;
+  loadProjects: () => Promise<void>;
+  createProject: (name: string, color?: string) => Promise<void>;
+  updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
+  deleteProject: (id: string) => Promise<void>;
+  loadLanes: (projectId: string) => Promise<void>;
+  createLane: (projectId: string, name: string, color?: string) => Promise<void>;
+  updateLane: (id: string, updates: Partial<Lane>) => Promise<void>;
+  deleteLane: (id: string) => Promise<void>;
+  setSelectedProject: (id: string | null) => void;
+  setShowDashboard: (show: boolean) => void;
   
   updateLastActivity: () => void;
   lockApp: () => void;
@@ -99,12 +114,16 @@ export const useStore = create<Store>()(
   (set, get) => ({
       notes: [],
       activeNoteId: null,
+      projects: [],
+      lanes: [],
+      selectedProjectId: null,
       folders: [],
       selectedFolderId: null,
       settings: loadSettings(),
       auth: defaultAuth,
       sidebarOpen: true,
       searchQuery: '',
+      showDashboard: false,
       encryptionRequestForNoteId: null,
 
       loadNotes: async () => {
@@ -447,6 +466,71 @@ export const useStore = create<Store>()(
 
       setSearchQuery: (query) => {
         set({ searchQuery: query });
+      },
+      // Dashboard actions
+      loadProjects: async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data, error } = await supabase.from('projects').select('*').eq('user_id', user.id).order('position', { ascending: false });
+        if (error) { console.error('loadProjects', error); return; }
+        const projects: Project[] = (data || []).map((p: any) => ({ id: p.id, userId: p.user_id, name: p.name, color: p.color, position: p.position || 0, createdAt: new Date(p.created_at) }));
+        set({ projects });
+      },
+      createProject: async (name, color = '#6b7280') => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const proj: any = { id: crypto.randomUUID(), user_id: user.id, name, color, position: Date.now() };
+        const { error } = await supabase.from('projects').insert(proj);
+        if (error) { console.error('createProject', error); return; }
+        set((s) => ({ projects: [{ id: proj.id, userId: proj.user_id, name, color, position: proj.position, createdAt: new Date() }, ...s.projects] }));
+      },
+      updateProject: async (id, updates) => {
+        const db: any = {};
+        if (updates.name !== undefined) db.name = updates.name;
+        if (updates.color !== undefined) db.color = updates.color;
+        if (updates.position !== undefined) db.position = updates.position;
+        const { error } = await supabase.from('projects').update(db).eq('id', id);
+        if (error) { console.error('updateProject', error); return; }
+        set(s => ({ projects: s.projects.map(p => p.id===id ? { ...p, ...updates } : p) }));
+      },
+      deleteProject: async (id) => {
+        const { error } = await supabase.from('projects').delete().eq('id', id);
+        if (error) { console.error('deleteProject', error); return; }
+        set(s => ({ projects: s.projects.filter(p => p.id!==id), selectedProjectId: s.selectedProjectId===id ? null : s.selectedProjectId }));
+      },
+      loadLanes: async (projectId: string) => {
+        const { data, error } = await supabase.from('lanes').select('*').eq('project_id', projectId).order('position', { ascending: true });
+        if (error) { console.error('loadLanes', error); return; }
+        const lanes: Lane[] = (data || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
+        set({ lanes });
+      },
+      createLane: async (projectId: string, name: string, color = '#e5e7eb') => {
+        const lane: any = { id: crypto.randomUUID(), project_id: projectId, name, color, position: Date.now() };
+        const { error } = await supabase.from('lanes').insert(lane);
+        if (error) { console.error('createLane', error); return; }
+        set(s => ({ lanes: [...s.lanes, { id: lane.id, projectId, name, color, position: lane.position, createdAt: new Date() }] }));
+      },
+      updateLane: async (id: string, updates: Partial<Lane>) => {
+        const db: any = {};
+        if (updates.name !== undefined) db.name = updates.name;
+        if (updates.color !== undefined) db.color = updates.color;
+        if (updates.position !== undefined) db.position = updates.position;
+        const { error } = await supabase.from('lanes').update(db).eq('id', id);
+        if (error) { console.error('updateLane', error); return; }
+        set(s => ({ lanes: s.lanes.map(l => l.id===id ? { ...l, ...updates } : l) }));
+      },
+      deleteLane: async (id: string) => {
+        const { error } = await supabase.from('lanes').delete().eq('id', id);
+        if (error) { console.error('deleteLane', error); return; }
+        set(s => ({ lanes: s.lanes.filter(l => l.id!==id) }));
+      },
+      setSelectedProject: (id) => {
+        set({ selectedProjectId: id });
+        if (id) get().loadLanes(id);
+      },
+      setShowDashboard: (show) => {
+        set({ showDashboard: show });
+        if (show) get().loadProjects();
       },
 
       updateLastActivity: () => {

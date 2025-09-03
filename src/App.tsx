@@ -5,6 +5,7 @@ import { useAuth } from './hooks/useAuth';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import EditorView from './components/Editor/EditorView';
+import DashboardPage from './pages/DashboardPage';
 import FloatingActionButton from './components/FloatingActionButton';
 import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
@@ -12,7 +13,7 @@ import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const App: React.FC = () => {
-  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings, auth, lockApp, unlockApp } = useStore();
+  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings, auth, lockApp, unlockApp, showDashboard } = useStore();
   const { user, loading } = useAuth();
   const [showLanding, setShowLanding] = React.useState(!user);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
@@ -150,11 +151,9 @@ const App: React.FC = () => {
             <div className="h-full flex flex-col">
               {!settings.distractionFreeMode && <Header />}
               
-              <div className={`flex-1 flex ${
-                settings.distractionFreeMode ? 'p-8' : ''
-              } overflow-hidden`}>
+              <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden`}>
                 {!settings.distractionFreeMode && <Sidebar />}
-                <EditorView />
+                {showDashboard ? <DashboardPage /> : <EditorView />}
               </div>
             </div>
           </div>

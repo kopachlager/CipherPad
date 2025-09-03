@@ -22,6 +22,10 @@ const Header: React.FC = () => {
     searchQuery,
     createNote,
     settings,
+    showDashboard,
+    setShowDashboard,
+    setSelectedProject,
+    loadProjects,
   } = useStore();
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -55,9 +59,17 @@ const Header: React.FC = () => {
             <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
 
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            CipherWrite
-          </h1>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">CipherWrite</h1>
+          <button
+            onClick={async () => { 
+              setShowDashboard(!showDashboard); 
+              if (!showDashboard) { await loadProjects(); setSelectedProject(null); }
+            }}
+            className="px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+            title={showDashboard ? 'Back to Editor' : 'Open Dashboard'}
+          >
+            {showDashboard ? 'Editor' : 'Dashboard'}
+          </button>
         </div>
 
         <div className="relative hidden md:block">

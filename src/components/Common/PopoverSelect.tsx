@@ -26,19 +26,20 @@ const PopoverSelect: React.FC<PopoverSelectProps> = ({
   const [pos, setPos] = useState<{top:number; left:number; width:number}>({ top: 0, left: 0, width: 0 });
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const openedAtRef = useRef<number>(0);
+  const ignoreClickUntilRef = useRef<number>(0);
 
   const recomputePosition = () => {
     const rect = btnRef.current?.getBoundingClientRect();
     if (rect) setPos({ top: rect.bottom, left: rect.left, width: rect.width });
   };
 
-  const openMenu = () => { recomputePosition(); setOpen(true); openedAtRef.current = Date.now(); };
+  const openMenu = () => { recomputePosition(); setOpen(true); ignoreClickUntilRef.current = Date.now() + 200; };
   const closeMenu = () => setOpen(false);
 
   useEffect(() => {
     if (!open) return;
     const onDocClick = (e: MouseEvent) => {
+      if (Date.now() < ignoreClickUntilRef.current) return; // ignore the click that opened
       const t = e.target as Node;
       if (btnRef.current?.contains(t)) return; // allow toggle clicks
       if (menuRef.current && !menuRef.current.contains(t)) closeMenu();

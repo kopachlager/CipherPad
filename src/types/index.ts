@@ -5,12 +5,33 @@ export interface Note {
   isEncrypted: boolean;
   isCodeMode: boolean;
   language?: string;
+  projectId?: string;
+  laneId?: string;
+  position?: number;
   folderId?: string;
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
   isFavorite: boolean;
+}
+
+export interface Project {
+  id: string;
+  userId: string;
+  name: string;
+  color: string;
+  position: number;
+  createdAt: Date;
+}
+
+export interface Lane {
+  id: string;
+  projectId: string;
+  name: string;
+  color: string;
+  position: number;
+  createdAt: Date;
 }
 
 export interface Folder {
