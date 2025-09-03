@@ -284,6 +284,7 @@ const EditorView: React.FC = () => {
               disabled={!!activeNote.isEncrypted}
               placeholder="Untitled Note"
               className="w-full bg-transparent text-xl font-semibold text-gray-900 dark:text-gray-100 outline-none border-b border-transparent focus:border-gray-300 dark:focus:border-gray-700 pb-2"
+              style={{ fontFamily: settings.fontFamily }}
             />
           </div>
         )}
