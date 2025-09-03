@@ -10,7 +10,8 @@ import {
   Save,
   Palette,
   Keyboard,
-  Shield
+  Shield,
+  FileText
 } from 'lucide-react';
 import { useStore, defaultSettings } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
