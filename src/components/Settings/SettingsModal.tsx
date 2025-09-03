@@ -157,12 +157,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Choose your preferred font for the editor"
       >
         <select
-          value={settings.fontFamily}
+          value={settings.fontFamily || defaultSettings.fontFamily}
           onChange={(e) => {
             updateSettings({ fontFamily: e.target.value });
           }}
           className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
+          <option value={settings.fontFamily || defaultSettings.fontFamily} hidden>Current</option>
           <option value={defaultSettings.fontFamily}>Inter (Default)</option>
           <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
           <option value="'Fira Code', monospace">Fira Code</option>
@@ -202,16 +203,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Adjust line spacing for better readability"
       >
         <select
-          value={settings.lineHeight}
+          value={String(settings.lineHeight)}
           onChange={(e) => {
             updateSettings({ lineHeight: parseFloat(e.target.value) });
           }}
           className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
-          <option value={1.2}>Tight (1.2)</option>
-          <option value={1.4}>Normal (1.4)</option>
-          <option value={1.6}>Relaxed (1.6)</option>
-          <option value={1.8}>Loose (1.8)</option>
+          <option value="1.2">Tight (1.2)</option>
+          <option value="1.4">Normal (1.4)</option>
+          <option value="1.6">Relaxed (1.6)</option>
+          <option value="1.8">Loose (1.8)</option>
         </select>
       </SettingItem>
 
