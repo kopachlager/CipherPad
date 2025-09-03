@@ -26,28 +26,33 @@ const PopoverSelect: React.FC<PopoverSelectProps> = ({
   const [pos, setPos] = useState<{top:number; left:number; width:number}>({ top: 0, left: 0, width: 0 });
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const openedAtRef = useRef<number>(0);
 
   const recomputePosition = () => {
     const rect = btnRef.current?.getBoundingClientRect();
     if (rect) setPos({ top: rect.bottom, left: rect.left, width: rect.width });
   };
 
-  const openMenu = () => { recomputePosition(); setOpen(true); };
+  const openMenu = () => { recomputePosition(); setOpen(true); openedAtRef.current = Date.now(); };
   const closeMenu = () => setOpen(false);
 
   useEffect(() => {
     if (!open) return;
-    const onDocPointer = (e: MouseEvent) => {
+    const onDocClick = (e: MouseEvent) => {
       const t = e.target as Node;
       if (btnRef.current?.contains(t)) return; // allow toggle clicks
       if (menuRef.current && !menuRef.current.contains(t)) closeMenu();
     };
     const onResize = () => recomputePosition();
-    document.addEventListener('click', onDocPointer, true);
+    // Delay binding slightly to ignore the click that opened the menu
+    const timer = window.setTimeout(() => {
+      document.addEventListener('click', onDocClick, false);
+    }, 0);
     window.addEventListener('resize', onResize);
     window.addEventListener('scroll', onResize, true);
     return () => {
-      document.removeEventListener('click', onDocPointer, true);
+      window.clearTimeout(timer);
+      document.removeEventListener('click', onDocClick, false);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', onResize, true);
     };
