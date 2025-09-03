@@ -44,6 +44,38 @@ body {
   color: theme('colors.gray.100');
 }
 
+/* Natural Paper Theme */
+.theme-paper body {
+  background: linear-gradient(135deg, #fbf7ef 0%, #f2eadf 100%) !important;
+  color: #3b3a36;
+}
+
+.theme-paper .distraction-free {
+  background: linear-gradient(135deg, #fcf8f0 0%, #f5eee3 100%) !important;
+}
+
+/* Paper surfaces for editor frame */
+.theme-paper .paper-surface {
+  background: #faf5e6 !important; /* warm parchment */
+  border-color: #eadfc7 !important;
+}
+
+.theme-paper .paper-sheet {
+  background: #fffdf7; /* lighter sheet */
+}
+
+.theme-paper .paper-sheet .framed-scrollbar::-webkit-scrollbar-thumb {
+  background: #d9cdb5;
+}
+
+.theme-paper input::placeholder, .theme-paper .placeholder-gray-500 {
+  color: #9b8f7a !important;
+}
+
+.theme-paper .border-gray-200 { border-color: #eadfc7 !important; }
+.theme-paper .border-gray-300 { border-color: #e3d8c3 !important; }
+.theme-paper .bg-gray-50 { background-color: #faf6ec !important; }
+
 /* Scrollbar styles */
 ::-webkit-scrollbar {
   width: 8px;

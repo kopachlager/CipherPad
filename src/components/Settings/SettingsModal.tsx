@@ -86,6 +86,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           {[
             { value: 'light', icon: <Sun className="w-4 h-4" />, label: 'Light' },
             { value: 'dark', icon: <Moon className="w-4 h-4" />, label: 'Dark' },
+            { value: 'paper', icon: <FileText className="w-4 h-4" />, label: 'Paper' },
             { value: 'system', icon: <Monitor className="w-4 h-4" />, label: 'System' },
           ].map((themeOption) => (
             <button

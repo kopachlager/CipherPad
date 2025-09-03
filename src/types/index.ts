@@ -22,7 +22,7 @@ export interface Folder {
 }
 
 export interface AppSettings {
-  theme: 'light' | 'dark' | 'system';
+  theme: 'light' | 'dark' | 'system' | 'paper';
   accentColor: string;
   fontFamily: string;
   fontSize: number;

@@ -273,7 +273,7 @@ const EditorView: React.FC = () => {
 
   return (
     <>
-      <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden rounded-r-2xl">
+      <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden rounded-r-2xl paper-surface">
         {/* Title Bar */}
         {activeNote && (
           <div className="px-4 pt-3">
@@ -331,7 +331,7 @@ const EditorView: React.FC = () => {
           }}
         />
         
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative paper-sheet">
           {/* Encrypted placeholder */}
           {activeNote.isEncrypted ? (
             <div className="h-full flex items-center justify-center p-8">

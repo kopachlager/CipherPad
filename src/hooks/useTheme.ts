@@ -10,7 +10,9 @@ export const useTheme = () => {
     const computeIsDark = () => settings.theme === 'dark' || (settings.theme === 'system' && mql.matches);
     const isDark = computeIsDark();
 
+    // Handle dark and custom paper theme classes
     root.classList.toggle('dark', isDark);
+    root.classList.toggle('theme-paper', settings.theme === 'paper');
     
     // Set accent color
     root.style.setProperty('--accent-color', settings.accentColor);
