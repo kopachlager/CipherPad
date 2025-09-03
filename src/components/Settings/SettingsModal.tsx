@@ -154,9 +154,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     <div className="space-y-4">
       <SettingItem
         label="Font Family"
-        description="Choose your preferred font for the editor"
+        description="Choose your preferred font"
       >
-        <div className="flex flex-wrap gap-2 max-w-md">
+        <div className="max-w-md overflow-x-auto whitespace-nowrap pr-1 framed-scrollbar">
           {[
             { label: 'Inter (Default)', value: defaultSettings.fontFamily },
             { label: 'JetBrains Mono', value: "'JetBrains Mono', monospace" },
@@ -171,7 +171,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               key={opt.value}
               type="button"
               onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ fontFamily: opt.value }); }}
-              className={`px-3 py-1 text-sm rounded border transition-colors ${
+              className={`inline-block mr-2 mb-2 px-2.5 py-1 text-xs rounded-full border transition-colors ${
                 settings.fontFamily===opt.value
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
                   : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
@@ -210,15 +210,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
       <SettingItem
         label="Line Height"
-        description="Adjust line spacing for better readability"
+        description="Adjust editor line spacing"
       >
-        <div className="flex gap-2">
+        <div className="flex gap-1">
           {['1.2','1.4','1.6','1.8'].map(v => (
             <button
               key={v}
               type="button"
               onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ lineHeight: parseFloat(v) }); }}
-              className={`px-3 py-1 text-sm rounded border transition-colors ${
+              className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
                 String(settings.lineHeight)===v
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'
                   : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
