@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { FileText, Folder, Star, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, FolderOpen, X } from 'lucide-react';
+import { FileText, Folder, Heart, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, FolderOpen, X } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { formatDate, exportNote } from '../../utils/helpers';
 
@@ -66,7 +66,7 @@ const Sidebar: React.FC = () => {
               <span className="text-xs text-gray-500">{notes.filter(n=>!n.isDeleted).length}</span>
             </button>
             <button className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm ${viewMode==='favorites'?'bg-gray-100 dark:bg-gray-800':'hover:bg-gray-50 dark:hover:bg-gray-800'}`} onClick={()=>{setViewMode('favorites'); setSelectedFolder(null);}}>
-              <span className="flex items-center gap-2"><Star className="w-4 h-4"/>Favorites</span>
+              <span className="flex items-center gap-2"><Heart className="w-4 h-4"/>Favorites</span>
               <span className="text-xs text-gray-500">{notes.filter(n=>n.isFavorite && !n.isDeleted).length}</span>
             </button>
             <button className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm ${viewMode==='trash'?'bg-gray-100 dark:bg-gray-800':'hover:bg-gray-50 dark:hover:bg-gray-800'}`} onClick={()=>{setViewMode('trash'); setSelectedFolder(null);}}>
@@ -119,7 +119,7 @@ const Sidebar: React.FC = () => {
                     title={n.isFavorite ? 'Unfavorite' : 'Favorite'}
                     aria-label={n.isFavorite ? 'Unfavorite' : 'Favorite'}
                   >
-                    <Star className={`w-3 h-3 ${n.isFavorite ? 'text-yellow-500 fill-current' : 'text-gray-500'}`} />
+                    <Heart className={`w-3 h-3 ${n.isFavorite ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
                   </button>
                   <button
                     onClick={(e)=>{ e.stopPropagation(); useStore.getState().setActiveNote(n.id); useStore.getState().requestEncryption?.(n.id); }}
@@ -140,8 +140,9 @@ const Sidebar: React.FC = () => {
                     onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isFavorite: !n.isFavorite }); }}
                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                     title={n.isFavorite ? 'Unfavorite' : 'Favorite'}
+                    aria-label={n.isFavorite ? 'Unfavorite' : 'Favorite'}
                   >
-                    <Star className={`w-3 h-3 ${n.isFavorite ? 'text-yellow-500 fill-current' : 'text-gray-500'}`} />
+                    <Heart className={`w-3 h-3 ${n.isFavorite ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
                   </button>
                   <button
                     onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { isEncrypted: !n.isEncrypted }); }}
