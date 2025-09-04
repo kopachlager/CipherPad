@@ -80,8 +80,20 @@ const Sidebar: React.FC = () => {
         {/* Notes */}
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-600">
           <div className="flex items-center justify-between p-3">
-            <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{viewMode==='trash'?'Deleted Notes':viewMode==='favorites'?'Favorite Notes':selectedFolderId?'Folder Notes':'All Notes'} ({filteredNotes.length})</div>
-            <button onClick={()=>createNote()} className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700" title="New Note"><Plus className="w-3 h-3 text-gray-500"/></button>
+            <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{viewMode==='trash'?'Deleted Notes':viewMode==='favorites'?'Favorite Notes':'All Notes'} ({filteredNotes.length})</div>
+            <div className="flex items-center gap-2">
+              {viewMode==='trash' ? (
+                <button
+                  onMouseDown={async (e)=>{ e.preventDefault(); if (confirm('Permanently delete all notes in Trash?')) { await useStore.getState().emptyTrash(); } }}
+                  className="px-2 py-1 text-xs rounded border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  title="Empty Trash"
+                >
+                  Empty
+                </button>
+              ) : (
+                <button onClick={()=>createNote()} className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700" title="New Note"><Plus className="w-3 h-3 text-gray-500"/></button>
+              )}
+            </div>
           </div>
           <div className="px-3 pb-3 space-y-1 max-h-96 overflow-y-auto framed-scrollbar">
             {filteredNotes.map(n => (

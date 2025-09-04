@@ -27,6 +27,7 @@ interface Store {
   deleteNote: (id: string) => Promise<void>;
   restoreNote: (id: string) => Promise<void>;
   toggleNoteFavorite: (id: string) => Promise<void>;
+  emptyTrash: () => Promise<void>;
   loadNotes: () => Promise<void>;
   
   createFolder: (name: string, parentId?: string) => Promise<void>;
@@ -261,6 +262,22 @@ export const useStore = create<Store>()(
         if (note) {
           await get().updateNote(id, { isFavorite: !note.isFavorite });
         }
+      },
+
+      emptyTrash: async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        // Permanently delete trashed notes for this user
+        const { error } = await supabase
+          .from('notes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('is_deleted', true);
+        if (error) {
+          console.error('Error emptying trash:', error);
+          return;
+        }
+        set((state) => ({ notes: state.notes.filter(n => !n.isDeleted) }));
       },
 
       loadFolders: async () => {
