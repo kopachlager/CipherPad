@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  Menu, 
   Search, 
   Sun, 
   Moon, 
@@ -17,8 +16,6 @@ import SettingsModal from '../Settings/SettingsModal';
 
 const Header: React.FC = () => {
   const { 
-    setSidebarOpen, 
-    sidebarOpen, 
     setSearchQuery, 
     searchQuery,
     createNote,
@@ -53,13 +50,6 @@ const Header: React.FC = () => {
     <>
       <header className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 relative z-50 flex-shrink-0">
         <div className="flex items-center space-x-2 sm:space-x-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
-          >
-            <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
-
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">CipherWrite</h1>
           <button
             onClick={async () => {

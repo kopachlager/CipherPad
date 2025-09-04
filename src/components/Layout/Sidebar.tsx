@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { FileText, Heart, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, X } from 'lucide-react';
+import { FileText, Heart, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, X, Bell } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { formatDate, exportNote } from '../../utils/helpers';
 
@@ -42,16 +42,25 @@ const Sidebar: React.FC = () => {
     <aside className="w-80 h-full bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0 relative z-40">
       {/* Search */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-        <div className="relative">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            data-search-input
-            type="text"
-            placeholder="Search notes..."
-            value={searchQuery}
-            onChange={(e)=>setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              data-search-input
+              type="text"
+              placeholder="Search notes..."
+              value={searchQuery}
+              onChange={(e)=>setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-10 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+            />
+          </div>
+          <button
+            title="Notifications"
+            aria-label="Notifications"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            <Bell className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          </button>
         </div>
       </div>
 
