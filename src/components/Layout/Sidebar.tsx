@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { FileText, Folder, Heart, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, FolderOpen, X } from 'lucide-react';
+import { FileText, Heart, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, X } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { formatDate, exportNote } from '../../utils/helpers';
 
@@ -21,7 +21,6 @@ const Sidebar: React.FC = () => {
   const [viewMode, setViewMode] = useState<'all'|'favorites'|'trash'>('all');
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
-  const [showMoveMenuFor, setShowMoveMenuFor] = useState<string | null>(null);
 
   const filteredNotes = useMemo(() => {
     const byView = notes.filter(n => viewMode==='trash' ? n.isDeleted : viewMode==='favorites' ? n.isFavorite && !n.isDeleted : !n.isDeleted);
@@ -76,28 +75,7 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Folders */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between p-3">
-            <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Folders</div>
-            <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700" onClick={()=>setShowNewFolder(v=>!v)} title="New Folder"><Plus className="w-3 h-3 text-gray-500"/></button>
-          </div>
-          <div className="px-3 pb-3 space-y-1">
-            {showNewFolder && (
-              <div className="flex items-center gap-2 mb-2">
-                <input value={newFolderName} onChange={(e)=>setNewFolderName(e.target.value)} onKeyDown={(e)=>{ if(e.key==='Enter') addFolder(); if(e.key==='Escape'){ setShowNewFolder(false); setNewFolderName(''); } }} className="flex-1 px-2 py-1 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded" placeholder="Folder name" autoFocus />
-                <button onClick={addFolder} className="px-2 py-1 text-xs rounded bg-gray-900 text-white hover:bg-gray-800">Add</button>
-              </div>
-            )}
-            {folders.map(f => (
-              <button key={f.id} onClick={()=>{ setSelectedFolder(f.id); setViewMode('all'); }} className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm ${selectedFolderId===f.id?'bg-gray-100 dark:bg-gray-800':'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
-                <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: f.color }} />
-                <span className="truncate flex-1 text-left">{f.name}</span>
-                <span className="text-xs text-gray-500">{notes.filter(n=>n.folderId===f.id && !n.isDeleted).length}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Folders removed for project-based organization */}
 
         {/* Notes */}
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-300 dark:border-gray-600">
@@ -130,32 +108,7 @@ const Sidebar: React.FC = () => {
                     {n.isEncrypted ? (<Unlock className="w-3 h-3 text-gray-600" />) : (<Lock className="w-3 h-3 text-gray-500" />)}
                   </button>
                   
-                  <div className="relative">
-                    <button
-                      onClick={(e)=>{ e.stopPropagation(); setShowMoveMenuFor(showMoveMenuFor===n.id?null:n.id); }}
-                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                      title="Move to folder"
-                      aria-label="Move to folder"
-                    >
-                      <FolderOpen className="w-3 h-3 text-gray-500" />
-                    </button>
-                    {showMoveMenuFor===n.id && (
-                      <div className="absolute right-0 top-6 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg min-w-40 p-1">
-                        <button
-                          onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { folderId: undefined }); setShowMoveMenuFor(null); }}
-                          className={`w-full text-left px-3 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 ${!n.folderId ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
-                        >No Folder</button>
-                        {folders.map(f => (
-                          <button key={f.id}
-                            onClick={(e)=>{ e.stopPropagation(); useStore.getState().updateNote(n.id, { folderId: f.id }); setShowMoveMenuFor(null); }}
-                            className={`w-full text-left px-3 py-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 ${n.folderId===f.id ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
-                          >
-                            <span className="inline-block w-2 h-2 rounded-sm mr-2" style={{ backgroundColor: f.color }} />{f.name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  {/* Move to folder removed */}
                   <button
                     onClick={(e)=>{ e.stopPropagation(); exportNote(n, 'txt'); }}
                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
