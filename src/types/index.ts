@@ -12,6 +12,7 @@ export interface Note {
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
+  deletedAt?: Date;
   isDeleted: boolean;
   isFavorite: boolean;
 }

@@ -153,6 +153,7 @@ export const useStore = create<Store>()(
           tags: note.tags,
           createdAt: new Date(note.created_at),
           updatedAt: new Date(note.updated_at),
+          deletedAt: note.deleted_at ? new Date(note.deleted_at) : undefined,
           isDeleted: note.is_deleted,
           isFavorite: note.is_favorite,
         }));
@@ -232,6 +233,7 @@ export const useStore = create<Store>()(
         if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId;
         if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
         if (updates.isDeleted !== undefined) dbUpdates.is_deleted = updates.isDeleted;
+        if ((updates as any).deletedAt !== undefined) dbUpdates.deleted_at = (updates as any).deletedAt;
         if (updates.isFavorite !== undefined) dbUpdates.is_favorite = updates.isFavorite;
         dbUpdates.updated_at = new Date().toISOString();
 
@@ -247,14 +249,14 @@ export const useStore = create<Store>()(
       },
 
       deleteNote: async (id) => {
-        await get().updateNote(id, { isDeleted: true });
+        await get().updateNote(id, { isDeleted: true, deletedAt: new Date() } as any);
         set((state) => ({
           activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
         }));
       },
 
       restoreNote: async (id) => {
-        await get().updateNote(id, { isDeleted: false });
+        await get().updateNote(id, { isDeleted: false, deletedAt: null } as any);
       },
 
       toggleNoteFavorite: async (id) => {
@@ -267,17 +269,20 @@ export const useStore = create<Store>()(
       emptyTrash: async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        // Permanently delete trashed notes for this user
+        // Permanently delete trashed notes older than 5 days
+        const threshold = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
         const { error } = await supabase
           .from('notes')
           .delete()
           .eq('user_id', user.id)
-          .eq('is_deleted', true);
+          .eq('is_deleted', true)
+          .not('deleted_at', 'is', null)
+          .lte('deleted_at', threshold);
         if (error) {
           console.error('Error emptying trash:', error);
           return;
         }
-        set((state) => ({ notes: state.notes.filter(n => !n.isDeleted) }));
+        set((state) => ({ notes: state.notes.filter(n => !(n.isDeleted && n.deletedAt && n.deletedAt <= new Date(threshold))) }));
       },
 
       loadFolders: async () => {
