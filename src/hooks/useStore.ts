@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Note, Folder, AppSettings, AuthState } from '../types';
+import { Note, Folder, AppSettings, AuthState, Project, Lane } from '../types';
 import { supabase } from '../lib/supabase';
 
 interface Store {
@@ -48,6 +48,11 @@ interface Store {
   lanes: Lane[];
   selectedProjectId: string | null;
   showDashboard: boolean;
+  // Undo toast state
+  showUndoForNoteId?: string | null;
+  lastDeletedSnapshot?: Note | null;
+  undoTimerId?: number | null;
+  undoDelete?: () => Promise<void>;
   loadProjects: () => Promise<void>;
   createProject: (name: string, color?: string) => Promise<void>;
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
@@ -58,6 +63,8 @@ interface Store {
   deleteLane: (id: string) => Promise<void>;
   setSelectedProject: (id: string | null) => void;
   setShowDashboard: (show: boolean) => void;
+  ensureDefaultLaneForProject?: (projectId: string) => Promise<void>;
+  ensureInboxProjectAndAssign?: () => Promise<void>;
   
   updateLastActivity: () => void;
   lockApp: () => void;
@@ -125,6 +132,9 @@ export const useStore = create<Store>()(
       sidebarOpen: true,
       searchQuery: '',
       showDashboard: false,
+      showUndoForNoteId: null,
+      lastDeletedSnapshot: null,
+      undoTimerId: null,
       encryptionRequestForNoteId: null,
 
       loadNotes: async () => {
@@ -149,6 +159,9 @@ export const useStore = create<Store>()(
           isEncrypted: note.is_encrypted,
           isCodeMode: note.is_code_mode,
           language: note.language || 'plaintext',
+          projectId: note.project_id || undefined,
+          laneId: note.lane_id || undefined,
+          position: note.position || undefined,
           folderId: note.folder_id || undefined,
           tags: note.tags,
           createdAt: new Date(note.created_at),
@@ -230,6 +243,9 @@ export const useStore = create<Store>()(
         if (updates.isEncrypted !== undefined) dbUpdates.is_encrypted = updates.isEncrypted;
         if (updates.isCodeMode !== undefined) dbUpdates.is_code_mode = updates.isCodeMode;
         if (updates.language !== undefined) dbUpdates.language = updates.language;
+        if (updates.projectId !== undefined) dbUpdates.project_id = updates.projectId;
+        if (updates.laneId !== undefined) dbUpdates.lane_id = updates.laneId;
+        if (updates.position !== undefined) dbUpdates.position = updates.position;
         if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId;
         if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
         if (updates.isDeleted !== undefined) dbUpdates.is_deleted = updates.isDeleted;
@@ -249,14 +265,28 @@ export const useStore = create<Store>()(
       },
 
       deleteNote: async (id) => {
+        const note = get().notes.find(n => n.id === id) || null;
         await get().updateNote(id, { isDeleted: true, deletedAt: new Date() } as any);
+        // Show undo toast for 5s
+        const timer = window.setTimeout(() => {
+          set({ showUndoForNoteId: null, lastDeletedSnapshot: null, undoTimerId: null });
+        }, 5000);
         set((state) => ({
           activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
+          showUndoForNoteId: id,
+          lastDeletedSnapshot: note,
+          undoTimerId: timer,
         }));
       },
 
       restoreNote: async (id) => {
         await get().updateNote(id, { isDeleted: false, deletedAt: null } as any);
+        // Hide undo toast if it matches
+        const st = get();
+        if (st.showUndoForNoteId === id) {
+          if (st.undoTimerId) window.clearTimeout(st.undoTimerId);
+          set({ showUndoForNoteId: null, lastDeletedSnapshot: null, undoTimerId: null });
+        }
       },
 
       toggleNoteFavorite: async (id) => {
@@ -490,6 +520,51 @@ export const useStore = create<Store>()(
         set({ searchQuery: query });
       },
       // Dashboard actions
+      undoDelete: async () => {
+        const id = get().showUndoForNoteId;
+        if (!id) return;
+        if (get().undoTimerId) window.clearTimeout(get().undoTimerId!);
+        await get().restoreNote(id);
+      },
+      // Utility: ensure a project has a default "Notes" lane
+      ensureDefaultLaneForProject: async (projectId: string) => {
+        const { data, error } = await supabase.from('lanes').select('id').eq('project_id', projectId).limit(1);
+        if (error) { console.error('ensureDefaultLaneForProject', error); return; }
+        if (!data || data.length === 0) {
+          await get().createLane(projectId, 'Notes');
+        }
+      },
+      // Ensure Inbox project and Notes lane exist, and assign all unassigned notes
+      ensureInboxProjectAndAssign: async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        // Find or create Inbox project
+        let inbox = get().projects.find(p => p.name.toLowerCase() === 'inbox');
+        if (!inbox) {
+          const proj: any = { id: crypto.randomUUID(), user_id: user.id, name: 'Inbox', color: '#6b7280', position: Date.now() };
+          const { error } = await supabase.from('projects').insert(proj);
+          if (error) { console.error('ensureInbox create project', error); }
+          inbox = { id: proj.id, userId: proj.user_id, name: 'Inbox', color: proj.color, position: proj.position, createdAt: new Date() };
+          set(s => ({ projects: [inbox!, ...s.projects] }));
+        }
+        // Ensure default lane exists
+        await get().ensureDefaultLaneForProject!(inbox.id);
+        // Load lanes for inbox to find Notes lane id
+        const { data: lanesData, error: lanesErr } = await supabase.from('lanes').select('*').eq('project_id', inbox.id).order('position', { ascending: true });
+        if (lanesErr) { console.error('ensureInbox load lanes', lanesErr); return; }
+        const lanes: Lane[] = (lanesData || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
+        const notesLane = lanes.find(l => l.name.toLowerCase() === 'notes') || lanes[0];
+        // Assign all unassigned notes
+        const { data: unassigned, error: unErr } = await supabase.from('notes').select('id').eq('user_id', user.id).is('project_id', null).eq('is_deleted', false);
+        if (unErr) { console.error('ensureInbox fetch unassigned', unErr); return; }
+        if (unassigned && unassigned.length > 0) {
+          const ids = unassigned.map((n: any) => n.id);
+          const { error: updErr } = await supabase.from('notes').update({ project_id: inbox.id, lane_id: notesLane?.id || null }).in('id', ids);
+          if (updErr) { console.error('ensureInbox assign', updErr); }
+          // Update local state
+          set(s => ({ notes: s.notes.map(n => ids.includes(n.id) ? { ...n, projectId: inbox!.id, laneId: notesLane?.id } : n) }));
+        }
+      },
       loadProjects: async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
@@ -497,6 +572,8 @@ export const useStore = create<Store>()(
         if (error) { console.error('loadProjects', error); return; }
         const projects: Project[] = (data || []).map((p: any) => ({ id: p.id, userId: p.user_id, name: p.name, color: p.color, position: p.position || 0, createdAt: new Date(p.created_at) }));
         set({ projects });
+        // Ensure Inbox exists and unassigned notes are assigned
+        await get().ensureInboxProjectAndAssign!();
       },
       createProject: async (name, color = '#6b7280') => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -525,6 +602,13 @@ export const useStore = create<Store>()(
         if (error) { console.error('loadLanes', error); return; }
         const lanes: Lane[] = (data || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
         set({ lanes });
+        if (lanes.length === 0) {
+          await get().ensureDefaultLaneForProject!(projectId);
+          // Reload lanes
+          const { data: data2 } = await supabase.from('lanes').select('*').eq('project_id', projectId).order('position', { ascending: true });
+          const lanes2: Lane[] = (data2 || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
+          set({ lanes: lanes2 });
+        }
       },
       createLane: async (projectId: string, name: string, color = '#e5e7eb') => {
         const lane: any = { id: crypto.randomUUID(), project_id: projectId, name, color, position: Date.now() };

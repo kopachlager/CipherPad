@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
+import PopoverSelect from '../Common/PopoverSelect';
+import Tooltip from '../Common/Tooltip';
 
 interface ToolbarProps {
   note: any;
@@ -82,6 +84,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const { settings, updateSettings } = useStore();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  useEffect(() => {
+    if (note?.projectId) {
+      useStore.getState().loadLanes(note.projectId);
+    }
+  }, [note?.projectId]);
 
   if (settings.distractionFreeMode) {
     return null;
@@ -116,7 +123,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
     disabled = false,
     suggested = false 
   }) => (
-    <button
+    <Tooltip content={tooltip}>
+      <button
       type="button"
       onMouseDown={(e) => {
         try { console.log('[Toolbar MouseDown]', tooltip, e.button); } catch {}
@@ -133,7 +141,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
         e.stopPropagation();
       }}
       disabled={disabled}
-      title={tooltip}
       aria-label={tooltip}
       className={`p-2 rounded-md transition-all duration-150 pointer-events-auto ${
         disabled
@@ -146,7 +153,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
       }`}
     >
       {icon}
-    </button>
+      </button>
+    </Tooltip>
   );
 
   const handleDownload = () => {
@@ -296,6 +304,46 @@ const Toolbar: React.FC<ToolbarProps> = ({
           active={note.isCodeMode}
           onClick={onToggleCodeMode}
         />
+        {/* Project / Lane assignment */}
+        <div className="ml-2 hidden md:flex items-center gap-2">
+          <PopoverSelect
+            value={note.projectId || ''}
+            options={[...useStore.getState().projects.map(p => ({ label: p.name, value: p.id }))]}
+            onChange={async (projectId) => {
+              const { loadLanes, createLane, updateNote } = useStore.getState();
+              if (!projectId) return;
+              await loadLanes(projectId);
+              let lanes = useStore.getState().lanes.filter(l => l.projectId === projectId);
+              if (lanes.length === 0) {
+                await createLane(projectId, 'Notes');
+                await loadLanes(projectId);
+                lanes = useStore.getState().lanes.filter(l => l.projectId === projectId);
+              }
+              const defaultLane = lanes.find(l => l.name.toLowerCase()==='notes') || lanes[0];
+              await updateNote(note.id, { projectId, laneId: defaultLane?.id });
+            }}
+            buttonClassName="px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+            menuClassName="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-md"
+            renderButtonLabel={(value) => {
+              const proj = useStore.getState().projects.find(p => p.id === value);
+              return <span className="flex items-center gap-2"><span className="w-2 h-2 rounded" style={{ backgroundColor: proj?.color || '#6b7280' }} />{proj?.name || 'Select project'}</span>;
+            }}
+          />
+          <PopoverSelect
+            value={note.laneId || ''}
+            options={useStore.getState().lanes.filter(l => l.projectId === (note.projectId || '')).map(l => ({ label: l.name, value: l.id }))}
+            onChange={async (laneId) => {
+              if (!laneId) return;
+              await useStore.getState().updateNote(note.id, { laneId });
+            }}
+            buttonClassName="px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+            menuClassName="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-md"
+            renderButtonLabel={(value) => {
+              const lane = useStore.getState().lanes.find(l => l.id === value);
+              return <span>{lane?.name || 'Lane'}</span>;
+            }}
+          />
+        </div>
 
         {note.isCodeMode ? (
           /* Code Mode - Language Selector */

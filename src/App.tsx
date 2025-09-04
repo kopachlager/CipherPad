@@ -9,11 +9,12 @@ import DashboardPage from './pages/DashboardPage';
 import FloatingActionButton from './components/FloatingActionButton';
 import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
+import Tooltip from './components/Common/Tooltip';
 import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const App: React.FC = () => {
-  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings, auth, lockApp, unlockApp, showDashboard } = useStore();
+  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings, auth, lockApp, unlockApp, showDashboard, showUndoForNoteId, undoDelete, lastDeletedSnapshot, loadProjects } = useStore();
   const { user, loading } = useAuth();
   const [showLanding, setShowLanding] = React.useState(!user);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
@@ -29,8 +30,10 @@ const App: React.FC = () => {
           await Promise.all([
             loadNotes(),
             loadFolders(),
-            loadSettings()
+            loadSettings(),
           ]);
+          // Also load projects to initialize Inbox/Notes and assignment
+          await loadProjects();
           console.log('User data loaded successfully');
         } catch (error) {
           console.error('Error loading user data:', error);
@@ -160,6 +163,21 @@ const App: React.FC = () => {
         </div>
         
         {!settings.distractionFreeMode && <FloatingActionButton />}
+        {/* Undo Toast */}
+        {showUndoForNoteId && !auth.isLocked && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200]">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
+              <span className="text-sm text-gray-700 dark:text-gray-300">Note deleted</span>
+              <button
+                onClick={() => undoDelete?.()}
+                className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+              >Undo</button>
+              {lastDeletedSnapshot?.title && (
+                <span className="ml-1 text-xs text-gray-400 truncate max-w-[160px]">{lastDeletedSnapshot.title}</span>
+              )}
+            </div>
+          </div>
+        )}
         {auth.isLocked && (
           <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">

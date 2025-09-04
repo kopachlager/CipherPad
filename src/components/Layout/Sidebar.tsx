@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { FileText, Heart, Trash2, Plus, Search, Lock, Code, Unlock, Download, Share, X, Bell } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { formatDate, exportNote } from '../../utils/helpers';
+import Tooltip from '../Common/Tooltip';
+import PopoverSelect from '../Common/PopoverSelect';
 
 const Sidebar: React.FC = () => {
   const {
@@ -21,6 +23,7 @@ const Sidebar: React.FC = () => {
   const [viewMode, setViewMode] = useState<'all'|'favorites'|'trash'>('all');
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const [assignForId, setAssignForId] = useState<string | null>(null);
 
   const filteredNotes = useMemo(() => {
     const byView = notes.filter(n => viewMode==='trash' ? n.isDeleted : viewMode==='favorites' ? n.isFavorite && !n.isDeleted : !n.isDeleted);
@@ -130,18 +133,68 @@ const Sidebar: React.FC = () => {
                   </button>
                   
                   {/* Move to folder removed */}
-                  <button
-                    onClick={(e)=>{ e.stopPropagation(); exportNote(n, 'txt'); }}
-                    className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    title="Download"
-                    aria-label="Download note"
-                  >
-                    <Download className="w-3 h-3 text-gray-500" />
-                  </button>
+                  <Tooltip content="Download">
+                    <button
+                      onClick={(e)=>{ e.stopPropagation(); exportNote(n, 'txt'); }}
+                      className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                      aria-label="Download note"
+                    >
+                      <Download className="w-3 h-3 text-gray-500" />
+                    </button>
+                  </Tooltip>
+                  {/* Assign project/lane */}
+                  {viewMode!=='trash' && (
+                    <div className="relative">
+                      <Tooltip content="Assign">
+                        <button
+                          onClick={(e)=>{ e.stopPropagation(); setAssignForId(assignForId===n.id?null:n.id); if (assignForId!==n.id) { if (n.projectId) { useStore.getState().loadLanes(n.projectId); } } }}
+                          className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                          aria-label="Assign note"
+                        >
+                          <span className="text-[10px] px-1 text-gray-600">Assign</span>
+                        </button>
+                      </Tooltip>
+                      {assignForId===n.id && (
+                        <div className="absolute right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg p-2 z-20 w-56" onMouseDown={(e)=>e.stopPropagation()}>
+                          <div className="text-xs text-gray-500 mb-1">Project</div>
+                          <PopoverSelect
+                            value={n.projectId || ''}
+                            options={useStore.getState().projects.map(p => ({ label: p.name, value: p.id }))}
+                            onChange={async (projectId) => {
+                              const { loadLanes, createLane, updateNote } = useStore.getState();
+                              if (!projectId) return;
+                              await loadLanes(projectId);
+                              let lanes = useStore.getState().lanes.filter(l => l.projectId === projectId);
+                              if (lanes.length === 0) {
+                                await createLane(projectId, 'Notes');
+                                await loadLanes(projectId);
+                                lanes = useStore.getState().lanes.filter(l => l.projectId === projectId);
+                              }
+                              const defaultLane = lanes.find(l => l.name.toLowerCase()==='notes') || lanes[0];
+                              await updateNote(n.id, { projectId, laneId: defaultLane?.id });
+                            }}
+                            buttonClassName="w-full px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                            menuClassName="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-md"
+                          />
+                          <div className="text-xs text-gray-500 mt-2 mb-1">Lane</div>
+                          <PopoverSelect
+                            value={n.laneId || ''}
+                            options={useStore.getState().lanes.filter(l => l.projectId === (n.projectId || '')).map(l => ({ label: l.name, value: l.id }))}
+                            onChange={async (laneId) => {
+                              if (!laneId) return;
+                              await useStore.getState().updateNote(n.id, { laneId });
+                              setAssignForId(null);
+                            }}
+                            buttonClassName="w-full px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                            menuClassName="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-md"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <button
                     onClick={async (e)=>{ e.stopPropagation(); if (navigator.share) { try { await navigator.share({ title: n.title, text: n.content }); } catch {} } else { navigator.clipboard.writeText(n.content); } }}
                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    title="Share"
                     aria-label="Share note"
                   >
                     <Share className="w-3 h-3 text-gray-500" />
