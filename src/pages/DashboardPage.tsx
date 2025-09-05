@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStore } from '../hooks/useStore';
 import NoteCard from '../components/Dashboard/NoteCard';
+import { Pencil, Check, X } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
   const {
@@ -9,18 +10,29 @@ const DashboardPage: React.FC = () => {
     selectedProjectId,
     setSelectedProject,
     createProject,
+    updateProject,
     createNote,
     updateNote,
     setActiveNote,
     setShowDashboard,
   } = useStore();
 
+  const [filter, setFilter] = useState<'all'|'important'|'todo'|'notes'>('all');
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [nameInput, setNameInput] = useState('');
+  const [colorPickerForId, setColorPickerForId] = useState<string | null>(null);
+
+  const colorSwatches = ['#6b7280','#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f97316'];
+
   const project = projects.find(p => p.id === selectedProjectId) || null;
   const projectNotes = useMemo(() => {
     if (!project) return [] as typeof notes;
-    const list = notes.filter(n => n.projectId === project.id && !n.isDeleted);
+    let list = notes.filter(n => n.projectId === project.id && !n.isDeleted);
+    if (filter === 'important') list = list.filter(n => n.isFavorite);
+    if (filter === 'todo') list = list.filter(n => (n.tags || []).includes('todo'));
+    if (filter === 'notes') list = list.filter(n => (n.tags || []).includes('note'));
     return list.sort((a,b) => (b.position || 0) - (a.position || 0) || (new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
-  }, [notes, project]);
+  }, [notes, project, filter]);
 
   const handleCreateInProject = async () => {
     if (!project) return;
@@ -66,14 +78,46 @@ const DashboardPage: React.FC = () => {
         </div>
         <div className="space-y-1 overflow-y-auto max-h-[calc(100vh-8rem)]">
           {projects.map(p => (
-            <button
-              key={p.id}
-              onMouseDown={(e)=>{ e.preventDefault(); setSelectedProject(p.id); }}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${selectedProjectId===p.id ? 'bg-gray-100 dark:bg-gray-800' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}`}
-            >
-              <span className="w-3 h-3 rounded" style={{ backgroundColor: p.color }} />
-              <span className="truncate">{p.name}</span>
-            </button>
+            <div key={p.id} className={`w-full flex items-center gap-2 px-2 py-1 rounded ${selectedProjectId===p.id ? 'bg-gray-100 dark:bg-gray-800' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+              <button
+                onMouseDown={(e)=>{ e.preventDefault(); setSelectedProject(p.id); }}
+                className="flex-1 flex items-center gap-2 px-1 py-1 rounded text-sm text-left"
+              >
+                <span
+                  onMouseDown={(e)=>{ e.preventDefault(); setColorPickerForId(colorPickerForId===p.id?null:p.id); }}
+                  className="w-3 h-3 rounded flex-shrink-0"
+                  style={{ backgroundColor: p.color }}
+                  aria-label="Change project color"
+                  title="Change color"
+                />
+                {editingProjectId === p.id ? (
+                  <input
+                    autoFocus
+                    value={nameInput}
+                    onChange={(e)=>setNameInput(e.target.value)}
+                    onKeyDown={(e)=>{ if (e.key==='Enter'){ updateProject(p.id, { name: nameInput.trim() || p.name }); setEditingProjectId(null);} if (e.key==='Escape'){ setEditingProjectId(null);} }}
+                    onBlur={()=>{ updateProject(p.id, { name: nameInput.trim() || p.name }); setEditingProjectId(null);} }
+                    className="bg-transparent border border-gray-300 dark:border-gray-700 rounded px-2 py-0.5 text-sm w-full"
+                  />
+                ) : (
+                  <span className="truncate" onDoubleClick={()=>{ setEditingProjectId(p.id); setNameInput(p.name); }} title="Double-click to rename">{p.name}</span>
+                )}
+              </button>
+              {colorPickerForId===p.id && (
+                <div className="absolute z-20 mt-8 p-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded shadow">
+                  <div className="grid grid-cols-6 gap-2">
+                    {colorSwatches.map(c => (
+                      <button key={c} className="w-5 h-5 rounded" style={{ backgroundColor: c }} onMouseDown={(e)=>{ e.preventDefault(); updateProject(p.id, { color: c }); setColorPickerForId(null); }} />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {editingProjectId!==p.id && (
+                <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700" title="Rename" aria-label="Rename" onMouseDown={(e)=>{ e.preventDefault(); setEditingProjectId(p.id); setNameInput(p.name); }}>
+                  <Pencil className="w-3 h-3 text-gray-600" />
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </aside>
@@ -90,10 +134,20 @@ const DashboardPage: React.FC = () => {
                 <span className="w-3 h-3 rounded" style={{ backgroundColor: project.color }} />
                 <h2 className="text-lg font-semibold">{project.name}</h2>
               </div>
-              <button
-                onMouseDown={(e)=>{ e.preventDefault(); handleCreateInProject(); }}
-                className="px-3 py-1.5 text-sm rounded-md bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
-              >New Note</button>
+              <div className="flex items-center gap-2">
+                {/* Filters */}
+                {(['all','important','todo','notes'] as const).map(f => (
+                  <button
+                    key={f}
+                    onMouseDown={(e)=>{ e.preventDefault(); setFilter(f); }}
+                    className={`px-2 py-1 text-xs rounded border ${filter===f ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
+                  >{f.charAt(0).toUpperCase()+f.slice(1)}</button>
+                ))}
+                <button
+                  onMouseDown={(e)=>{ e.preventDefault(); handleCreateInProject(); }}
+                  className="px-3 py-1.5 text-sm rounded-md bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white"
+                >New Note</button>
+              </div>
             </div>
 
             {/* Grid of notes */}
@@ -108,6 +162,7 @@ const DashboardPage: React.FC = () => {
                     projectColor={project.color}
                     onOpen={() => onOpenNote(n.id)}
                     onReorder={onReorder}
+                    showTagToggles
                   />)
                 )}
               </div>
