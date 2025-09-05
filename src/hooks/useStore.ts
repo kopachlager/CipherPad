@@ -6,6 +6,7 @@ interface Store {
   // Notes
   notes: Note[];
   activeNoteId: string | null;
+  openTabs: string[];
   
   // Folders
   folders: Folder[];
@@ -36,6 +37,7 @@ interface Store {
   loadFolders: () => Promise<void>;
   
   setActiveNote: (id: string | null) => void;
+  closeTab: (id: string) => void;
   setSelectedFolder: (id: string | null) => void;
   updateSettings: (updates: Partial<AppSettings>) => void;
   
@@ -122,6 +124,9 @@ export const useStore = create<Store>()(
   (set, get) => ({
       notes: [],
       activeNoteId: null,
+      openTabs: (() => {
+        try { const s = localStorage.getItem('open-tabs'); return s ? JSON.parse(s) : []; } catch { return []; }
+      })(),
       projects: [],
       lanes: [],
       selectedProjectId: null,
@@ -171,7 +176,12 @@ export const useStore = create<Store>()(
           isFavorite: note.is_favorite,
         }));
 
-        set({ notes });
+        set((state) => {
+          const existingIds = new Set(notes.map(n => n.id));
+          const prunedTabs = state.openTabs.filter(id => existingIds.has(id));
+          try { localStorage.setItem('open-tabs', JSON.stringify(prunedTabs)); } catch {}
+          return { notes, openTabs: prunedTabs };
+        });
       },
 
       createNote: async (folderId) => {
@@ -271,12 +281,17 @@ export const useStore = create<Store>()(
         const timer = window.setTimeout(() => {
           set({ showUndoForNoteId: null, lastDeletedSnapshot: null, undoTimerId: null });
         }, 5000);
-        set((state) => ({
-          activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
-          showUndoForNoteId: id,
-          lastDeletedSnapshot: note,
-          undoTimerId: timer,
-        }));
+        set((state) => {
+          const newTabs = state.openTabs.filter(t => t !== id);
+          try { localStorage.setItem('open-tabs', JSON.stringify(newTabs)); } catch {}
+          return {
+            activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
+            showUndoForNoteId: id,
+            lastDeletedSnapshot: note,
+            undoTimerId: timer,
+            openTabs: newTabs,
+          };
+        });
       },
 
       restoreNote: async (id) => {
@@ -425,10 +440,28 @@ export const useStore = create<Store>()(
 
       setActiveNote: (id) => {
         console.log('Setting active note:', id);
-        const note = get().notes.find(n => n.id === id);
+        const note = id ? get().notes.find(n => n.id === id) : null;
         console.log('Found note:', note);
-        set({ activeNoteId: id });
+        set((state) => {
+          let tabs = state.openTabs;
+          if (id && !tabs.includes(id)) tabs = [...tabs, id];
+          try { localStorage.setItem('open-tabs', JSON.stringify(tabs)); } catch {}
+          return { activeNoteId: id, openTabs: tabs };
+        });
         get().updateLastActivity();
+      },
+      closeTab: (id: string) => {
+        const s = get();
+        const idx = s.openTabs.indexOf(id);
+        if (idx === -1) return;
+        const newTabs = s.openTabs.filter(t => t !== id);
+        let nextActive = s.activeNoteId;
+        if (s.activeNoteId === id) {
+          const neighbor = newTabs[Math.max(0, idx - 1)] || newTabs[0] || null;
+          nextActive = neighbor || null;
+        }
+        set({ openTabs: newTabs, activeNoteId: nextActive });
+        try { localStorage.setItem('open-tabs', JSON.stringify(newTabs)); } catch {}
       },
 
       setSelectedFolder: (id) => {

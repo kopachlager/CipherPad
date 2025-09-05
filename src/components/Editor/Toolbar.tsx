@@ -23,6 +23,7 @@ import {
   MoreHorizontal,
   Heading1,
   Heading2,
+  Eraser,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
@@ -48,6 +49,7 @@ interface ToolbarProps {
     }
   ) => void;
   onRichCommand?: (cmd: 'bold' | 'italic' | 'underline' | 'strikeThrough' | 'insertUnorderedList' | 'insertOrderedList' | 'formatBlock' | 'createLink' | 'pre', value?: string) => void;
+  onClearFormatting?: () => void;
   contentAnalysis: {
     hasLists: boolean;
     hasLinks: boolean;
@@ -79,6 +81,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   editorRef,
   onApplyEdit,
   onRichCommand,
+  onClearFormatting,
   contentAnalysis,
 }) => {
   const { settings, updateSettings } = useStore();
@@ -569,6 +572,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
           icon={<Eye className="w-4 h-4" />}
           tooltip="Focus Mode"
           onClick={handleToggleFocusMode}
+        />
+        <ToolbarButton
+          icon={<Eraser className="w-4 h-4" />}
+          tooltip="Clear Formatting"
+          onClick={() => { if (!note.isCodeMode) onClearFormatting?.(); }}
+          disabled={note.isCodeMode}
         />
         <span className="ml-2 text-[10px] text-gray-400 select-none" title="Build marker">v-2025-09-02-b</span>
       </div>

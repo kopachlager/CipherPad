@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
 import StatusBar from './StatusBar';
@@ -9,6 +10,35 @@ import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
 import EncryptionModal from '../Encryption/EncryptionModal';
+
+const TabsBar: React.FC = () => {
+  const { openTabs, notes, activeNoteId, setActiveNote, closeTab } = useStore();
+  const tabs = openTabs
+    .map(id => notes.find(n => n.id === id))
+    .filter(Boolean) as any[];
+  if (tabs.length === 0) return null;
+  return (
+    <div className="h-9 flex items-center gap-1 px-2 overflow-x-auto border-b border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60">
+      {tabs.map((n: any) => (
+        <button
+          key={n.id}
+          onMouseDown={(e)=>{ e.preventDefault(); setActiveNote(n.id); }}
+          className={`group flex items-center gap-2 px-3 h-7 rounded-md text-sm whitespace-nowrap ${activeNoteId===n.id ? 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
+        >
+          <span className="truncate max-w-[160px]">{n.title || 'Untitled'}</span>
+          <span
+            role="button"
+            aria-label="Close"
+            onMouseDown={(e)=>{ e.preventDefault(); e.stopPropagation(); closeTab(n.id); }}
+            className="opacity-70 group-hover:opacity-100 hover:bg-gray-300/60 dark:hover:bg-gray-700/60 rounded"
+          >
+            <X className="w-3 h-3" />
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+};
 
 const EditorView: React.FC = () => {
   const { 
@@ -271,6 +301,23 @@ const EditorView: React.FC = () => {
     }, 300) as unknown as number;
   };
 
+  const escapeHtml = (text: string) => text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const handleClearFormatting = () => {
+    // Convert current rich HTML to plain text, keep line breaks.
+    const temp = document.createElement('div');
+    temp.innerHTML = localContent || '';
+    const plain = temp.innerText || temp.textContent || '';
+    const html = escapeHtml(plain).replace(/\n/g, '<br>');
+    setLocalContent(html);
+    handleContentChange(html);
+  };
+
   return (
     <>
       <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 overflow-hidden rounded-r-2xl paper-surface min-h-0">
@@ -288,12 +335,15 @@ const EditorView: React.FC = () => {
             />
           </div>
         )}
+        {/* Tabs Bar */}
+        <TabsBar />
         <Toolbar
           note={activeNote}
           onToggleCodeMode={handleToggleCodeMode}
           onToggleFavorite={handleToggleFavorite}
           onToggleEncryption={handleToggleEncryption}
           onLanguageChange={handleLanguageChange}
+          onClearFormatting={handleClearFormatting}
           onStartRecording={startRecording}
           onStopRecording={stopRecording}
           isRecording={isRecording}
