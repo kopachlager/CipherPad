@@ -157,7 +157,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
           onInput={handleInput}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed editor-content min-h-0"
+          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed editor-content min-h-full"
           style={{
             minHeight: '200px',
             wordWrap: 'break-word',

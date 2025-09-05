@@ -331,7 +331,7 @@ const EditorView: React.FC = () => {
           }}
         />
         
-        <div className="flex-1 overflow-hidden relative paper-sheet min-h-0">
+        <div className="flex-1 overflow-y-auto relative paper-sheet min-h-0 h-full framed-scrollbar">
           {/* Encrypted placeholder */}
           {activeNote.isEncrypted ? (
             <div className="h-full flex items-center justify-center p-8">
