@@ -87,7 +87,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
   const language = note.isCodeMode ? (note.language || 'plaintext') : 'plaintext';
 
   return (
-    <div className="flex-1 relative overflow-hidden">
+    <div className="flex-1 relative overflow-hidden min-h-0">
       <Editor
         height="100%"
         language={language}

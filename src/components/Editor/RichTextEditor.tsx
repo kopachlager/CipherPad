@@ -141,7 +141,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
   }));
 
   return (
-    <div className="flex-1 flex flex-col relative">
+    <div className="flex-1 flex flex-col relative min-h-0">
       {isCodeMode ? (
         <textarea
           value={content}
@@ -157,7 +157,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
           onInput={handleInput}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed editor-content"
+          className="flex-1 p-6 outline-none overflow-y-auto leading-relaxed editor-content min-h-0"
           style={{
             minHeight: '200px',
             wordWrap: 'break-word',

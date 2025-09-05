@@ -154,7 +154,7 @@ const App: React.FC = () => {
             <div className="h-full flex flex-col">
               {!settings.distractionFreeMode && <Header />}
               
-              <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden`}>
+              <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden min-h-0`}>
                 {!settings.distractionFreeMode && !showDashboard && <Sidebar />}
                 {showDashboard ? <DashboardPage /> : <EditorView />}
               </div>
