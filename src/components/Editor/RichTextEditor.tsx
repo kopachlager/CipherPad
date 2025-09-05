@@ -164,6 +164,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({
             whiteSpace: 'pre-wrap',
             fontSize: `${settings.fontSize}px`,
             lineHeight: settings.lineHeight as unknown as string,
+            WebkitOverflowScrolling: 'touch' as any,
           }}
           placeholder="Start writing..."
           suppressContentEditableWarning={true}
