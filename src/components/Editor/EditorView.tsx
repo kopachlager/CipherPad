@@ -16,7 +16,7 @@ const TabsBar: React.FC = () => {
   const tabs = openTabs
     .map(id => notes.find(n => n.id === id))
     .filter(Boolean) as any[];
-  if (tabs.length === 0) return null;
+  if (tabs.length <= 1) return null;
   return (
     <div className="h-9 flex items-center gap-1 px-2 overflow-x-auto border-b border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60">
       {tabs.map((n: any) => (

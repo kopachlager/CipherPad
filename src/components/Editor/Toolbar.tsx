@@ -512,6 +512,17 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   <div className="border-t border-gray-300 dark:border-gray-600 my-1"></div>
                   <button
                     onClick={() => {
+                      if (!note.isCodeMode) onClearFormatting?.();
+                      setShowMoreMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center space-x-3"
+                  >
+                    <Eraser className="w-4 h-4" />
+                    <span>Clear Formatting</span>
+                  </button>
+                  <div className="border-t border-gray-300 dark:border-gray-600 my-1"></div>
+                  <button
+                    onClick={() => {
                       handleDownload();
                       setShowMoreMenu(false);
                     }}
