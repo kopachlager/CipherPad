@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react';
 import { useStore } from '../hooks/useStore';
 
 const FloatingActionButton: React.FC = () => {
-  const { createNote } = useStore();
+  const createNote = useStore((state) => state.createNote);
 
   return (
     <button

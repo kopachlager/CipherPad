@@ -22,7 +22,7 @@ if (supabaseUrl && supabaseAnonKey) {
         }
       }
     });
-  } catch (e) {
+  } catch {
     console.error('Invalid Supabase configuration. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
   }
 } else {

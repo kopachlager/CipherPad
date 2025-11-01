@@ -1,22 +1,25 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Editor } from '@monaco-editor/react';
+import type { OnMount } from '@monaco-editor/react';
+import type * as Monaco from 'monaco-editor';
 import { useStore } from '../../hooks/useStore';
+import type { Note } from '../../types';
 
 interface MonacoEditorProps {
-  note: any;
+  note: Note;
   onChange: (value: string) => void;
 }
 
 const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
-  const { settings } = useStore();
-  const editorRef = useRef<any>(null);
+  const settings = useStore((state) => state.settings);
+  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
 
-  const handleEditorDidMount = (editor: any, monaco: any) => {
-    editorRef.current = editor;
-    editor.focus();
-    
+  const handleEditorDidMount: OnMount = (editorInstance, monacoInstance) => {
+    editorRef.current = editorInstance;
+    editorInstance.focus();
+
     // Ensure editor is editable
-    editor.updateOptions({
+    editorInstance.updateOptions({
       readOnly: false,
       wordWrap: 'on',
       wordWrapColumn: 80,
@@ -25,9 +28,9 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
     });
 
     // Define custom themes using monaco provided by onMount
-    if (monaco?.editor) {
+    if (monacoInstance?.editor) {
       // Light monochromatic theme
-      monaco.editor.defineTheme('light-mono', {
+      monacoInstance.editor.defineTheme('light-mono', {
         base: 'vs',
         inherit: true,
         rules: [
@@ -50,7 +53,7 @@ const MonacoEditor: React.FC<MonacoEditorProps> = ({ note, onChange }) => {
       });
 
       // Dark monochromatic theme
-      monaco.editor.defineTheme('dark-mono', {
+      monacoInstance.editor.defineTheme('dark-mono', {
         base: 'vs-dark',
         inherit: true,
         rules: [

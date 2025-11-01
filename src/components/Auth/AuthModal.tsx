@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User } from 'lucide-react';
+import { X, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 interface AuthModalProps {
@@ -40,7 +40,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           setPassword('');
         }
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);

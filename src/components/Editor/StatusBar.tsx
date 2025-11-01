@@ -2,14 +2,15 @@ import React from 'react';
 import { Save, Clock, Type, Hash } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { getWordCount, getCharCount, formatDate } from '../../utils/helpers';
+import type { Note } from '../../types';
 
 interface StatusBarProps {
-  note: any;
+  note: Note;
   lastSaved?: Date;
 }
 
 const StatusBar: React.FC<StatusBarProps> = ({ note, lastSaved }) => {
-  const { settings } = useStore();
+  const settings = useStore((state) => state.settings);
 
   if (settings.distractionFreeMode) {
     return null;

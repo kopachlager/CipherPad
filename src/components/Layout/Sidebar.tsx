@@ -1,18 +1,22 @@
 import React, { useMemo, useState } from 'react';
+import { shallow } from 'zustand/shallow';
 import { FileText, Heart, Trash2, Plus, Search, Lock, Unlock, Download, Share, X, Bell } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
 import Tooltip from '../Common/Tooltip';
 
 const Sidebar: React.FC = () => {
-  const {
-    sidebarOpen,
-    notes,
-    activeNoteId,
-    searchQuery,
-    setSearchQuery,
-    setActiveNote,
-  } = useStore();
+  const sidebarOpen = useStore((state) => state.sidebarOpen);
+  const notes = useStore((state) => state.notes);
+  const activeNoteId = useStore((state) => state.activeNoteId);
+  const searchQuery = useStore((state) => state.searchQuery);
+  const { setSearchQuery, setActiveNote } = useStore(
+    (state) => ({
+      setSearchQuery: state.setSearchQuery,
+      setActiveNote: state.setActiveNote,
+    }),
+    shallow
+  );
 
   const [viewMode, setViewMode] = useState<'all'|'favorites'|'trash'>('all');
 
@@ -116,7 +120,19 @@ const Sidebar: React.FC = () => {
                     </Tooltip>
                     <Tooltip content="Share">
                       <button
-                        onMouseDown={async (e)=>{ e.preventDefault(); e.stopPropagation(); if (navigator.share) { try { await navigator.share({ title: n.title, text: n.content }); } catch {} } else { navigator.clipboard.writeText(n.content); } }}
+                        onMouseDown={async (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (navigator.share) {
+                            try {
+                              await navigator.share({ title: n.title, text: n.content });
+                            } catch (shareError) {
+                              console.warn('Share action was not completed', shareError);
+                            }
+                          } else {
+                            void navigator.clipboard.writeText(n.content);
+                          }
+                        }}
                         className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                         aria-label="Share note"
                       >
@@ -159,4 +175,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-

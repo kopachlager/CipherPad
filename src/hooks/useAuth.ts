@@ -45,9 +45,9 @@ export const useAuth = () => {
     
     if (!supabase || !supabaseConfigured) {
       setLoading(false);
-      return { data: null, error: { message: 'Authentication not configured' } as any };
+      return { error: { message: 'Authentication not configured' } };
     }
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -59,8 +59,7 @@ export const useAuth = () => {
     if (error) {
       setError(error.message);
     }
-    
-    return { data, error };
+    return { error: error ? { message: error.message } : null };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -69,9 +68,9 @@ export const useAuth = () => {
     
     if (!supabase || !supabaseConfigured) {
       setLoading(false);
-      return { data: null, error: { message: 'Authentication not configured' } as any };
+      return { error: { message: 'Authentication not configured' } };
     }
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -80,20 +79,19 @@ export const useAuth = () => {
     if (error) {
       setError(error.message);
     }
-    
-    return { data, error };
+    return { error: error ? { message: error.message } : null };
   };
 
   const signOut = async () => {
     setError(null);
     if (!supabase || !supabaseConfigured) {
-      return { error: { message: 'Authentication not configured' } as any };
+      return { error: { message: 'Authentication not configured' } };
     }
     const { error } = await supabase.auth.signOut();
     if (error) {
       setError(error.message);
     }
-    return { error };
+    return { error: error ? { message: error.message } : null };
   };
 
   return {

@@ -1,15 +1,18 @@
 import { useHotkeys } from 'react-hotkeys-hook';
+import { shallow } from 'zustand/shallow';
 import { useStore } from './useStore';
 
 export const useKeyboardShortcuts = () => {
-  const { 
-    createNote, 
-    setSidebarOpen, 
-    sidebarOpen, 
-    setSearchQuery,
-    settings,
-    updateSettings 
-  } = useStore();
+  const createNote = useStore((state) => state.createNote);
+  const { sidebarOpen, setSidebarOpen } = useStore(
+    (state) => ({
+      sidebarOpen: state.sidebarOpen,
+      setSidebarOpen: state.setSidebarOpen,
+    }),
+    shallow
+  );
+  const distractionFreeMode = useStore((state) => state.settings.distractionFreeMode);
+  const updateSettings = useStore((state) => state.updateSettings);
 
   // New note
   useHotkeys('ctrl+n,cmd+n', (e) => {
@@ -35,7 +38,7 @@ export const useKeyboardShortcuts = () => {
   // Toggle distraction-free mode
   useHotkeys('ctrl+shift+d,cmd+shift+d', (e) => {
     e.preventDefault();
-    updateSettings({ distractionFreeMode: !settings.distractionFreeMode });
+    updateSettings({ distractionFreeMode: !distractionFreeMode });
   });
 
   // Save (manual save)

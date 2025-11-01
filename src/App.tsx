@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { shallow } from 'zustand/shallow';
 import LandingPage from './pages/LandingPage';
 import { useAuth } from './hooks/useAuth';
 import Header from './components/Layout/Header';
@@ -9,12 +10,33 @@ import DashboardPage from './pages/DashboardPage';
 import FloatingActionButton from './components/FloatingActionButton';
 import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
-import Tooltip from './components/Common/Tooltip';
 import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 const App: React.FC = () => {
-  const { settings, updateLastActivity, loadNotes, loadFolders, loadSettings, auth, lockApp, unlockApp, showDashboard, showUndoForNoteId, undoDelete, lastDeletedSnapshot, loadProjects } = useStore();
+  const settings = useStore((state) => state.settings);
+  const auth = useStore((state) => state.auth);
+  const showDashboard = useStore((state) => state.showDashboard);
+  const { updateLastActivity, loadNotes, loadFolders, loadSettings, loadProjects, lockApp, unlockApp } = useStore(
+    (state) => ({
+      updateLastActivity: state.updateLastActivity,
+      loadNotes: state.loadNotes,
+      loadFolders: state.loadFolders,
+      loadSettings: state.loadSettings,
+      loadProjects: state.loadProjects,
+      lockApp: state.lockApp,
+      unlockApp: state.unlockApp,
+    }),
+    shallow
+  );
+  const { showUndoForNoteId, undoDelete, lastDeletedSnapshot } = useStore(
+    (state) => ({
+      showUndoForNoteId: state.showUndoForNoteId,
+      undoDelete: state.undoDelete,
+      lastDeletedSnapshot: state.lastDeletedSnapshot,
+    }),
+    shallow
+  );
   const { user, loading } = useAuth();
   const [showLanding, setShowLanding] = React.useState(!user);
   const [showAuthModal, setShowAuthModal] = React.useState(false);
@@ -42,7 +64,7 @@ const App: React.FC = () => {
       
       loadUserData();
     }
-  }, [user, loadNotes, loadFolders, loadSettings]);
+  }, [user, loadNotes, loadFolders, loadSettings, loadProjects]);
 
   // Show auth modal if not authenticated and not loading
   useEffect(() => {
@@ -93,15 +115,12 @@ const App: React.FC = () => {
 
   // PWA installation
   useEffect(() => {
-    let deferredPrompt: any;
-    
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      deferredPrompt = e;
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };

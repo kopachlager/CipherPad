@@ -5,14 +5,13 @@ import {
   Sun, 
   Monitor, 
   Type, 
-  Eye, 
-  Lock, 
-  Save,
   Palette,
   Keyboard,
   Shield
 } from 'lucide-react';
+import { shallow } from 'zustand/shallow';
 import { useStore, defaultSettings } from '../../hooks/useStore';
+import type { AppSettings } from '../../types';
 import PopoverSelect from '../Common/PopoverSelect';
 import { useTheme } from '../../hooks/useTheme';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -23,8 +22,21 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const { settings, updateSettings } = useStore();
-  const { theme } = useTheme();
+  const { settings, updateSettings } = useStore(
+    (state) => ({
+      settings: state.settings,
+      updateSettings: state.updateSettings,
+    }),
+    shallow
+  );
+  useTheme();
+  type ThemeOption = { value: AppSettings['theme']; icon: React.ReactNode; label: string };
+  const themeOptions: ThemeOption[] = [
+    { value: 'light', icon: <Sun className="w-4 h-4" />, label: 'Light' },
+    { value: 'dark', icon: <Moon className="w-4 h-4" />, label: 'Dark' },
+    { value: 'paper', icon: <Palette className="w-4 h-4" />, label: 'Paper' },
+    { value: 'system', icon: <Monitor className="w-4 h-4" />, label: 'System' },
+  ];
   const [activeTab, setActiveTab] = useState('appearance');
   // Simplified: no dropdown state to avoid event conflicts
 
@@ -85,16 +97,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         description="Choose your preferred color scheme"
       >
         <div className="flex space-x-2">
-          {[
-            { value: 'light', icon: <Sun className="w-4 h-4" />, label: 'Light' },
-            { value: 'dark', icon: <Moon className="w-4 h-4" />, label: 'Dark' },
-            { value: 'paper', icon: <Palette className="w-4 h-4" />, label: 'Paper' },
-            { value: 'system', icon: <Monitor className="w-4 h-4" />, label: 'System' },
-          ].map((themeOption) => (
+          {themeOptions.map((themeOption) => (
             <button
               key={themeOption.value}
               type="button"
-              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ theme: themeOption.value as any }); }}
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); updateSettings({ theme: themeOption.value }); }}
               className={`p-2 rounded-md border transition-colors ${
                 settings.theme === themeOption.value
                   ? 'border-gray-900 dark:border-gray-100 bg-gray-50 dark:bg-gray-800'

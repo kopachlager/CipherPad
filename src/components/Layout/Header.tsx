@@ -1,30 +1,33 @@
 import React from 'react';
-import { 
-  Search, 
-  Sun, 
-  Moon, 
-  Settings, 
+import {
+  Search,
+  Sun,
+  Moon,
+  Settings,
   Plus,
   LogOut,
   Loader2,
-  LayoutDashboard
+  LayoutDashboard,
 } from 'lucide-react';
+import { shallow } from 'zustand/shallow';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
 import SettingsModal from '../Settings/SettingsModal';
 
 const Header: React.FC = () => {
-  const { 
-    setSearchQuery, 
-    searchQuery,
-    createNote,
-    settings,
-    showDashboard,
-    setShowDashboard,
-    setSelectedProject,
-    loadProjects,
-  } = useStore();
+  const searchQuery = useStore((state) => state.searchQuery);
+  const setSearchQuery = useStore((state) => state.setSearchQuery);
+  const createNote = useStore((state) => state.createNote);
+  const showDashboard = useStore((state) => state.showDashboard);
+  const { setShowDashboard, setSelectedProject, loadProjects } = useStore(
+    (state) => ({
+      setShowDashboard: state.setShowDashboard,
+      setSelectedProject: state.setSelectedProject,
+      loadProjects: state.loadProjects,
+    }),
+    shallow
+  );
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showSettings, setShowSettings] = React.useState(false);

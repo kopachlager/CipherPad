@@ -66,7 +66,15 @@ const PopoverSelect: React.FC<PopoverSelectProps> = ({
       <button
         ref={btnRef}
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); open ? closeMenu() : openMenu(); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (open) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        }}
         className={buttonClassName}
         aria-expanded={open}
       >

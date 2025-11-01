@@ -1,6 +1,98 @@
 import { create } from 'zustand';
+import type { User } from '@supabase/supabase-js';
 import { Note, Folder, AppSettings, AuthState, Project, Lane } from '../types';
-import { supabase } from '../lib/supabase';
+import { supabase, supabaseConfigured } from '../lib/supabase';
+
+type SupabaseNoteRow = {
+  id: string;
+  title: string;
+  content: string;
+  is_encrypted: boolean;
+  is_code_mode: boolean;
+  language: string | null;
+  project_id: string | null;
+  lane_id: string | null;
+  position: number | null;
+  folder_id: string | null;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  is_deleted: boolean;
+  is_favorite: boolean;
+  user_id: string;
+};
+
+type SupabaseFolderRow = {
+  id: string;
+  name: string;
+  color: string;
+  parent_id: string | null;
+  created_at: string;
+  user_id: string;
+};
+
+type SupabaseUserSettingsRow = {
+  user_id: string;
+  theme: string | null;
+  accent_color: string | null;
+  font_family: string | null;
+  font_size: number | null;
+  line_height: number | null;
+  auto_save: boolean | null;
+  auto_lock: boolean | null;
+  auto_lock_timeout: number | null;
+  biometric_auth: boolean | null;
+  show_word_count: boolean | null;
+  distraction_free_mode: boolean | null;
+};
+
+type SupabaseProjectRow = {
+  id: string;
+  user_id: string;
+  name: string;
+  color: string;
+  position: number | null;
+  created_at: string;
+};
+
+type SupabaseLaneRow = {
+  id: string;
+  project_id: string;
+  name: string;
+  color: string;
+  position: number | null;
+  created_at: string;
+};
+
+type SupabaseLaneIdRow = Pick<SupabaseLaneRow, 'id'>;
+type SupabaseNoteIdRow = Pick<SupabaseNoteRow, 'id'>;
+
+type SupabaseProjectInsert = Omit<SupabaseProjectRow, 'created_at'> & { created_at?: string };
+type SupabaseLaneInsert = Omit<SupabaseLaneRow, 'created_at'> & { created_at?: string };
+
+type SupabaseClient = NonNullable<typeof supabase>;
+
+const getSupabaseClient = (): SupabaseClient | null => {
+  if (!supabase || !supabaseConfigured) {
+    console.warn('[useStore] Supabase client unavailable');
+    return null;
+  }
+  return supabase;
+};
+
+const getClientAndUser = async (): Promise<{ client: SupabaseClient; user: User | null } | null> => {
+  const client = getSupabaseClient();
+  if (!client) {
+    return null;
+  }
+  const { data, error } = await client.auth.getUser();
+  if (error) {
+    console.error('[useStore] Failed to get auth user', error);
+    return null;
+  }
+  return { client, user: data.user };
+};
 
 interface Store {
   // Notes
@@ -49,6 +141,8 @@ interface Store {
   projects: Project[];
   lanes: Lane[];
   selectedProjectId: string | null;
+  projectsLoaded: boolean;
+  inboxEnsured: boolean;
   showDashboard: boolean;
   // Undo toast state
   showUndoForNoteId?: string | null;
@@ -130,6 +224,8 @@ export const useStore = create<Store>()(
       projects: [],
       lanes: [],
       selectedProjectId: null,
+      projectsLoaded: false,
+      inboxEnsured: false,
       folders: [],
       selectedFolderId: null,
       settings: loadSettings(),
@@ -143,11 +239,12 @@ export const useStore = create<Store>()(
       encryptionRequestForNoteId: null,
 
       loadNotes: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
-        const { data, error } = await supabase
-          .from('notes')
+        const { data, error } = await client
+          .from<SupabaseNoteRow>('notes')
           .select('*')
           .eq('user_id', user.id)
           .order('updated_at', { ascending: false });
@@ -157,18 +254,18 @@ export const useStore = create<Store>()(
           return;
         }
 
-        const notes: Note[] = data.map(note => ({
+        const notes: Note[] = (data ?? []).map((note) => ({
           id: note.id,
           title: note.title,
           content: note.content,
           isEncrypted: note.is_encrypted,
           isCodeMode: note.is_code_mode,
-          language: note.language || 'plaintext',
-          projectId: note.project_id || undefined,
-          laneId: note.lane_id || undefined,
-          position: note.position || undefined,
-          folderId: note.folder_id || undefined,
-          tags: note.tags,
+          language: note.language ?? 'plaintext',
+          projectId: note.project_id ?? undefined,
+          laneId: note.lane_id ?? undefined,
+          position: note.position ?? undefined,
+          folderId: note.folder_id ?? undefined,
+          tags: note.tags ?? [],
           createdAt: new Date(note.created_at),
           updatedAt: new Date(note.updated_at),
           deletedAt: note.deleted_at ? new Date(note.deleted_at) : undefined,
@@ -179,14 +276,17 @@ export const useStore = create<Store>()(
         set((state) => {
           const existingIds = new Set(notes.map(n => n.id));
           const prunedTabs = state.openTabs.filter(id => existingIds.has(id));
-          try { localStorage.setItem('open-tabs', JSON.stringify(prunedTabs)); } catch {}
+          try { localStorage.setItem('open-tabs', JSON.stringify(prunedTabs)); } catch (storageError) { console.warn('Failed to persist open tabs', storageError); }
           return { notes, openTabs: prunedTabs };
         });
       },
 
       createNote: async (folderId) => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('User not authenticated');
+        const auth = await getClientAndUser();
+        if (!auth?.user) {
+          throw new Error('Supabase not configured or user not authenticated');
+        }
+        const { client, user } = auth;
 
         const id = crypto.randomUUID();
         const note: Note = {
@@ -204,8 +304,8 @@ export const useStore = create<Store>()(
           isFavorite: false,
         };
         
-        const { error } = await supabase
-          .from('notes')
+        const { error } = await client
+          .from<SupabaseNoteRow>('notes')
           .insert({
             id,
             title: note.title,
@@ -216,6 +316,14 @@ export const useStore = create<Store>()(
             folder_id: folderId || null,
             tags: note.tags,
             user_id: user.id,
+            is_deleted: false,
+            is_favorite: false,
+            project_id: null,
+            lane_id: null,
+            position: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            deleted_at: null,
           });
 
         if (error) {
@@ -232,8 +340,6 @@ export const useStore = create<Store>()(
       },
 
       updateNote: async (id, updates) => {
-        const { data: { user } } = await supabase.auth.getUser();
-
         // Update local state immediately
         set((state) => ({
           notes: state.notes.map((note) =>
@@ -245,26 +351,30 @@ export const useStore = create<Store>()(
         get().updateLastActivity();
 
         // If not authenticated, skip remote persistence
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
-        const dbUpdates: any = {};
+        const dbUpdates: Record<string, unknown> = {};
         if (updates.title !== undefined) dbUpdates.title = updates.title;
         if (updates.content !== undefined) dbUpdates.content = updates.content;
         if (updates.isEncrypted !== undefined) dbUpdates.is_encrypted = updates.isEncrypted;
         if (updates.isCodeMode !== undefined) dbUpdates.is_code_mode = updates.isCodeMode;
         if (updates.language !== undefined) dbUpdates.language = updates.language;
-        if (updates.projectId !== undefined) dbUpdates.project_id = updates.projectId;
-        if (updates.laneId !== undefined) dbUpdates.lane_id = updates.laneId;
-        if (updates.position !== undefined) dbUpdates.position = updates.position;
-        if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId;
+        if (updates.projectId !== undefined) dbUpdates.project_id = updates.projectId ?? null;
+        if (updates.laneId !== undefined) dbUpdates.lane_id = updates.laneId ?? null;
+        if (updates.position !== undefined) dbUpdates.position = updates.position ?? null;
+        if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId ?? null;
         if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
         if (updates.isDeleted !== undefined) dbUpdates.is_deleted = updates.isDeleted;
-        if ((updates as any).deletedAt !== undefined) dbUpdates.deleted_at = (updates as any).deletedAt;
+        if (Object.prototype.hasOwnProperty.call(updates, 'deletedAt')) {
+          dbUpdates.deleted_at = updates.deletedAt instanceof Date ? updates.deletedAt.toISOString() : updates.deletedAt;
+        }
         if (updates.isFavorite !== undefined) dbUpdates.is_favorite = updates.isFavorite;
         dbUpdates.updated_at = new Date().toISOString();
 
-        const { error } = await supabase
-          .from('notes')
+        const { error } = await client
+          .from<SupabaseNoteRow>('notes')
           .update(dbUpdates)
           .eq('id', id)
           .eq('user_id', user.id);
@@ -276,14 +386,14 @@ export const useStore = create<Store>()(
 
       deleteNote: async (id) => {
         const note = get().notes.find(n => n.id === id) || null;
-        await get().updateNote(id, { isDeleted: true, deletedAt: new Date() } as any);
+        await get().updateNote(id, { isDeleted: true, deletedAt: new Date() });
         // Show undo toast for 5s
         const timer = window.setTimeout(() => {
           set({ showUndoForNoteId: null, lastDeletedSnapshot: null, undoTimerId: null });
         }, 5000);
         set((state) => {
           const newTabs = state.openTabs.filter(t => t !== id);
-          try { localStorage.setItem('open-tabs', JSON.stringify(newTabs)); } catch {}
+          try { localStorage.setItem('open-tabs', JSON.stringify(newTabs)); } catch (storageError) { console.warn('Failed to persist open tabs', storageError); }
           return {
             activeNoteId: state.activeNoteId === id ? null : state.activeNoteId,
             showUndoForNoteId: id,
@@ -295,7 +405,7 @@ export const useStore = create<Store>()(
       },
 
       restoreNote: async (id) => {
-        await get().updateNote(id, { isDeleted: false, deletedAt: null } as any);
+        await get().updateNote(id, { isDeleted: false, deletedAt: null });
         // Hide undo toast if it matches
         const st = get();
         if (st.showUndoForNoteId === id) {
@@ -312,11 +422,12 @@ export const useStore = create<Store>()(
       },
 
       emptyTrash: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
         // Permanently delete trashed notes older than 5 days
         const threshold = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
-        const { error } = await supabase
+        const { error } = await client
           .from('notes')
           .delete()
           .eq('user_id', user.id)
@@ -331,11 +442,12 @@ export const useStore = create<Store>()(
       },
 
       loadFolders: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
-        const { data, error } = await supabase
-          .from('folders')
+        const { data, error } = await client
+          .from<SupabaseFolderRow>('folders')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: true });
@@ -345,11 +457,11 @@ export const useStore = create<Store>()(
           return;
         }
 
-        const folders: Folder[] = data.map(folder => ({
+        const folders: Folder[] = (data ?? []).map(folder => ({
           id: folder.id,
           name: folder.name,
           color: folder.color,
-          parentId: folder.parent_id || undefined,
+          parentId: folder.parent_id ?? undefined,
           createdAt: new Date(folder.created_at),
         }));
 
@@ -357,8 +469,9 @@ export const useStore = create<Store>()(
       },
 
       createFolder: async (name, parentId) => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
         const folder: Folder = {
           id: crypto.randomUUID(),
@@ -368,14 +481,15 @@ export const useStore = create<Store>()(
           createdAt: new Date(),
         };
         
-        const { error } = await supabase
-          .from('folders')
+        const { error } = await client
+          .from<SupabaseFolderRow>('folders')
           .insert({
             id: folder.id,
             name: folder.name,
             color: folder.color,
-            parent_id: parentId || null,
+            parent_id: parentId ?? null,
             user_id: user.id,
+            created_at: new Date().toISOString(),
           });
 
         if (error) {
@@ -389,16 +503,17 @@ export const useStore = create<Store>()(
       },
 
       updateFolder: async (id, updates) => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
-        const dbUpdates: any = {};
+        const dbUpdates: Partial<SupabaseFolderRow> = {};
         if (updates.name !== undefined) dbUpdates.name = updates.name;
         if (updates.color !== undefined) dbUpdates.color = updates.color;
-        if (updates.parentId !== undefined) dbUpdates.parent_id = updates.parentId;
+        if (updates.parentId !== undefined) dbUpdates.parent_id = updates.parentId ?? null;
 
-        const { error } = await supabase
-          .from('folders')
+        const { error } = await client
+          .from<SupabaseFolderRow>('folders')
           .update(dbUpdates)
           .eq('id', id)
           .eq('user_id', user.id);
@@ -416,11 +531,12 @@ export const useStore = create<Store>()(
       },
 
       deleteFolder: async (id) => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
-        const { error } = await supabase
-          .from('folders')
+        const { error } = await client
+          .from<SupabaseFolderRow>('folders')
           .delete()
           .eq('id', id)
           .eq('user_id', user.id);
@@ -439,13 +555,10 @@ export const useStore = create<Store>()(
       },
 
       setActiveNote: (id) => {
-        console.log('Setting active note:', id);
-        const note = id ? get().notes.find(n => n.id === id) : null;
-        console.log('Found note:', note);
         set((state) => {
           let tabs = state.openTabs;
           if (id && !tabs.includes(id)) tabs = [...tabs, id];
-          try { localStorage.setItem('open-tabs', JSON.stringify(tabs)); } catch {}
+          try { localStorage.setItem('open-tabs', JSON.stringify(tabs)); } catch (storageError) { console.warn('Failed to persist open tabs', storageError); }
           return { activeNoteId: id, openTabs: tabs };
         });
         get().updateLastActivity();
@@ -461,7 +574,7 @@ export const useStore = create<Store>()(
           nextActive = neighbor || null;
         }
         set({ openTabs: newTabs, activeNoteId: nextActive });
-        try { localStorage.setItem('open-tabs', JSON.stringify(newTabs)); } catch {}
+        try { localStorage.setItem('open-tabs', JSON.stringify(newTabs)); } catch (storageError) { console.warn('Failed to persist open tabs', storageError); }
       },
 
       setSelectedFolder: (id) => {
@@ -476,9 +589,10 @@ export const useStore = create<Store>()(
 
         // Best-effort save to Supabase if authenticated
         (async () => {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) return;
-          const dbUpdates: any = {};
+          const auth = await getClientAndUser();
+          if (!auth?.user) return;
+          const { client, user } = auth;
+          const dbUpdates: Partial<SupabaseUserSettingsRow> = {};
           if (updates.theme !== undefined) dbUpdates.theme = updates.theme;
           if (updates.accentColor !== undefined) dbUpdates.accent_color = updates.accentColor;
           if (updates.fontFamily !== undefined) dbUpdates.font_family = updates.fontFamily;
@@ -491,20 +605,21 @@ export const useStore = create<Store>()(
           if (updates.showWordCount !== undefined) dbUpdates.show_word_count = updates.showWordCount;
           if (updates.distractionFreeMode !== undefined) dbUpdates.distraction_free_mode = updates.distractionFreeMode;
 
-          const { error } = await supabase
-            .from('user_settings')
+          const { error } = await client
+            .from<SupabaseUserSettingsRow>('user_settings')
             .upsert({ user_id: user.id, ...dbUpdates });
           if (error) console.error('Error saving settings:', error);
         })();
       },
 
       loadSettings: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
 
         try {
-          const { data, error } = await supabase
-            .from('user_settings')
+          const { data, error } = await client
+            .from<SupabaseUserSettingsRow>('user_settings')
             .select('*')
             .eq('user_id', user.id)
             .limit(1);
@@ -516,18 +631,23 @@ export const useStore = create<Store>()(
 
           if (data && data.length > 0) {
             const settingsData = data[0];
+            const theme = settingsData.theme;
+            const themeValue: AppSettings['theme'] =
+              theme === 'dark' || theme === 'light' || theme === 'system' || theme === 'paper'
+                ? theme
+                : defaultSettings.theme;
             const settings: AppSettings = {
-              theme: settingsData.theme as any,
-              accentColor: settingsData.accent_color,
-              fontFamily: settingsData.font_family,
-              fontSize: settingsData.font_size,
-              lineHeight: settingsData.line_height,
-              autoSave: settingsData.auto_save,
-              autoLock: settingsData.auto_lock,
-              autoLockTimeout: settingsData.auto_lock_timeout,
-              biometricAuth: settingsData.biometric_auth,
-              showWordCount: settingsData.show_word_count,
-              distractionFreeMode: settingsData.distraction_free_mode,
+              theme: themeValue,
+              accentColor: settingsData.accent_color ?? defaultSettings.accentColor,
+              fontFamily: settingsData.font_family ?? defaultSettings.fontFamily,
+              fontSize: settingsData.font_size ?? defaultSettings.fontSize,
+              lineHeight: settingsData.line_height ?? defaultSettings.lineHeight,
+              autoSave: settingsData.auto_save ?? defaultSettings.autoSave,
+              autoLock: settingsData.auto_lock ?? defaultSettings.autoLock,
+              autoLockTimeout: settingsData.auto_lock_timeout ?? defaultSettings.autoLockTimeout,
+              biometricAuth: settingsData.biometric_auth ?? defaultSettings.biometricAuth,
+              showWordCount: settingsData.show_word_count ?? defaultSettings.showWordCount,
+              distractionFreeMode: settingsData.distraction_free_mode ?? defaultSettings.distractionFreeMode,
             };
             
             set({ settings });
@@ -561,7 +681,13 @@ export const useStore = create<Store>()(
       },
       // Utility: ensure a project has a default "Notes" lane
       ensureDefaultLaneForProject: async (projectId: string) => {
-        const { data, error } = await supabase.from('lanes').select('id').eq('project_id', projectId).limit(1);
+        const client = getSupabaseClient();
+        if (!client) return;
+        const { data, error } = await client
+          .from<SupabaseLaneIdRow>('lanes')
+          .select('id')
+          .eq('project_id', projectId)
+          .limit(1);
         if (error) { console.error('ensureDefaultLaneForProject', error); return; }
         if (!data || data.length === 0) {
           await get().createLane(projectId, 'Notes');
@@ -569,97 +695,219 @@ export const useStore = create<Store>()(
       },
       // Ensure Inbox project and Notes lane exist, and assign all unassigned notes
       ensureInboxProjectAndAssign: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
         // Find or create Inbox project
         let inbox = get().projects.find(p => p.name.toLowerCase() === 'inbox');
         if (!inbox) {
-          const proj: any = { id: crypto.randomUUID(), user_id: user.id, name: 'Inbox', color: '#6b7280', position: Date.now() };
-          const { error } = await supabase.from('projects').insert(proj);
+          const newProject: SupabaseProjectInsert = {
+            id: crypto.randomUUID(),
+            user_id: user.id,
+            name: 'Inbox',
+            color: '#6b7280',
+            position: Date.now(),
+            created_at: new Date().toISOString(),
+          };
+          const { error } = await client.from<SupabaseProjectRow>('projects').insert(newProject);
           if (error) { console.error('ensureInbox create project', error); }
-          inbox = { id: proj.id, userId: proj.user_id, name: 'Inbox', color: proj.color, position: proj.position, createdAt: new Date() };
+          inbox = {
+            id: newProject.id,
+            userId: newProject.user_id,
+            name: newProject.name,
+            color: newProject.color,
+            position: newProject.position ?? 0,
+            createdAt: new Date(newProject.created_at ?? Date.now()),
+          };
           set(s => ({ projects: [inbox!, ...s.projects] }));
         }
         // Ensure default lane exists
         await get().ensureDefaultLaneForProject!(inbox.id);
         // Load lanes for inbox to find Notes lane id
-        const { data: lanesData, error: lanesErr } = await supabase.from('lanes').select('*').eq('project_id', inbox.id).order('position', { ascending: true });
+        const { data: lanesData, error: lanesErr } = await client
+          .from<SupabaseLaneRow>('lanes')
+          .select('*')
+          .eq('project_id', inbox.id)
+          .order('position', { ascending: true });
         if (lanesErr) { console.error('ensureInbox load lanes', lanesErr); return; }
-        const lanes: Lane[] = (lanesData || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
+        const lanes: Lane[] = (lanesData ?? []).map((lane) => ({
+          id: lane.id,
+          projectId: lane.project_id,
+          name: lane.name,
+          color: lane.color,
+          position: lane.position ?? 0,
+          createdAt: new Date(lane.created_at),
+        }));
         const notesLane = lanes.find(l => l.name.toLowerCase() === 'notes') || lanes[0];
         // Assign all unassigned notes
-        const { data: unassigned, error: unErr } = await supabase.from('notes').select('id').eq('user_id', user.id).is('project_id', null).eq('is_deleted', false);
+        const { data: unassigned, error: unErr } = await client
+          .from<SupabaseNoteIdRow>('notes')
+          .select('id')
+          .eq('user_id', user.id)
+          .is('project_id', null)
+          .eq('is_deleted', false);
         if (unErr) { console.error('ensureInbox fetch unassigned', unErr); return; }
         if (unassigned && unassigned.length > 0) {
-          const ids = unassigned.map((n: any) => n.id);
-          const { error: updErr } = await supabase.from('notes').update({ project_id: inbox.id, lane_id: notesLane?.id || null }).in('id', ids);
+          const ids = unassigned.map((n) => n.id);
+          const { error: updErr } = await client
+            .from<SupabaseNoteRow>('notes')
+            .update({ project_id: inbox.id, lane_id: notesLane?.id ?? null })
+            .in('id', ids);
           if (updErr) { console.error('ensureInbox assign', updErr); }
           // Update local state
           set(s => ({ notes: s.notes.map(n => ids.includes(n.id) ? { ...n, projectId: inbox!.id, laneId: notesLane?.id } : n) }));
         }
+        set({ inboxEnsured: true });
       },
       loadProjects: async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        const { data, error } = await supabase.from('projects').select('*').eq('user_id', user.id).order('position', { ascending: false });
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
+        const { data, error } = await client
+          .from<SupabaseProjectRow>('projects')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('position', { ascending: false });
         if (error) { console.error('loadProjects', error); return; }
-        const projects: Project[] = (data || []).map((p: any) => ({ id: p.id, userId: p.user_id, name: p.name, color: p.color, position: p.position || 0, createdAt: new Date(p.created_at) }));
-        set({ projects });
+        const projects: Project[] = (data ?? []).map((project) => ({
+          id: project.id,
+          userId: project.user_id,
+          name: project.name,
+          color: project.color,
+          position: project.position ?? 0,
+          createdAt: new Date(project.created_at),
+        }));
+        set({ projects, projectsLoaded: true });
         // Ensure Inbox exists and unassigned notes are assigned
-        await get().ensureInboxProjectAndAssign!();
+        if (!get().inboxEnsured) {
+          await get().ensureInboxProjectAndAssign?.();
+        }
       },
       createProject: async (name, color = '#6b7280') => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        const proj: any = { id: crypto.randomUUID(), user_id: user.id, name, color, position: Date.now() };
-        const { error } = await supabase.from('projects').insert(proj);
+        const auth = await getClientAndUser();
+        if (!auth?.user) return;
+        const { client, user } = auth;
+        const proj: SupabaseProjectInsert = {
+          id: crypto.randomUUID(),
+          user_id: user.id,
+          name,
+          color,
+          position: Date.now(),
+          created_at: new Date().toISOString(),
+        };
+        const { error } = await client.from<SupabaseProjectRow>('projects').insert(proj);
         if (error) { console.error('createProject', error); return; }
-        set((s) => ({ projects: [{ id: proj.id, userId: proj.user_id, name, color, position: proj.position, createdAt: new Date() }, ...s.projects] }));
+        set((s) => ({
+          projects: [
+            {
+              id: proj.id,
+              userId: proj.user_id,
+              name,
+              color,
+              position: proj.position ?? 0,
+              createdAt: new Date(proj.created_at ?? Date.now()),
+            },
+            ...s.projects,
+          ],
+        }));
       },
       updateProject: async (id, updates) => {
-        const db: any = {};
+        const client = getSupabaseClient();
+        if (!client) return;
+        const db: Partial<SupabaseProjectRow> = {};
         if (updates.name !== undefined) db.name = updates.name;
         if (updates.color !== undefined) db.color = updates.color;
-        if (updates.position !== undefined) db.position = updates.position;
-        const { error } = await supabase.from('projects').update(db).eq('id', id);
+        if (updates.position !== undefined) db.position = updates.position ?? null;
+        const { error } = await client.from<SupabaseProjectRow>('projects').update(db).eq('id', id);
         if (error) { console.error('updateProject', error); return; }
         set(s => ({ projects: s.projects.map(p => p.id===id ? { ...p, ...updates } : p) }));
       },
       deleteProject: async (id) => {
-        const { error } = await supabase.from('projects').delete().eq('id', id);
+        const client = getSupabaseClient();
+        if (!client) return;
+        const { error } = await client.from<SupabaseProjectRow>('projects').delete().eq('id', id);
         if (error) { console.error('deleteProject', error); return; }
         set(s => ({ projects: s.projects.filter(p => p.id!==id), selectedProjectId: s.selectedProjectId===id ? null : s.selectedProjectId }));
       },
       loadLanes: async (projectId: string) => {
-        const { data, error } = await supabase.from('lanes').select('*').eq('project_id', projectId).order('position', { ascending: true });
+        const client = getSupabaseClient();
+        if (!client) return;
+        const { data, error } = await client
+          .from<SupabaseLaneRow>('lanes')
+          .select('*')
+          .eq('project_id', projectId)
+          .order('position', { ascending: true });
         if (error) { console.error('loadLanes', error); return; }
-        const lanes: Lane[] = (data || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
+        const lanes: Lane[] = (data ?? []).map((lane) => ({
+          id: lane.id,
+          projectId: lane.project_id,
+          name: lane.name,
+          color: lane.color,
+          position: lane.position ?? 0,
+          createdAt: new Date(lane.created_at),
+        }));
         set({ lanes });
         if (lanes.length === 0) {
           await get().ensureDefaultLaneForProject!(projectId);
           // Reload lanes
-          const { data: data2 } = await supabase.from('lanes').select('*').eq('project_id', projectId).order('position', { ascending: true });
-          const lanes2: Lane[] = (data2 || []).map((l: any) => ({ id: l.id, projectId: l.project_id, name: l.name, color: l.color, position: l.position || 0, createdAt: new Date(l.created_at) }));
+          const { data: data2 } = await client
+            .from<SupabaseLaneRow>('lanes')
+            .select('*')
+            .eq('project_id', projectId)
+            .order('position', { ascending: true });
+          const lanes2: Lane[] = (data2 ?? []).map((lane) => ({
+            id: lane.id,
+            projectId: lane.project_id,
+            name: lane.name,
+            color: lane.color,
+            position: lane.position ?? 0,
+            createdAt: new Date(lane.created_at),
+          }));
           set({ lanes: lanes2 });
         }
       },
       createLane: async (projectId: string, name: string, color = '#e5e7eb') => {
-        const lane: any = { id: crypto.randomUUID(), project_id: projectId, name, color, position: Date.now() };
-        const { error } = await supabase.from('lanes').insert(lane);
+        const client = getSupabaseClient();
+        if (!client) return;
+        const lane: SupabaseLaneInsert = {
+          id: crypto.randomUUID(),
+          project_id: projectId,
+          name,
+          color,
+          position: Date.now(),
+          created_at: new Date().toISOString(),
+        };
+        const { error } = await client.from<SupabaseLaneRow>('lanes').insert(lane);
         if (error) { console.error('createLane', error); return; }
-        set(s => ({ lanes: [...s.lanes, { id: lane.id, projectId, name, color, position: lane.position, createdAt: new Date() }] }));
+        set(s => ({
+          lanes: [
+            ...s.lanes,
+            {
+              id: lane.id,
+              projectId,
+              name,
+              color,
+              position: lane.position ?? 0,
+              createdAt: new Date(lane.created_at ?? Date.now()),
+            },
+          ],
+        }));
       },
       updateLane: async (id: string, updates: Partial<Lane>) => {
-        const db: any = {};
+        const client = getSupabaseClient();
+        if (!client) return;
+        const db: Partial<SupabaseLaneRow> = {};
         if (updates.name !== undefined) db.name = updates.name;
         if (updates.color !== undefined) db.color = updates.color;
-        if (updates.position !== undefined) db.position = updates.position;
-        const { error } = await supabase.from('lanes').update(db).eq('id', id);
+        if (updates.position !== undefined) db.position = updates.position ?? null;
+        const { error } = await client.from<SupabaseLaneRow>('lanes').update(db).eq('id', id);
         if (error) { console.error('updateLane', error); return; }
         set(s => ({ lanes: s.lanes.map(l => l.id===id ? { ...l, ...updates } : l) }));
       },
       deleteLane: async (id: string) => {
-        const { error } = await supabase.from('lanes').delete().eq('id', id);
+        const client = getSupabaseClient();
+        if (!client) return;
+        const { error } = await client.from<SupabaseLaneRow>('lanes').delete().eq('id', id);
         if (error) { console.error('deleteLane', error); return; }
         set(s => ({ lanes: s.lanes.filter(l => l.id!==id) }));
       },
@@ -669,7 +917,9 @@ export const useStore = create<Store>()(
       },
       setShowDashboard: (show) => {
         set({ showDashboard: show });
-        if (show) get().loadProjects();
+        if (show && !get().projectsLoaded) {
+          get().loadProjects();
+        }
       },
 
       updateLastActivity: () => {

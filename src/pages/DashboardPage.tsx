@@ -1,21 +1,25 @@
 import React, { useMemo, useState } from 'react';
+import { shallow } from 'zustand/shallow';
 import { useStore } from '../hooks/useStore';
 import NoteCard from '../components/Dashboard/NoteCard';
-import { Pencil, Check, X } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
-  const {
-    projects,
-    notes,
-    selectedProjectId,
-    setSelectedProject,
-    createProject,
-    updateProject,
-    createNote,
-    updateNote,
-    setActiveNote,
-    setShowDashboard,
-  } = useStore();
+  const projects = useStore((state) => state.projects);
+  const notes = useStore((state) => state.notes);
+  const selectedProjectId = useStore((state) => state.selectedProjectId);
+  const { setSelectedProject, createProject, updateProject, createNote, updateNote, setActiveNote, setShowDashboard } = useStore(
+    (state) => ({
+      setSelectedProject: state.setSelectedProject,
+      createProject: state.createProject,
+      updateProject: state.updateProject,
+      createNote: state.createNote,
+      updateNote: state.updateNote,
+      setActiveNote: state.setActiveNote,
+      setShowDashboard: state.setShowDashboard,
+    }),
+    shallow
+  );
 
   const [filter, setFilter] = useState<'all'|'important'|'todo'|'notes'>('all');
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);

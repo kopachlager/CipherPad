@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { shallow } from 'zustand/shallow';
 import { X } from 'lucide-react';
 import MonacoEditor from './MonacoEditor';
 import Toolbar from './Toolbar';
@@ -6,30 +7,57 @@ import StatusBar from './StatusBar';
 // Temporarily render textarea for stability; rich editor can be re-enabled later
 import RichTextEditor, { RichTextEditorHandle } from './RichTextEditor';
 import { Lock } from 'lucide-react';
+import type { Note } from '../../types';
 import { useStore } from '../../hooks/useStore';
 import { useAutoSave } from '../../hooks/useAutoSave';
 import { detectLanguage } from '../../utils/helpers';
 import EncryptionModal from '../Encryption/EncryptionModal';
 
+type ContentAnalysis = {
+  hasLists: boolean;
+  hasLinks: boolean;
+  hasCode: boolean;
+  hasSelection: boolean;
+  selectedText: string;
+  wordCount: number;
+  boldActive?: boolean;
+  italicActive?: boolean;
+  underlineActive?: boolean;
+  strikethroughActive?: boolean;
+  bulletActive?: boolean;
+  orderedActive?: boolean;
+  quoteActive?: boolean;
+  selectionVersion?: number;
+};
+
 const TabsBar: React.FC = () => {
-  const { openTabs, notes, activeNoteId, setActiveNote, closeTab } = useStore();
-  const tabs = openTabs
-    .map(id => notes.find(n => n.id === id))
-    .filter(Boolean) as any[];
+  const openTabs = useStore((state) => state.openTabs);
+  const notes = useStore((state) => state.notes);
+  const activeNoteId = useStore((state) => state.activeNoteId);
+  const { setActiveNote, closeTab } = useStore(
+    (state) => ({
+      setActiveNote: state.setActiveNote,
+      closeTab: state.closeTab,
+    }),
+    shallow
+  );
+  const tabs: Note[] = openTabs
+    .map((id) => notes.find((note) => note.id === id))
+    .filter((note): note is Note => Boolean(note));
   if (tabs.length <= 1) return null;
   return (
     <div className="h-9 flex items-center gap-1 px-2 overflow-x-auto border-b border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60">
-      {tabs.map((n: any) => (
+      {tabs.map((note) => (
         <button
-          key={n.id}
-          onMouseDown={(e)=>{ e.preventDefault(); setActiveNote(n.id); }}
-          className={`group flex items-center gap-2 px-3 h-7 rounded-md text-sm whitespace-nowrap ${activeNoteId===n.id ? 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
+          key={note.id}
+          onMouseDown={(e) => { e.preventDefault(); setActiveNote(note.id); }}
+          className={`group flex items-center gap-2 px-3 h-7 rounded-md text-sm whitespace-nowrap ${activeNoteId === note.id ? 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'}`}
         >
-          <span className="truncate max-w-[160px]">{n.title || 'Untitled'}</span>
+          <span className="truncate max-w-[160px]">{note.title || 'Untitled'}</span>
           <span
             role="button"
             aria-label="Close"
-            onMouseDown={(e)=>{ e.preventDefault(); e.stopPropagation(); closeTab(n.id); }}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); closeTab(note.id); }}
             className="opacity-70 group-hover:opacity-100 hover:bg-gray-300/60 dark:hover:bg-gray-700/60 rounded"
           >
             <X className="w-3 h-3" />
@@ -41,15 +69,18 @@ const TabsBar: React.FC = () => {
 };
 
 const EditorView: React.FC = () => {
-  const { 
-    notes, 
-    activeNoteId, 
-    updateNote, 
-    toggleNoteFavorite,
-    settings,
-    encryptionRequestForNoteId,
-    clearEncryptionRequest
-  } = useStore();
+  const notes = useStore((state) => state.notes);
+  const activeNoteId = useStore((state) => state.activeNoteId);
+  const settings = useStore((state) => state.settings);
+  const { updateNote, toggleNoteFavorite, encryptionRequestForNoteId, clearEncryptionRequest } = useStore(
+    (state) => ({
+      updateNote: state.updateNote,
+      toggleNoteFavorite: state.toggleNoteFavorite,
+      encryptionRequestForNoteId: state.encryptionRequestForNoteId,
+      clearEncryptionRequest: state.clearEncryptionRequest,
+    }),
+    shallow
+  );
 
   const activeNote = notes.find((note) => note.id === activeNoteId);
   const [localContent, setLocalContent] = useState('');
@@ -59,8 +90,8 @@ const EditorView: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [editorRef, setEditorRef] = useState<HTMLTextAreaElement | null>(null);
   const richRef = React.useRef<RichTextEditorHandle>(null);
+  const editorRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [selectionVersion, setSelectionVersion] = useState(0);
   const langDebounceRef = React.useRef<number | null>(null);
   const titleDebounceRef = React.useRef<number | null>(null);
@@ -179,12 +210,14 @@ const EditorView: React.FC = () => {
     setLastSaved(new Date());
   };
 
-  const getContentAnalysis = () => {
+  const getContentAnalysis = (): ContentAnalysis => {
     const content = localContent || '';
-    const wordCount = content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(w => w.length > 0).length;
+    const wordCount = content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter((word) => word.length > 0).length;
     if (!activeNote.isCodeMode) {
       // WYSIWYG mode: use queryCommandState where possible
-      const hasSelection = (window.getSelection()?.toString() || '').length > 0;
+      const selection = window.getSelection();
+      const selectedText = selection?.toString() ?? '';
+      const hasSelection = selectedText.length > 0;
       const boldActive = document.queryCommandState('bold');
       const italicActive = document.queryCommandState('italic');
       const underlineActive = document.queryCommandState('underline');
@@ -193,11 +226,13 @@ const EditorView: React.FC = () => {
       const orderedActive = document.queryCommandState('insertOrderedList');
       // Detect blockquote by walking up DOM
       let quoteActive = false;
-      const sel = window.getSelection();
-      if (sel && sel.anchorNode) {
-        let node: Node | null = sel.anchorNode;
+      if (selection && selection.anchorNode) {
+        let node: Node | null = selection.anchorNode;
         while (node) {
-          if ((node as HTMLElement).tagName === 'BLOCKQUOTE') { quoteActive = true; break; }
+          if ((node as HTMLElement).tagName === 'BLOCKQUOTE') {
+            quoteActive = true;
+            break;
+          }
           node = (node as Node).parentNode;
         }
       }
@@ -208,7 +243,7 @@ const EditorView: React.FC = () => {
         hasLinks,
         hasCode,
         hasSelection,
-        selectedText: window.getSelection()?.toString() || '',
+        selectedText,
         wordCount,
         boldActive,
         italicActive,
@@ -218,7 +253,7 @@ const EditorView: React.FC = () => {
         orderedActive,
         quoteActive,
         selectionVersion,
-      } as any;
+      };
     }
     // Code mode (plain textarea/Monaco)
     const hasLists = /[-*+]\s|\d+\.\s/.test(content);
@@ -232,7 +267,7 @@ const EditorView: React.FC = () => {
       selectedText: '',
       wordCount,
       selectionVersion,
-    } as any;
+    };
   };
 
   const applyEditFromToolbar = (
@@ -244,7 +279,7 @@ const EditorView: React.FC = () => {
   ) => {
     // Only for Rich Text mode (textarea)
     if (activeNote.isCodeMode) return;
-    const ta = editorRef;
+    const ta = editorRef.current;
     const value = localContent;
     const start = ta ? ta.selectionStart : value.length;
     const end = ta ? ta.selectionEnd : value.length;
@@ -253,7 +288,7 @@ const EditorView: React.FC = () => {
     handleContentChange(result.value);
     // Restore selection
     requestAnimationFrame(() => {
-      const el = editorRef;
+      const el = editorRef.current;
       if (el) {
         el.setSelectionRange(result.nextStart, result.nextEnd);
         el.focus();
@@ -349,7 +384,7 @@ const EditorView: React.FC = () => {
           isRecording={isRecording}
           isTranscribing={isTranscribing}
           contentAnalysis={getContentAnalysis()}
-          editorRef={editorRef}
+          editorRef={editorRef.current}
           onApplyEdit={applyEditFromToolbar}
           onRichCommand={(cmd, value) => {
             // Focus the rich editor to keep selection

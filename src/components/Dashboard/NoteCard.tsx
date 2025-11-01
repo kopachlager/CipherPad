@@ -1,4 +1,5 @@
 import React, { useMemo, useRef } from 'react';
+import { shallow } from 'zustand/shallow';
 import { Heart, Lock, Unlock, X, Share, Download, GripVertical, CheckSquare, StickyNote } from 'lucide-react';
 import { Note } from '../../types';
 import { useStore } from '../../hooks/useStore';
@@ -13,7 +14,14 @@ interface NoteCardProps {
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, onReorder, showTagToggles = false }) => {
-  const { toggleNoteFavorite, updateNote, deleteNote } = useStore();
+  const { toggleNoteFavorite, updateNote, deleteNote } = useStore(
+    (state) => ({
+      toggleNoteFavorite: state.toggleNoteFavorite,
+      updateNote: state.updateNote,
+      deleteNote: state.deleteNote,
+    }),
+    shallow
+  );
   const ref = useRef<HTMLDivElement | null>(null);
   const [isOver, setIsOver] = React.useState(false);
 
@@ -46,7 +54,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, onReord
     e.preventDefault();
     setIsOver(true);
   };
-  const handleDragLeave = (e: React.DragEvent) => {
+  const handleDragLeave = () => {
     setIsOver(false);
   };
 
@@ -92,7 +100,19 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, onReord
           <Download className="w-3 h-3 text-gray-500" />
         </button>
         <button
-          onMouseDown={async (e)=>{ e.preventDefault(); e.stopPropagation(); if (navigator.share) { try { await navigator.share({ title: note.title, text: note.content }); } catch {} } else { navigator.clipboard.writeText(note.content); } }}
+          onMouseDown={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (navigator.share) {
+              try {
+                await navigator.share({ title: note.title, text: note.content });
+              } catch (shareError) {
+                console.warn('Share action was not completed', shareError);
+              }
+            } else {
+              void navigator.clipboard.writeText(note.content);
+            }
+          }}
           className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
           aria-label="Share"
         >

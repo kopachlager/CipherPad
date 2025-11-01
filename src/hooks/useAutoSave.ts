@@ -2,11 +2,12 @@ import { useEffect, useRef } from 'react';
 import { useStore } from './useStore';
 
 export const useAutoSave = (noteId: string | null, content: string) => {
-  const { updateNote, settings } = useStore();
+  const updateNote = useStore((state) => state.updateNote);
+  const autoSaveEnabled = useStore((state) => state.settings.autoSave);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    if (!settings.autoSave || !noteId) return;
+    if (!autoSaveEnabled || !noteId) return;
 
     // Clear existing timeout
     if (timeoutRef.current) {
@@ -23,5 +24,5 @@ export const useAutoSave = (noteId: string | null, content: string) => {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [content, noteId, updateNote, settings.autoSave]);
+  }, [content, noteId, updateNote, autoSaveEnabled]);
 };

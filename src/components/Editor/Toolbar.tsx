@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { shallow } from 'zustand/shallow';
 import {
   Bold,
   Italic,
@@ -26,12 +27,13 @@ import {
   Eraser,
 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
+import type { Note } from '../../types';
 import { exportNote } from '../../utils/helpers';
 import PopoverSelect from '../Common/PopoverSelect';
 import Tooltip from '../Common/Tooltip';
 
 interface ToolbarProps {
-  note: any;
+  note: Note;
   onToggleCodeMode: () => void;
   onToggleFavorite: () => void;
   onToggleEncryption: () => void;
@@ -84,7 +86,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onClearFormatting,
   contentAnalysis,
 }) => {
-  const { settings, updateSettings } = useStore();
+  const { settings, updateSettings } = useStore(
+    (state) => ({
+      settings: state.settings,
+      updateSettings: state.updateSettings,
+    }),
+    shallow
+  );
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   useEffect(() => {
@@ -130,7 +138,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
       <button
       type="button"
       onMouseDown={(e) => {
-        try { console.log('[Toolbar MouseDown]', tooltip, e.button); } catch {}
         // Prevent focus from leaving the textarea, which can cancel click.
         e.preventDefault();
         e.stopPropagation();
@@ -139,7 +146,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
       }}
       onMouseUp={(e) => { e.preventDefault(); e.stopPropagation(); }}
       onClick={(e) => {
-        try { console.log('[Toolbar Click]', tooltip, { isCodeMode: note?.isCodeMode }); } catch {}
         e.preventDefault();
         e.stopPropagation();
       }}
@@ -173,17 +179,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
           title: note.title,
           text: editorRef?.value ?? note.content,
         });
-      } catch (err) {
-        console.log('Share cancelled');
+      } catch (shareError) {
+        console.warn('Share action was not completed', shareError);
       }
     } else {
-      navigator.clipboard.writeText(editorRef?.value ?? note.content);
+      void navigator.clipboard.writeText(editorRef?.value ?? note.content);
     }
   };
 
   const handleToggleFocusMode = () => {
     const next = !settings.distractionFreeMode;
-    try { console.log('[Toolbar] Toggle Focus Mode ->', next); } catch {}
     updateSettings({ distractionFreeMode: next });
   };
 
@@ -294,9 +299,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
   return (
     <div
       className="h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 flex-shrink-0 relative z-50 pointer-events-auto"
-      onMouseDown={(e) => {
-        try { console.log('[Toolbar] container mousedown', { x: e.clientX, y: e.clientY }); } catch {}
-      }}
       aria-label="Editor toolbar"
     >
       <div className="flex items-center space-x-1">

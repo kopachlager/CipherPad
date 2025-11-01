@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { X, Lock, Unlock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { encryptData, decryptData } from '../../utils/crypto';
+import type { Note } from '../../types';
 
 interface EncryptionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  note: any;
+  note: Note;
   onSave: (encryptedContent: string, isEncrypted: boolean) => void;
 }
 
@@ -19,7 +20,7 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isDecrypting, setIsDecrypting] = useState(note?.isEncrypted || false);
+  const isDecrypting = note.isEncrypted;
 
   if (!isOpen) return null;
 
@@ -44,7 +45,7 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
         setPassword('');
         setConfirmPassword('');
         onClose();
-      } catch (err) {
+      } catch {
         setError('Failed to decrypt note. Please check your password.');
       }
     } else {
@@ -65,7 +66,7 @@ const EncryptionModal: React.FC<EncryptionModalProps> = ({
         setPassword('');
         setConfirmPassword('');
         onClose();
-      } catch (err) {
+      } catch {
         setError('Failed to encrypt note');
       }
     }
