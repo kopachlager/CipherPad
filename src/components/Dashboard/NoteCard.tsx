@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { shallow } from 'zustand/shallow';
 import { Heart, Lock, Unlock, X, Share, Download, GripVertical, CheckSquare, StickyNote } from 'lucide-react';
-import { Note } from '../../types';
+import type { Note } from '../../types';
 import { useStore } from '../../hooks/useStore';
 import { exportNote } from '../../utils/helpers';
 
@@ -9,10 +9,11 @@ interface NoteCardProps {
   note: Note;
   projectColor: string;
   onOpen: () => void;
+  onReorder: (dragId: string, hoverId: string) => void;
   showTagToggles?: boolean;
 }
 
-const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTagToggles = false }) => {
+const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, onReorder, showTagToggles = false }) => {
   const { toggleNoteFavorite, updateNote, deleteNote } = useStore(
     (state) => ({
       toggleNoteFavorite: state.toggleNoteFavorite,
@@ -22,22 +23,20 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
     shallow
   );
   const ref = useRef<HTMLDivElement | null>(null);
+  const [isOver, setIsOver] = React.useState(false);
 
   const title = note.title || 'Untitled';
   const excerpt = useMemo(() => {
-    const plain = (note.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    return plain.length > 180 ? plain.slice(0, 177) + '…' : plain;
+    const plain = (note.content || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return plain.length > 160 ? `${plain.slice(0, 157)}…` : plain;
   }, [note.content]);
 
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData(
-      'application/json',
-      JSON.stringify({
-        noteId: note.id,
-        sourceLaneId: note.laneId ?? null,
-      })
-    );
-    e.dataTransfer.effectAllowed = 'move';
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.setData('text/plain', note.id);
+    event.dataTransfer.effectAllowed = 'move';
     ref.current?.classList.add('opacity-60');
   };
 
@@ -45,13 +44,34 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
     ref.current?.classList.remove('opacity-60');
   };
 
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const dragId = event.dataTransfer.getData('text/plain');
+    if (dragId && dragId !== note.id) {
+      onReorder(dragId, note.id);
+    }
+    setIsOver(false);
+  };
+
   return (
     <div
       ref={ref}
-      className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow transition-shadow min-h-[172px] overflow-hidden cursor-pointer"
+      className={`group relative h-44 overflow-hidden rounded-xl border bg-white shadow transition-shadow dark:bg-gray-900 ${
+        isOver ? 'border-blue-300 shadow-lg' : 'border-gray-200 dark:border-gray-700 hover:shadow-md'
+      }`}
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      }}
+      onDragEnter={(e) => {
+        e.preventDefault();
+        setIsOver(true);
+      }}
+      onDragLeave={() => setIsOver(false)}
+      onDrop={handleDrop}
       onMouseDown={(e) => {
         e.preventDefault();
         onOpen();
@@ -59,10 +79,11 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
       role="button"
       aria-label={`Open note ${title}`}
     >
-      <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: projectColor }} />
-      <div className="absolute top-1 right-1 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="p-1 text-gray-400 cursor-grab">
-          <GripVertical className="w-3 h-3" />
+      <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: projectColor }} />
+
+      <div className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-white/80 px-1.5 py-1 opacity-0 shadow-sm transition-opacity group-hover:opacity-100 dark:bg-gray-900/90">
+        <span className="cursor-grab p-1 text-gray-400" title="Drag to reorder">
+          <GripVertical className="h-3 w-3" />
         </span>
         <button
           onMouseDown={(e) => {
@@ -70,10 +91,10 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
             e.stopPropagation();
             toggleNoteFavorite(note.id);
           }}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label="Favorite"
+          className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Toggle favorite"
         >
-          <Heart className={`w-3 h-3 ${note.isFavorite ? 'text-pink-500' : 'text-gray-500'}`} />
+          <Heart className={`h-3 w-3 ${note.isFavorite ? 'text-pink-500' : 'text-gray-500'}`} />
         </button>
         <button
           onMouseDown={(e) => {
@@ -81,10 +102,10 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
             e.stopPropagation();
             updateNote(note.id, { isEncrypted: !note.isEncrypted });
           }}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label={note.isEncrypted ? 'Unlock' : 'Lock'}
+          className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label={note.isEncrypted ? 'Unlock note' : 'Lock note'}
         >
-          {note.isEncrypted ? <Lock className="w-3 h-3 text-gray-600" /> : <Unlock className="w-3 h-3 text-gray-500" />}
+          {note.isEncrypted ? <Unlock className="h-3 w-3 text-gray-600" /> : <Lock className="h-3 w-3 text-gray-500" />}
         </button>
         <button
           onMouseDown={(e) => {
@@ -92,10 +113,10 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
             e.stopPropagation();
             exportNote(note, 'txt');
           }}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label="Download"
+          className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Download note"
         >
-          <Download className="w-3 h-3 text-gray-500" />
+          <Download className="h-3 w-3 text-gray-500" />
         </button>
         <button
           onMouseDown={async (e) => {
@@ -111,10 +132,10 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
               void navigator.clipboard.writeText(note.content);
             }
           }}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label="Share"
+          className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Share note"
         >
-          <Share className="w-3 h-3 text-gray-500" />
+          <Share className="h-3 w-3 text-gray-500" />
         </button>
         <button
           onMouseDown={(e) => {
@@ -122,54 +143,52 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, projectColor, onOpen, showTag
             e.stopPropagation();
             deleteNote(note.id);
           }}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label="Delete"
+          className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Delete note"
         >
-          <X className="w-3 h-3 text-gray-500" />
+          <X className="h-3 w-3 text-gray-500" />
         </button>
       </div>
 
-      <div className="h-full flex flex-col p-3">
+      <div className="flex h-full flex-col p-3">
         <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">{title}</div>
-        <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 flex-1 leading-relaxed whitespace-pre-line">
+        <div className="mt-2 text-xs text-gray-600 dark:text-gray-400" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           {excerpt || '—'}
         </div>
-        <div className="mt-3 flex items-center justify-between text-[10px] text-gray-400">
-          <span>{new Date(note.updatedAt).toLocaleString()}</span>
-          {showTagToggles && (
+        <div className="mt-auto flex items-center justify-between pt-2 text-[10px] text-gray-400">
+          {showTagToggles ? (
             <div className="flex items-center gap-1">
               <button
                 onMouseDown={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  const has = (note.tags || []).includes('todo');
-                  const next = has ? (note.tags || []).filter((t) => t !== 'todo') : ([...(note.tags || []), 'todo']);
-                  updateNote(note.id, { tags: next });
+                  const hasTodo = (note.tags || []).includes('todo');
+                  const nextTags = hasTodo ? (note.tags || []).filter((tag) => tag !== 'todo') : [...(note.tags || []), 'todo'];
+                  updateNote(note.id, { tags: nextTags });
                 }}
-                className={`px-2 py-0.5 rounded text-[10px] ${ (note.tags || []).includes('todo') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-600' }`}
+                className={`inline-flex items-center gap-1 rounded px-2 py-0.5 ${ (note.tags || []).includes('todo') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' }`}
               >
-                <span className="inline-flex items-center gap-1">
-                  <CheckSquare className="w-3 h-3" />
-                  Todo
-                </span>
+                <CheckSquare className="h-3 w-3" />
+                Todo
               </button>
               <button
                 onMouseDown={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  const has = (note.tags || []).includes('note');
-                  const next = has ? (note.tags || []).filter((t) => t !== 'note') : ([...(note.tags || []), 'note']);
-                  updateNote(note.id, { tags: next });
+                  const hasNote = (note.tags || []).includes('note');
+                  const nextTags = hasNote ? (note.tags || []).filter((tag) => tag !== 'note') : [...(note.tags || []), 'note'];
+                  updateNote(note.id, { tags: nextTags });
                 }}
-                className={`px-2 py-0.5 rounded text-[10px] ${ (note.tags || []).includes('note') ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-600' }`}
+                className={`inline-flex items-center gap-1 rounded px-2 py-0.5 ${ (note.tags || []).includes('note') ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' }`}
               >
-                <span className="inline-flex items-center gap-1">
-                  <StickyNote className="w-3 h-3" />
-                  Note
-                </span>
+                <StickyNote className="h-3 w-3" />
+                Note
               </button>
             </div>
+          ) : (
+            <span />
           )}
+          <span>{new Date(note.updatedAt).toLocaleString()}</span>
         </div>
       </div>
     </div>
