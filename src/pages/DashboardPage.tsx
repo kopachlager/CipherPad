@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { shallow } from 'zustand/shallow';
-import { LayoutDashboard, Plus, Pencil, Wand2, CheckSquare, StickyNote } from 'lucide-react';
+import { LayoutDashboard, Plus, Pencil, Wand2, CheckSquare, StickyNote, Heart } from 'lucide-react';
 import { useStore } from '../hooks/useStore';
 import NoteCard from '../components/Dashboard/NoteCard';
 import type { Note, Project } from '../types';
@@ -88,7 +88,7 @@ const DashboardPage: React.FC = () => {
 
   const handleCreateNote = async () => {
     if (!activeProject) return;
-    const newNote = await createNote(activeProject.id);
+    const newNote = await createNote();
     await updateNote(newNote.id, { projectId: activeProject.id });
     setActiveNote(newNote.id);
     setShowDashboard(false);
@@ -254,7 +254,7 @@ const DashboardPage: React.FC = () => {
                         : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   >
-                    {key === 'important' && <HeartIcon />}
+                    {key === 'important' && <Heart className="h-3 w-3" />}
                     {key === 'todo' && <CheckSquare className="h-3 w-3" />}
                     {key === 'notes' && <StickyNote className="h-3 w-3" />}
                     {label}
@@ -309,7 +309,5 @@ const DashboardPage: React.FC = () => {
     </div>
   );
 };
-
-const HeartIcon = () => <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-6.716-4.579-10-9c-1.818-2.479-.49-6 2.5-7 2.274-.7 4.5.5 5.5 2 1-1.5 3.226-2.7 5.5-2 2.99 1 4.318 4.521 2.5 7-3.284 4.421-10 9-10 9z"/></svg>;
 
 export default DashboardPage;
