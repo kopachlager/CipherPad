@@ -6,7 +6,6 @@ import { useAuth } from './hooks/useAuth';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import EditorView from './components/Editor/EditorView';
-import DashboardPage from './pages/DashboardPage';
 import FloatingActionButton from './components/FloatingActionButton';
 import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
@@ -16,7 +15,6 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 const App: React.FC = () => {
   const settings = useStore((state) => state.settings);
   const auth = useStore((state) => state.auth);
-  const showDashboard = useStore((state) => state.showDashboard);
   const { updateLastActivity, loadNotes, loadFolders, loadSettings, loadProjects, lockApp, unlockApp } = useStore(
     (state) => ({
       updateLastActivity: state.updateLastActivity,
@@ -174,8 +172,8 @@ const App: React.FC = () => {
               {!settings.distractionFreeMode && <Header />}
               
               <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden min-h-0`}>
-                {!settings.distractionFreeMode && !showDashboard && <Sidebar />}
-                {showDashboard ? <DashboardPage /> : <EditorView />}
+                {!settings.distractionFreeMode && <Sidebar />}
+                <EditorView />
               </div>
             </div>
           </div>

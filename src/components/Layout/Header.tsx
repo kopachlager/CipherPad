@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Search,
-  Sun,
-  Moon,
-  Settings,
-  Plus,
-  LogOut,
-  Loader2,
-  LayoutDashboard,
-} from 'lucide-react';
-import { shallow } from 'zustand/shallow';
+import { Search, Sun, Moon, Settings, Plus, LogOut, Loader2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
@@ -19,15 +9,6 @@ const Header: React.FC = () => {
   const searchQuery = useStore((state) => state.searchQuery);
   const setSearchQuery = useStore((state) => state.setSearchQuery);
   const createNote = useStore((state) => state.createNote);
-  const showDashboard = useStore((state) => state.showDashboard);
-  const { setShowDashboard, setSelectedProject, loadProjects } = useStore(
-    (state) => ({
-      setShowDashboard: state.setShowDashboard,
-      setSelectedProject: state.setSelectedProject,
-      loadProjects: state.loadProjects,
-    }),
-    shallow
-  );
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showSettings, setShowSettings] = React.useState(false);
@@ -54,17 +35,6 @@ const Header: React.FC = () => {
       <header className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 relative z-50 flex-shrink-0">
         <div className="flex items-center space-x-2 sm:space-x-4">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">CipherWrite</h1>
-          <button
-            onClick={async () => {
-              setShowDashboard(!showDashboard);
-              if (!showDashboard) { await loadProjects(); setSelectedProject(null); }
-            }}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150"
-            title={showDashboard ? 'Back to Editor' : 'Open Dashboard'}
-            aria-label={showDashboard ? 'Back to Editor' : 'Open Dashboard'}
-          >
-            <LayoutDashboard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          </button>
         </div>
 
         <div className="relative hidden md:block">
