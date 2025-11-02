@@ -283,11 +283,6 @@ export const useStore = create<Store>()(
 
       createNote: async (folderId) => {
         const auth = await getClientAndUser();
-        if (!auth?.user) {
-          throw new Error('Supabase not configured or user not authenticated');
-        }
-        const { client, user } = auth;
-
         const id = crypto.randomUUID();
         const note: Note = {
           id,
@@ -296,6 +291,9 @@ export const useStore = create<Store>()(
           isEncrypted: false,
           isCodeMode: false,
           language: 'plaintext',
+          projectId: undefined,
+          laneId: undefined,
+          position: Date.now(),
           folderId,
           tags: [],
           createdAt: new Date(),
@@ -303,39 +301,41 @@ export const useStore = create<Store>()(
           isDeleted: false,
           isFavorite: false,
         };
-        
-        const { error } = await client
-          .from<SupabaseNoteRow>('notes')
-          .insert({
-            id,
-            title: note.title,
-            content: note.content,
-            is_encrypted: note.isEncrypted,
-            is_code_mode: note.isCodeMode,
-            language: note.language,
-            folder_id: folderId || null,
-            tags: note.tags,
-            user_id: user.id,
-            is_deleted: false,
-            is_favorite: false,
-            project_id: null,
-            lane_id: null,
-            position: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            deleted_at: null,
-          });
-
-        if (error) {
-          console.error('Error creating note:', error);
-          throw error;
-        }
 
         set((state) => ({
           notes: [note, ...state.notes],
           activeNoteId: id,
         }));
-        
+
+        if (auth?.user) {
+          const { client, user } = auth;
+          const { error } = await client
+            .from<SupabaseNoteRow>('notes')
+            .insert({
+              id,
+              title: note.title,
+              content: note.content,
+              is_encrypted: note.isEncrypted,
+              is_code_mode: note.isCodeMode,
+              language: note.language,
+              folder_id: folderId ?? null,
+              tags: note.tags,
+              user_id: user.id,
+              is_deleted: note.isDeleted,
+              is_favorite: note.isFavorite,
+              project_id: note.projectId ?? null,
+              lane_id: note.laneId ?? null,
+              position: note.position ?? null,
+              created_at: note.createdAt.toISOString(),
+              updated_at: note.updatedAt.toISOString(),
+              deleted_at: null,
+            });
+
+          if (error) {
+            console.error('Error creating note:', error);
+          }
+        }
+
         return note;
       },
 
