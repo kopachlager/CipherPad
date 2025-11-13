@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Sun, Moon, Settings, Plus, LogOut, Loader2 } from 'lucide-react';
+import { Search, Sun, Moon, Settings, Plus, LogOut, Loader2, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
@@ -14,6 +14,8 @@ const Header: React.FC = () => {
   const [showSettings, setShowSettings] = React.useState(false);
   const [isCreatingNote, setIsCreatingNote] = React.useState(false);
   const [isSigningOut, setIsSigningOut] = React.useState(false);
+  const showDashboard = useStore((state) => state.showDashboard);
+  const setShowDashboard = useStore((state) => state.setShowDashboard);
 
   const handleCreateNote = async () => {
     setIsCreatingNote(true);
@@ -50,6 +52,19 @@ const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-1 sm:space-x-2">
+          <button
+            onClick={() => setShowDashboard(!showDashboard)}
+            className={`p-2 rounded-md transition-all duration-150 hover:scale-105 active:scale-95 ${
+              showDashboard
+                ? 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+            }`}
+            title={showDashboard ? 'Back to notes' : 'Open dashboard'}
+            aria-pressed={showDashboard}
+          >
+            <LayoutDashboard className="w-5 h-5" />
+          </button>
+
           <button
             onClick={handleCreateNote}
             disabled={isCreatingNote}
