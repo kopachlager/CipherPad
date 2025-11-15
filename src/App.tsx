@@ -34,10 +34,20 @@ const App: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   useTheme();
   useKeyboardShortcuts();
+  const lastLoadedUserRef = React.useRef<string | null>(null);
 
   // Load data when user is authenticated
   useEffect(() => {
-    if (!user || !supabaseConfigured) return;
+    if (!user || !supabaseConfigured) {
+      if (!user) {
+        lastLoadedUserRef.current = null;
+      }
+      return;
+    }
+    if (lastLoadedUserRef.current === user.id) {
+      return;
+    }
+    lastLoadedUserRef.current = user.id;
     console.log('User authenticated, loading data...');
     const { loadNotes, loadFolders, loadSettings, loadProjects } = useStore.getState();
     const loadUserData = async () => {
