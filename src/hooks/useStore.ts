@@ -50,6 +50,7 @@ interface Store {
   projects: Project[];
   lanes: Lane[];
   selectedProjectId: string | null;
+  showDashboard: boolean;
   // Undo toast state
   showUndoForNoteId?: string | null;
   lastDeletedSnapshot?: Note | null;
@@ -64,6 +65,7 @@ interface Store {
   updateLane: (id: string, updates: Partial<Lane>) => Promise<void>;
   deleteLane: (id: string) => Promise<void>;
   setSelectedProject: (id: string | null) => void;
+  setShowDashboard: (show: boolean) => void;
   ensureDefaultLaneForProject?: (projectId: string) => Promise<void>;
   ensureInboxProjectAndAssign?: () => Promise<void>;
   
@@ -135,6 +137,7 @@ export const useStore = create<Store>()(
       auth: defaultAuth,
       sidebarOpen: true,
       searchQuery: '',
+      showDashboard: false,
       showUndoForNoteId: null,
       lastDeletedSnapshot: null,
       undoTimerId: null,
@@ -662,9 +665,13 @@ export const useStore = create<Store>()(
         set(s => ({ lanes: s.lanes.filter(l => l.id!==id) }));
       },
       setSelectedProject: (id) => {
-        set({ selectedProjectId: id });
-        if (id) get().loadLanes(id);
-      },
+      set({ selectedProjectId: id });
+      if (id) get().loadLanes(id);
+    },
+    setShowDashboard: (show) => {
+      set({ showDashboard: show });
+      if (show) get().loadProjects();
+    },
 
       updateLastActivity: () => {
         set((state) => ({
