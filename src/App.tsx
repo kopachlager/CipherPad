@@ -37,27 +37,25 @@ const App: React.FC = () => {
 
   // Load data when user is authenticated
   useEffect(() => {
-    if (user && supabaseConfigured) {
-      console.log('User authenticated, loading data...');
-      const { loadNotes, loadFolders, loadSettings, loadProjects } = useStore.getState();
-      const loadUserData = async () => {
-        try {
-          await Promise.all([
-            loadNotes(),
-            loadFolders(),
-            loadSettings(),
-          ]);
-          // Also load projects to initialize Inbox/Notes and assignment
-          await loadProjects();
-          console.log('User data loaded successfully');
-        } catch (error) {
-          console.error('Error loading user data:', error);
-        }
-      };
-      
-      loadUserData();
-    }
-  }, [user, loadNotes, loadFolders, loadSettings, loadProjects]);
+    if (!user || !supabaseConfigured) return;
+    console.log('User authenticated, loading data...');
+    const { loadNotes, loadFolders, loadSettings, loadProjects } = useStore.getState();
+    const loadUserData = async () => {
+      try {
+        await Promise.all([
+          loadNotes(),
+          loadFolders(),
+          loadSettings(),
+        ]);
+        await loadProjects();
+        console.log('User data loaded successfully');
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserData();
+  }, [user, supabaseConfigured]);
 
   // Show auth modal if not authenticated and not loading
   useEffect(() => {
