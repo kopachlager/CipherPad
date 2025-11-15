@@ -32,12 +32,21 @@ const AuthenticatedLayout: React.FC = () => {
   const navigate = useNavigate();
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
   const hasSyncedRef = React.useRef(false);
-  const skipNextNavigationRef = React.useRef(false);
+  const pendingNavigationRef = React.useRef<string | null>(null);
 
   useEffect(() => {
+    if (pendingNavigationRef.current) {
+      const expected = pendingNavigationRef.current;
+      const matches = expected === '/dashboard' ? isDashboardRoute : !isDashboardRoute;
+      if (matches) {
+        pendingNavigationRef.current = null;
+      } else {
+        return;
+      }
+    }
+
     const shouldShowDashboard = isDashboardRoute;
     if (shouldShowDashboard !== showDashboard) {
-      skipNextNavigationRef.current = true;
       setShowDashboard(shouldShowDashboard);
     }
     if (!hasSyncedRef.current) {
@@ -47,13 +56,11 @@ const AuthenticatedLayout: React.FC = () => {
 
   useEffect(() => {
     if (!hasSyncedRef.current) return;
-    if (skipNextNavigationRef.current) {
-      skipNextNavigationRef.current = false;
-      return;
-    }
     if (showDashboard && !isDashboardRoute) {
+      pendingNavigationRef.current = '/dashboard';
       navigate('/dashboard', { replace: true });
     } else if (!showDashboard && isDashboardRoute) {
+      pendingNavigationRef.current = '/';
       navigate('/', { replace: true });
     }
   }, [showDashboard, isDashboardRoute, navigate]);
