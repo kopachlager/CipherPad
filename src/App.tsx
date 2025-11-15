@@ -10,6 +10,7 @@ import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
 import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { supabaseConfigured } from './lib/supabase';
 const App: React.FC = () => {
   const settings = useStore((state) => state.settings);
   const auth = useStore((state) => state.auth);
@@ -22,13 +23,9 @@ const App: React.FC = () => {
     }),
     shallow
   );
-  const { updateLastActivity, loadNotes, loadFolders, loadSettings, loadProjects, lockApp } = useStore(
+  const { updateLastActivity, lockApp } = useStore(
     (state) => ({
       updateLastActivity: state.updateLastActivity,
-      loadNotes: state.loadNotes,
-      loadFolders: state.loadFolders,
-      loadSettings: state.loadSettings,
-      loadProjects: state.loadProjects,
       lockApp: state.lockApp,
     }),
     shallow
@@ -40,8 +37,9 @@ const App: React.FC = () => {
 
   // Load data when user is authenticated
   useEffect(() => {
-    if (user) {
+    if (user && supabaseConfigured) {
       console.log('User authenticated, loading data...');
+      const { loadNotes, loadFolders, loadSettings, loadProjects } = useStore.getState();
       const loadUserData = async () => {
         try {
           await Promise.all([
