@@ -1,10 +1,9 @@
 import React from 'react';
-import { Search, Sun, Moon, Settings, Plus, LogOut, Loader2, LayoutDashboard, FileText } from 'lucide-react';
+import { Search, Sun, Moon, Settings, Plus, LogOut, Loader2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
 import SettingsModal from '../Settings/SettingsModal';
-import { shallow } from 'zustand/shallow';
 
 const Header: React.FC = () => {
   const searchQuery = useStore((state) => state.searchQuery);
@@ -15,13 +14,6 @@ const Header: React.FC = () => {
   const [showSettings, setShowSettings] = React.useState(false);
   const [isCreatingNote, setIsCreatingNote] = React.useState(false);
   const [isSigningOut, setIsSigningOut] = React.useState(false);
-  const { showDashboard, setShowDashboard } = useStore(
-    (state) => ({
-      showDashboard: state.showDashboard,
-      setShowDashboard: state.setShowDashboard,
-    }),
-    shallow
-  );
 
   const handleCreateNote = async () => {
     setIsCreatingNote(true);
@@ -58,17 +50,6 @@ const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-1 sm:space-x-2">
-          <button
-            onClick={() => setShowDashboard(!showDashboard)}
-            className={`p-2 rounded-md transition-all duration-150 hover:scale-105 active:scale-95 ${
-              showDashboard
-                ? 'bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
-            }`}
-            title={showDashboard ? 'Back to notes' : 'Open dashboard'}
-          >
-            {showDashboard ? <FileText className="w-5 h-5" /> : <LayoutDashboard className="w-5 h-5" />}
-          </button>
           <button
             onClick={handleCreateNote}
             disabled={isCreatingNote}

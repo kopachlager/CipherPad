@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { shallow } from 'zustand/shallow';
 import LandingPage from './pages/LandingPage';
 import { useAuth } from './hooks/useAuth';
@@ -11,9 +10,7 @@ import AuthModal from './components/Auth/AuthModal';
 import { useStore } from './hooks/useStore';
 import { useTheme } from './hooks/useTheme';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import DashboardPage from './pages/DashboardPage';
-
-const AppContent: React.FC = () => {
+const App: React.FC = () => {
   const settings = useStore((state) => state.settings);
   const auth = useStore((state) => state.auth);
   const unlockApp = useStore((state) => state.unlockApp);
@@ -25,127 +22,6 @@ const AppContent: React.FC = () => {
     }),
     shallow
   );
-  const showDashboard = useStore((state) => state.showDashboard);
-  const setShowDashboard = useStore((state) => state.setShowDashboard);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isDashboardRoute = location.pathname.startsWith('/dashboard');
-  const hasBootstrappedRef = React.useRef(false);
-  const skipNextNavigationRef = React.useRef(false);
-  const showDashboardRef = React.useRef(showDashboard);
-
-  useEffect(() => {
-    showDashboardRef.current = showDashboard;
-  }, [showDashboard]);
-
-  useEffect(() => {
-    const shouldShowDashboard = isDashboardRoute;
-    if (shouldShowDashboard !== showDashboardRef.current) {
-      skipNextNavigationRef.current = true;
-      setShowDashboard(shouldShowDashboard);
-    }
-    if (!hasBootstrappedRef.current) {
-      hasBootstrappedRef.current = true;
-    }
-  }, [isDashboardRoute, setShowDashboard]);
-
-  useEffect(() => {
-    if (!hasBootstrappedRef.current) return;
-    if (skipNextNavigationRef.current) {
-      skipNextNavigationRef.current = false;
-      return;
-    }
-
-    if (showDashboard && !isDashboardRoute) {
-      navigate('/dashboard');
-    } else if (!showDashboard && isDashboardRoute) {
-      navigate('/');
-    }
-  }, [showDashboard, isDashboardRoute, navigate]);
-
-  return (
-    <div
-      className={`min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 font-inter transition-all duration-300 ${
-        settings.distractionFreeMode ? 'distraction-free' : ''
-      } p-4 md:p-8`}
-    >
-      <div className="max-w-7xl mx-auto">
-        <div
-          className={`bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
-            settings.distractionFreeMode
-              ? 'h-[calc(100vh-4rem)] md:h-[calc(100vh-8rem)]'
-              : 'h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)]'
-          }`}
-        >
-          <div className="h-full flex flex-col">
-            {!settings.distractionFreeMode && <Header />}
-
-            <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden min-h-0`}>
-              {!settings.distractionFreeMode && !isDashboardRoute && <Sidebar />}
-              <div className="flex-1 overflow-hidden min-h-0">
-                <Routes>
-                  <Route path="/" element={<EditorView />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="*" element={<Navigate to={showDashboard ? '/dashboard' : '/'} replace />} />
-                </Routes>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {!settings.distractionFreeMode && !isDashboardRoute && <FloatingActionButton />}
-      {showUndoForNoteId && !auth.isLocked && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200]">
-          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Note deleted</span>
-            <button
-              onClick={() => undoDelete?.()}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Undo
-            </button>
-            {lastDeletedSnapshot?.title && (
-              <span className="ml-1 text-xs text-gray-400 truncate max-w-[160px]">{lastDeletedSnapshot.title}</span>
-            )}
-          </div>
-        </div>
-      )}
-      {auth.isLocked && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">
-            <div className="mb-3 text-lg font-semibold">Session Locked</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-5">You've been inactive for a while. Unlock to continue.</p>
-            <div className="flex items-center justify-center gap-3">
-              <button
-                onClick={() => unlockApp()}
-                className="px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-colors"
-              >
-                Unlock
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {settings.distractionFreeMode && !auth.isLocked && (
-        <button
-          onClick={() => {
-            useStore.getState().updateSettings({ distractionFreeMode: false });
-          }}
-          className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
-          aria-label="Exit Focus Mode"
-          title="Exit Focus Mode"
-        >
-          <span className="inline-block w-2 h-2 bg-green-500 rounded-full" />
-          Exit Focus
-        </button>
-      )}
-    </div>
-  );
-};
-
-const App: React.FC = () => {
-  const settings = useStore((state) => state.settings);
   const { updateLastActivity, loadNotes, loadFolders, loadSettings, loadProjects, lockApp } = useStore(
     (state) => ({
       updateLastActivity: state.updateLastActivity,
@@ -279,9 +155,79 @@ const App: React.FC = () => {
   }
   
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <div
+      className={`min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 font-inter transition-all duration-300 ${
+        settings.distractionFreeMode ? 'distraction-free' : ''
+      } p-4 md:p-8`}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div
+          className={`bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ${
+            settings.distractionFreeMode
+              ? 'h-[calc(100vh-4rem)] md:h-[calc(100vh-8rem)]'
+              : 'h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)]'
+          }`}
+        >
+          <div className="h-full flex flex-col">
+            {!settings.distractionFreeMode && <Header />}
+
+            <div className={`flex-1 flex ${settings.distractionFreeMode ? 'p-8' : ''} overflow-hidden min-h-0`}>
+              {!settings.distractionFreeMode && <Sidebar />}
+              <div className="flex-1 overflow-hidden min-h-0">
+                <EditorView />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {!settings.distractionFreeMode && <FloatingActionButton />}
+      {showUndoForNoteId && !auth.isLocked && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200]">
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Note deleted</span>
+            <button
+              onClick={() => undoDelete?.()}
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Undo
+            </button>
+            {lastDeletedSnapshot?.title && (
+              <span className="ml-1 text-xs text-gray-400 truncate max-w-[160px]">{lastDeletedSnapshot.title}</span>
+            )}
+          </div>
+        </div>
+      )}
+      {auth.isLocked && (
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">
+            <div className="mb-3 text-lg font-semibold">Session Locked</div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-5">You've been inactive for a while. Unlock to continue.</p>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                onClick={() => unlockApp()}
+                className="px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+              >
+                Unlock
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {settings.distractionFreeMode && !auth.isLocked && (
+        <button
+          onClick={() => {
+            useStore.getState().updateSettings({ distractionFreeMode: false });
+          }}
+          className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-800 transition-colors flex items-center gap-2"
+          aria-label="Exit Focus Mode"
+          title="Exit Focus Mode"
+        >
+          <span className="inline-block w-2 h-2 bg-green-500 rounded-full" />
+          Exit Focus
+        </button>
+      )}
+    </div>
   );
 };
 
