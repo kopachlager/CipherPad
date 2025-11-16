@@ -54,26 +54,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-20">
+      <section className="pt-24 pb-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-            <span>Secure Note-Taking</span>
+          <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-8">
+            <Shield className="w-4 h-4" />
+            <span>End-to-End Encrypted</span>
           </div>
-          <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight max-w-5xl mx-auto">
-            Organize your thoughts,<br />
-            <span className="text-gray-600">secure your ideas.</span>
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight max-w-4xl mx-auto">
+            The secure, private notepad for your daily thoughts.
           </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Write, organize, and protect your notes with military-grade encryption. 
-            Focus on what matters while we keep your thoughts safe.
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            CipherPad is a modern, secure note-taking application that protects your privacy with military-grade encryption. Focus on what matters while we keep your ideas safe.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20">
             <button
               onClick={onGetStarted}
-              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-full font-semibold text-lg transition-all hover:scale-105 flex items-center space-x-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold text-lg transition-all hover:scale-105 flex items-center space-x-2"
             >
-              <span>Start Writing</span>
+              <span>Start Writing for Free</span>
               <ArrowRight className="w-5 h-5" />
             </button>
             <button className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-3 rounded-full font-semibold text-lg transition-colors">
@@ -83,60 +81,60 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
 
           {/* App Preview Placeholder */}
           <div className="relative max-w-6xl mx-auto">
-            <div className="bg-gray-900 rounded-3xl p-6 shadow-2xl transform transition-transform duration-1000 ease-out" id="hero-graphic">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden">
+            <div className="bg-white rounded-3xl p-6 shadow-2xl transform transition-transform duration-1000 ease-out" id="hero-graphic">
+              <div className="bg-gray-100 rounded-2xl overflow-hidden">
                 {/* Mock App Interface */}
-                <div className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center px-6">
+                <div className="h-14 bg-gray-200 border-b border-gray-300 flex items-center px-6">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
                   <div className="flex-1 text-center">
-                    <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">CipherWrite</div>
+                    <div className="text-sm text-gray-500 font-medium">CipherPad</div>
                   </div>
                 </div>
                 
                 <div className="flex h-[500px]">
                   {/* Sidebar */}
-                  <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-6">
+                  <div className="w-80 bg-gray-50 border-r border-gray-200 p-6">
                     <div className="space-y-4">
-                      <div className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center space-x-3 p-4 bg-white rounded-xl shadow-sm border border-gray-200">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Meeting Notes</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">2 hours ago</div>
+                          <div className="text-sm font-medium text-gray-900">Meeting Notes</div>
+                          <div className="text-xs text-gray-500">2 hours ago</div>
                         </div>
-                        <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                        <Lock className="w-4 h-4 text-gray-400" />
                       </div>
-                      <div className="flex items-center space-x-3 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                      <div className="flex items-center space-x-3 p-4 bg-gray-100 rounded-xl">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Project Ideas</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">1 day ago</div>
+                          <div className="text-sm font-medium text-gray-700">Project Ideas</div>
+                          <div className="text-xs text-gray-500">1 day ago</div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3 p-4 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                      <div className="flex items-center space-x-3 p-4 bg-gray-100 rounded-xl">
                         <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Personal Journal</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">3 days ago</div>
+                          <div className="text-sm font-medium text-gray-700">Personal Journal</div>
+                          <div className="text-xs text-gray-500">3 days ago</div>
                         </div>
-                        <Lock className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                        <Lock className="w-4 h-4 text-gray-400" />
                       </div>
                     </div>
                   </div>
                   
                   {/* Editor */}
-                  <div className="flex-1 p-8">
-                    <div className="h-10 bg-gray-100 dark:bg-gray-800 rounded-lg mb-6 w-64"></div>
+                  <div className="flex-1 p-8 bg-white">
+                    <div className="h-10 bg-gray-100 rounded-lg mb-6 w-64"></div>
                     <div className="space-y-4">
-                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-full"></div>
-                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-5/6"></div>
-                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-4/6"></div>
-                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-full"></div>
-                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-3/4"></div>
-                      <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded-lg w-5/6"></div>
+                      <div className="h-5 bg-gray-100 rounded-lg w-full"></div>
+                      <div className="h-5 bg-gray-100 rounded-lg w-5/6"></div>
+                      <div className="h-5 bg-gray-100 rounded-lg w-4/6"></div>
+                      <div className="h-5 bg-gray-100 rounded-lg w-full"></div>
+                      <div className="h-5 bg-gray-100 rounded-lg w-3/4"></div>
+                      <div className="h-5 bg-gray-100 rounded-lg w-5/6"></div>
                     </div>
                   </div>
                 </div>
@@ -151,156 +149,85 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20 animate-fade-in">
-            <div className="inline-flex items-center space-x-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-              <span>Features</span>
+            <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <Zap className="w-4 h-4" />
+              <span>Powerful Features</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto leading-tight">
-              Your ultimate secure note-taking experience
+              Everything you need to write, organize, and secure your ideas.
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover how CipherWrite can revolutionize the way you work and 
-              organize. Explore a myriad of features designed to enhance your productivity.
+              CipherPad is packed with features designed to enhance your productivity and protect your privacy.
             </p>
           </div>
 
-          {/* Feature Cards - Asymmetric Layout */}
-          <div className="max-w-6xl mx-auto space-y-8">
-            {/* First Row - Large + Small */}
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Large Feature Card */}
-              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-left">
-                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                  <Lock className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  Military-Grade Encryption
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-lg mb-6">
-                  Your thoughts deserve the highest level of protection. Our end-to-end encryption 
-                  ensures that only you can access your notes, using the same security standards 
-                  trusted by governments and financial institutions worldwide.
-                </p>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <span className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>AES-256 Encryption</span>
-                  </span>
-                  <span className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>Zero-Knowledge Architecture</span>
-                  </span>
-                </div>
+          {/* Feature Cards - 3x2 Grid */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6">
+                <Lock className="w-6 h-6" />
               </div>
-              
-              {/* Small Feature Card */}
-              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-right">
-                <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Lightning Fast
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Instant sync across all your devices with real-time collaboration features.
-                </p>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                End-to-End Encryption
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Your notes are encrypted on your device and can only be decrypted by you. Not even we can read your notes.
+              </p>
             </div>
-            
-            {/* Second Row - Small + Large */}
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Small Feature Card */}
-              <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-left delay-100">
-                <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center mb-6">
-                  <Eye className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Focus Mode
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Distraction-free writing environment that helps you concentrate on what matters.
-                </p>
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6">
+                <Code className="w-6 h-6" />
               </div>
-              
-              {/* Large Feature Card */}
-              <div className="md:col-span-2 bg-white rounded-3xl p-10 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-slide-in-right delay-100">
-                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                  <Code className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                  Smart Organization
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-lg mb-6">
-                  Organize your thoughts with intelligent folders, tags, and search. Our smart 
-                  categorization helps you find exactly what you're looking for, when you need it. 
-                  Perfect for writers, developers, and creative professionals.
-                </p>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                  <span className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>Smart Search</span>
-                  </span>
-                  <span className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>Auto-tagging</span>
-                  </span>
-                  <span className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>Nested Folders</span>
-                  </span>
-                </div>
-              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Markdown & Code Support
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Write in Markdown and store code snippets with syntax highlighting for over 100 languages.
+              </p>
             </div>
-            
-            {/* Third Row - Additional Features */}
-            <div className="grid md:grid-cols-4 gap-6">
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-150">
-                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                  <Mic className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">
-                  Voice Notes
-                </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Convert speech to text with AI-powered transcription.
-                </p>
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6">
+                <Zap className="w-6 h-6" />
               </div>
-              
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-200">
-                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                  <Download className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">
-                  Export Anywhere
-                </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Export to PDF, Markdown, or plain text formats.
-                </p>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Lightning Fast Sync
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Your notes are synced across all your devices in real-time.
+              </p>
+            </div>
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6">
+                <Eye className="w-6 h-6" />
               </div>
-              
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-250">
-                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">
-                  Offline First
-                </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Work anywhere, anytime. Sync when you're back online.
-                </p>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Focus Mode
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                A distraction-free writing environment that helps you concentrate on what matters.
+              </p>
+            </div>
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6">
+                <Download className="w-6 h-6" />
               </div>
-              
-              <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1 animate-fade-in delay-300">
-                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-8">
-                  <Star className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-3">
-                  Favorites
-                </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Quick access to your most important notes and ideas.
-                </p>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Export Anywhere
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Export your notes to Markdown, PDF, or plain text formats.
+              </p>
+            </div>
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6">
+                <Shield className="w-6 h-6" />
               </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Offline First
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Work anywhere, anytime. Your notes are always available, even without an internet connection.
+              </p>
             </div>
           </div>
         </div>

@@ -1,3 +1,5 @@
+import type { Note } from '../types';
+
 export const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
@@ -52,7 +54,7 @@ export const detectLanguage = (content: string): string => {
   return 'plaintext';
 };
 
-export const exportNote = (note: any, format: 'txt' | 'md' | 'json'): void => {
+export const exportNote = (note: Pick<Note, 'id' | 'title' | 'content'>, format: 'txt' | 'md' | 'json'): void => {
   let content = '';
   let filename = '';
   let mimeType = '';
@@ -62,7 +64,7 @@ export const exportNote = (note: any, format: 'txt' | 'md' | 'json'): void => {
       const div = document.createElement('div');
       div.innerHTML = html;
       // innerText preserves line breaks better than textContent
-      const text = (div as any).innerText ?? div.textContent ?? '';
+      const text = div.innerText ?? div.textContent ?? '';
       return text.replace(/\u00A0/g, ' ').trim();
     } catch {
       // Fallback strip tags

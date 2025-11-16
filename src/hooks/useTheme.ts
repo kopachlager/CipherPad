@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useStore } from './useStore';
 
 export const useTheme = () => {
-  const { settings, updateSettings } = useStore();
+  const settings = useStore((state) => state.settings);
+  const updateSettings = useStore((state) => state.updateSettings);
 
   useEffect(() => {
     const root = document.documentElement;
