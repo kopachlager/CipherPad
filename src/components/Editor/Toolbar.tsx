@@ -309,7 +309,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
           active={note.isCodeMode}
           onClick={onToggleCodeMode}
         />
-        {/* Project / Lane assignment */}
         <div className="ml-2 hidden md:flex items-center gap-2">
           <PopoverSelect
             value={note.projectId || ''}

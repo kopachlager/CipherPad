@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { create } from 'zustand';
-import type { Note, Folder, AppSettings, AuthState, Project, Lane } from '../types';
+import type { Note, AppSettings, AuthState } from '../types';
 
 export const defaultSettings: AppSettings = {
   theme: 'light',
@@ -20,7 +20,8 @@ const loadSettings = (): AppSettings => {
   try {
     const raw = localStorage.getItem('notepad-settings');
     if (raw) {
-      return { ...defaultSettings, ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+      return { ...defaultSettings, ...parsed };
     }
   } catch {
     /* ignore */
@@ -43,66 +44,7 @@ const defaultAuth: AuthState = {
   lastActivity: new Date(),
 };
 
-interface Store {
-  notes: Note[];
-  activeNoteId: string | null;
-  openTabs: string[];
-  folders: Folder[];
-  selectedFolderId: string | null;
-  settings: AppSettings;
-  auth: AuthState;
-  sidebarOpen: boolean;
-  searchQuery: string;
-  projects: Project[];
-  lanes: Lane[];
-  selectedProjectId: string | null;
-  showUndoForNoteId?: string | null;
-  lastDeletedSnapshot?: Note | null;
-  undoTimerId?: number | null;
-  encryptionRequestForNoteId?: string | null;
-
-  createNote: (folderId?: string) => Promise<Note>;
-  updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
-  deleteNote: (id: string) => Promise<void>;
-  restoreNote: (id: string) => Promise<void>;
-  toggleNoteFavorite: (id: string) => Promise<void>;
-  emptyTrash: () => Promise<void>;
-  loadNotes: () => Promise<void>;
-
-  createFolder: (name: string, parentId?: string) => Promise<void>;
-  updateFolder: (id: string, updates: Partial<Folder>) => Promise<void>;
-  deleteFolder: (id: string) => Promise<void>;
-  loadFolders: () => Promise<void>;
-
-  setActiveNote: (id: string | null) => void;
-  closeTab: (id: string) => void;
-  setSelectedFolder: (id: string | null) => void;
-  updateSettings: (updates: Partial<AppSettings>) => void;
-  loadSettings: () => Promise<void>;
-  setSidebarOpen: (open: boolean) => void;
-  setSearchQuery: (query: string) => void;
-
-  loadProjects: () => Promise<void>;
-  createProject: (name: string, color?: string) => Promise<void>;
-  updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
-  deleteProject: (id: string) => Promise<void>;
-  loadLanes: (projectId: string) => Promise<void>;
-  createLane: (projectId: string, name: string, color?: string) => Promise<void>;
-  updateLane: (id: string, updates: Partial<Lane>) => Promise<void>;
-  deleteLane: (id: string) => Promise<void>;
-  setSelectedProject: (id: string | null) => void;
-  ensureDefaultLaneForProject?: (projectId: string) => Promise<void>;
-  ensureInboxProjectAndAssign?: () => Promise<void>;
-
-  updateLastActivity: () => void;
-  lockApp: () => void;
-  unlockApp: () => void;
-  requestEncryption?: (noteId: string) => void;
-  clearEncryptionRequest?: () => void;
-  undoDelete?: () => Promise<void>;
-}
-
-const createLocalNote = (folderId?: string): Note => ({
+const createNoteModel = (folderId?: string): Note => ({
   id: crypto.randomUUID(),
   title: 'Untitled Note',
   content: '',
@@ -117,6 +59,37 @@ const createLocalNote = (folderId?: string): Note => ({
   isFavorite: false,
 });
 
+interface Store {
+  notes: Note[];
+  activeNoteId: string | null;
+  openTabs: string[];
+  settings: AppSettings;
+  auth: AuthState;
+  sidebarOpen: boolean;
+  searchQuery: string;
+  showUndoForNoteId: string | null;
+  lastDeletedSnapshot: Note | null;
+  undoTimerId: number | null;
+
+  createNote: (folderId?: string) => Promise<Note>;
+  updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
+  deleteNote: (id: string) => Promise<void>;
+  restoreNote: (id: string) => Promise<void>;
+  toggleNoteFavorite: (id: string) => Promise<void>;
+  emptyTrash: () => Promise<void>;
+
+  setActiveNote: (id: string | null) => void;
+  closeTab: (id: string) => void;
+  updateSettings: (updates: Partial<AppSettings>) => void;
+  loadSettings: () => Promise<void>;
+  setSidebarOpen: (open: boolean) => void;
+  setSearchQuery: (query: string) => void;
+  updateLastActivity: () => void;
+  lockApp: () => void;
+  unlockApp: () => void;
+  undoDelete: () => Promise<void>;
+}
+
 export const useStore = create<Store>()((set, get) => ({
   notes: [],
   activeNoteId: null,
@@ -128,26 +101,20 @@ export const useStore = create<Store>()((set, get) => ({
       return [];
     }
   })(),
-  folders: [],
-  selectedFolderId: null,
   settings: loadSettings(),
   auth: defaultAuth,
   sidebarOpen: true,
   searchQuery: '',
-  projects: [],
-  lanes: [],
-  selectedProjectId: null,
   showUndoForNoteId: null,
   lastDeletedSnapshot: null,
   undoTimerId: null,
-  encryptionRequestForNoteId: null,
 
   createNote: async (folderId) => {
-    const note = createLocalNote(folderId);
+    const note = createNoteModel(folderId);
     set((state) => ({
       notes: [note, ...state.notes],
       activeNoteId: note.id,
-      openTabs: [note.id, ...state.openTabs.filter((id) => id !== note.id)],
+      openTabs: [note.id, ...state.openTabs.filter((tab) => tab !== note.id)],
     }));
     return note;
   },
@@ -170,18 +137,18 @@ export const useStore = create<Store>()((set, get) => ({
     const note = get().notes.find((n) => n.id === id);
     if (!note) return;
 
+    const timer = window.setTimeout(() => {
+      set({ showUndoForNoteId: null, lastDeletedSnapshot: null, undoTimerId: null });
+    }, 5000);
+
     set((state) => ({
       notes: state.notes.map((n) =>
         n.id === id ? { ...n, isDeleted: true, deletedAt: new Date() } : n
       ),
       showUndoForNoteId: id,
       lastDeletedSnapshot: { ...note },
+      undoTimerId: timer,
     }));
-
-    const timer = window.setTimeout(() => {
-      set({ showUndoForNoteId: null, lastDeletedSnapshot: null, undoTimerId: null });
-    }, 5000);
-    set({ undoTimerId: timer });
   },
 
   restoreNote: async (id) => {
@@ -205,13 +172,6 @@ export const useStore = create<Store>()((set, get) => ({
       notes: state.notes.filter((n) => !n.isDeleted),
     }));
   },
-
-  loadNotes: async () => {},
-
-  createFolder: async () => {},
-  updateFolder: async () => {},
-  deleteFolder: async () => {},
-  loadFolders: async () => {},
 
   setActiveNote: (id) => {
     if (!id) {
@@ -245,8 +205,6 @@ export const useStore = create<Store>()((set, get) => ({
     }
   },
 
-  setSelectedFolder: (id) => set({ selectedFolderId: id }),
-
   updateSettings: (updates) => {
     const newSettings = { ...get().settings, ...updates };
     set({ settings: newSettings });
@@ -260,19 +218,6 @@ export const useStore = create<Store>()((set, get) => ({
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   setSearchQuery: (query) => set({ searchQuery: query }),
 
-  loadProjects: async () => {},
-  createProject: async () => {},
-  updateProject: async () => {},
-  deleteProject: async () => {},
-  loadLanes: async () => {},
-  createLane: async () => {},
-  updateLane: async () => {},
-  deleteLane: async () => {},
-  setSelectedProject: (id) => set({ selectedProjectId: id }),
-
-  ensureDefaultLaneForProject: async () => {},
-  ensureInboxProjectAndAssign: async () => {},
-
   updateLastActivity: () => {
     set((state) => ({ auth: { ...state.auth, lastActivity: new Date() } }));
   },
@@ -285,25 +230,16 @@ export const useStore = create<Store>()((set, get) => ({
     set((state) => ({ auth: { ...state.auth, isLocked: false, lastActivity: new Date() } }));
   },
 
-  requestEncryption: (noteId: string) => {
-    set({ encryptionRequestForNoteId: noteId });
-  },
-
-  clearEncryptionRequest: () => {
-    set({ encryptionRequestForNoteId: null });
-  },
-
   undoDelete: async () => {
     const snapshot = get().lastDeletedSnapshot;
     if (!snapshot) return;
-    set((state) => ({
-      notes: state.notes.map((n) =>
+    set({
+      notes: get().notes.map((n) =>
         n.id === snapshot.id ? { ...n, isDeleted: false, deletedAt: undefined } : n
       ),
       showUndoForNoteId: null,
       lastDeletedSnapshot: null,
       undoTimerId: null,
-    }));
+    });
   },
 }));
-

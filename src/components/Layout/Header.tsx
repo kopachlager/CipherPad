@@ -1,6 +1,5 @@
 import React from 'react';
-import { Search, Sun, Moon, Settings, Plus, LogOut, Loader2 } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { Search, Sun, Moon, Settings, Plus, Loader2 } from 'lucide-react';
 import { useStore } from '../../hooks/useStore';
 import { useTheme } from '../../hooks/useTheme';
 import SettingsModal from '../Settings/SettingsModal';
@@ -9,11 +8,9 @@ const Header: React.FC = () => {
   const searchQuery = useStore((state) => state.searchQuery);
   const setSearchQuery = useStore((state) => state.setSearchQuery);
   const createNote = useStore((state) => state.createNote);
-  const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showSettings, setShowSettings] = React.useState(false);
   const [isCreatingNote, setIsCreatingNote] = React.useState(false);
-  const [isSigningOut, setIsSigningOut] = React.useState(false);
 
   const handleCreateNote = async () => {
     setIsCreatingNote(true);
@@ -22,12 +19,6 @@ const Header: React.FC = () => {
     } finally {
       setTimeout(() => setIsCreatingNote(false), 500); // Show animation briefly
     }
-  };
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    await signOut();
-    setIsSigningOut(false);
   };
 
   return (
@@ -74,21 +65,6 @@ const Header: React.FC = () => {
               <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-300 hover:-rotate-12" />
             )}
           </button>
-
-          {user && (
-            <button
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-50"
-              title="Sign out"
-            >
-              {isSigningOut ? (
-                <Loader2 className="w-5 h-5 animate-spin text-gray-600 dark:text-gray-400" />
-              ) : (
-                <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform duration-150 hover:translate-x-1" />
-              )}
-            </button>
-          )}
 
           <button
             onClick={() => setShowSettings(true)}
