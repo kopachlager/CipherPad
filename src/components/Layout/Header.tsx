@@ -92,7 +92,7 @@ const Header: React.FC = () => {
             <button
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 hover:scale-105 active:scale-95 hidden sm:block disabled:opacity-50"
+              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-50"
               title="Sign out"
             >
               {isSigningOut ? (
